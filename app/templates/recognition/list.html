@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}التكريم والتقدير{% endblock %}
+{% block page_title %}التكريم والتقدير{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
+  <div>
+    <h2 class="text-xl font-bold text-slate-800">التكريم والتقدير</h2>
+    <p class="text-sm text-slate-500 mt-1">إجمالي التكريمات: {{ pagination.total }}</p>
+  </div>
+  <a href="{{ url_for('recognition.new_recognition') }}"
+     class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    منح تكريم
+  </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+  <!-- Awards list -->
+  <div class="lg:col-span-2 space-y-5">
+    <!-- Filters -->
+    <form method="GET" action="{{ url_for('recognition.list_recognition') }}"
+          class="bg-white rounded-2xl border border-slate-200 p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <select name="award_type" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
+        <option value="">كل أنواع التكريم</option>
+        {% for a in award_types %}
+          <option value="{{ a }}" {% if filters.award_type == a %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+      <select name="department_id" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
+        <option value="">كل الأقسام</option>
+        {% for d in departments %}
+          <option value="{{ d.id }}" {% if filters.department_id == d.id %}selected{% endif %}>{{ d.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">تصفية</button>
+    </form>
+
+    <div class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100">
+      {% for r in items %}
+      <div class="p-4 flex items-start justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 ring-1 ring-violet-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+          </span>
+          <div>
+            <p class="font-medium text-slate-800">{{ r.staff.name if r.staff else '—' }}
+              <span class="text-xs text-slate-400">— {{ r.staff.department.name if r.staff and r.staff.department else '' }}</span>
+            </p>
+            <p class="text-sm text-violet-700">{{ r.award_type }}</p>
+            {% if r.note %}<p class="text-sm text-slate-500 mt-1">{{ r.note }}</p>{% endif %}
+            <p class="text-[11px] text-slate-400 mt-1">
+              {{ r.timestamp.strftime('%Y-%m-%d') }}{% if r.granted_by %} · مُنح بواسطة {{ r.granted_by }}{% endif %}
+            </p>
+          </div>
+        </div>
+        <form method="POST" action="{{ url_for('recognition.delete_recognition', rec_id=r.id) }}"
+              onsubmit="return confirm('تأكيد حذف التكريم؟');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
+        </form>
+      </div>
+      {% else %}
+      <div class="p-10 text-center text-slate-400">لا توجد تكريمات بعد</div>
+      {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+    <div class="flex items-center justify-center gap-1">
+      {% set base = dict(filters) %}
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('recognition.list_recognition', page=pagination.prev_num, **base) }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">السابق</a>
+      {% endif %}
+      {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+        {% if p %}
+          <a href="{{ url_for('recognition.list_recognition', page=p, **base) }}"
+             class="px-3 py-1.5 rounded-lg border text-sm {% if p == pagination.page %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">{{ p }}</a>
+        {% else %}<span class="px-2 text-slate-400">…</span>{% endif %}
+      {% endfor %}
+      {% if pagination.has_next %}
+        <a href="{{ url_for('recognition.list_recognition', page=pagination.next_num, **base) }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">التالي</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Top recipients -->
+  <div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+      <h3 class="font-bold text-slate-800 mb-3">الأكثر تكريماً</h3>
+      {% if top_recipients %}
+      <ol class="space-y-2">
+        {% for name, cnt in top_recipients %}
+        <li class="flex items-center justify-between text-sm">
+          <span class="flex items-center gap-2">
+            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-gold/15 text-brand-gold text-xs font-bold">{{ loop.index }}</span>
+            <span class="text-slate-700">{{ name }}</span>
+          </span>
+          <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{{ cnt }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}
+      <p class="text-sm text-slate-400">لا توجد بيانات</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -18,6 +18,8 @@ class Recognition(db.Model):
     )
     award_type = db.Column(db.String(120), nullable=False)
     granted_by = db.Column(db.String(150), nullable=True)
+    # Optional citation / reason for the award.
+    note = db.Column(db.Text, nullable=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     staff = db.relationship("Staff", back_populates="recognitions")

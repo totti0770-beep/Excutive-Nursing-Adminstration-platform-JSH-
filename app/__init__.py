@@ -43,9 +43,11 @@ def create_app(config_object=None):
     from app.blueprints.main import main_bp
     from app.blueprints.auth import auth_bp
     from app.blueprints.staff import staff_bp
+    from app.blueprints.recognition import recognition_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(staff_bp)
+    app.register_blueprint(recognition_bp)
 
     # Register CLI commands.
     from app.commands import register_commands

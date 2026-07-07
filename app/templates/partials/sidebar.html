@@ -28,9 +28,12 @@
        class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('staff.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
       <span class="h-2 w-2 rounded-full {% if active and active.startswith('staff.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> قاعدة بيانات الطاقم
     </a>
+    <a href="{{ url_for('recognition.list_recognition') }}"
+       class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('recognition.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
+      <span class="h-2 w-2 rounded-full {% if active and active.startswith('recognition.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> التكريم والتقدير
+    </a>
     {% set soon = [
-      'الأقسام', 'التكريم والتقدير',
-      'الأداء', 'الإشعارات والأخبار', 'التقارير', 'الإعدادات'
+      'الأقسام', 'الأداء', 'الإشعارات والأخبار', 'التقارير', 'الإعدادات'
     ] %}
     {% for item in soon %}
     <span class="flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-slate-400 cursor-not-allowed">
