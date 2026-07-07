@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}لوحة التحكم{% endblock %}
+{% block page_title %}لوحة التحكم{% endblock %}
+
+{% set accents = {
+  'amber':   'bg-amber-50 text-amber-600 ring-amber-100',
+  'emerald': 'bg-emerald-50 text-emerald-600 ring-emerald-100',
+  'violet':  'bg-violet-50 text-violet-600 ring-violet-100',
+  'sky':     'bg-sky-50 text-sky-600 ring-sky-100'
+} %}
+
+{% block content %}
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-slate-800">نظرة عامة تنفيذية</h2>
+  <p class="text-sm text-slate-500 mt-1">مؤشرات الأداء الرئيسية لإدارة التمريض</p>
+</div>
+
+<!-- KPI cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+  {% for kpi in kpis %}
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+    <div class="flex items-start justify-between">
+      <div>
+        <p class="text-sm text-slate-500">{{ kpi.label }}</p>
+        <p class="mt-2 text-3xl font-extrabold text-slate-800">{{ kpi.value }}</p>
+      </div>
+      <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl ring-1 {{ accents.get(kpi.accent, accents['amber']) }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          {% if kpi.icon == 'users' %}
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          {% elif kpi.icon == 'building' %}
+            <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/>
+          {% elif kpi.icon == 'award' %}
+            <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+          {% else %}
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          {% endif %}
+        </svg>
+      </span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Placeholder panel for upcoming modules -->
+<div class="mt-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+  <h3 class="font-bold text-slate-800">الوحدات القادمة</h3>
+  <p class="text-sm text-slate-500 mt-1">
+    تم إرساء الأساس (البنية، قاعدة البيانات، الواجهة). الميزات التالية ستُبنى تِباعاً:
+    نظام تسجيل الدخول، قاعدة بيانات الطاقم، وحدة التكريم، ومركز الإشعارات.
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!-- Sidebar navigation (RTL). Collapses off-canvas on small screens via the
+     `peer` checkbox toggled from the header hamburger button. -->
+<input type="checkbox" id="sidebar-toggle" class="peer hidden" />
+
+<!-- Backdrop (mobile only) -->
+<label for="sidebar-toggle"
+       class="fixed inset-0 z-30 hidden bg-slate-900/40 peer-checked:block lg:hidden"></label>
+
+<aside class="fixed inset-y-0 right-0 z-40 w-64 -translate-x-0 translate-x-full
+              bg-brand-dark text-slate-100 transition-transform duration-200
+              peer-checked:translate-x-0 lg:static lg:translate-x-0 lg:z-0">
+  <div class="flex items-center gap-3 px-5 h-16 border-b border-white/10">
+    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-gold text-brand-dark font-extrabold">ت</span>
+    <div class="leading-tight">
+      <p class="text-sm font-bold">{{ config.APP_NAME_AR }}</p>
+      <p class="text-[11px] text-slate-400">{{ config.ORG_NAME_AR }}</p>
+    </div>
+  </div>
+
+  <nav class="p-3 space-y-1 text-sm">
+    {# Foundation: only the dashboard is live. Remaining items are placeholders
+       for the feature increments and are visibly marked as such. #}
+    <a href="{{ url_for('main.dashboard') }}"
+       class="flex items-center gap-3 rounded-lg px-3 py-2 bg-white/10 text-white font-medium">
+      <span class="h-2 w-2 rounded-full bg-brand-gold"></span> لوحة التحكم
+    </a>
+    {% set soon = [
+      'قاعدة بيانات الطاقم', 'الأقسام', 'التكريم والتقدير',
+      'الأداء', 'الإشعارات والأخبار', 'التقارير', 'الإعدادات'
+    ] %}
+    {% for item in soon %}
+    <span class="flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-slate-400 cursor-not-allowed">
+      <span class="flex items-center gap-3"><span class="h-2 w-2 rounded-full bg-slate-600"></span>{{ item }}</span>
+      <span class="text-[10px] bg-white/5 px-1.5 py-0.5 rounded">قريباً</span>
+    </span>
+    {% endfor %}
+  </nav>
+</aside>
