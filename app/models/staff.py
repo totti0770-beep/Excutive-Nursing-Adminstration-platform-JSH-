@@ -18,6 +18,16 @@ class Staff(db.Model):
     # Job role (aligned with app.security.Roles vocabulary where applicable).
     role = db.Column(db.String(80), nullable=True)
 
+    # Optional directory/profile fields.
+    email = db.Column(db.String(255), nullable=True)
+    phone = db.Column(db.String(40), nullable=True)
+    # server_default so adding this NOT NULL column works on existing rows
+    # (required by SQLite; harmless on PostgreSQL).
+    is_active = db.Column(
+        db.Boolean, nullable=False, default=True, server_default=db.true()
+    )
+    hire_date = db.Column(db.Date, nullable=True)
+
     department_id = db.Column(
         db.Integer,
         db.ForeignKey("departments.id", ondelete="CASCADE"),

@@ -18,14 +18,18 @@
   </div>
 
   <nav class="p-3 space-y-1 text-sm">
-    {# Foundation: only the dashboard is live. Remaining items are placeholders
-       for the feature increments and are visibly marked as such. #}
+    {# Live links use the endpoint; upcoming items are marked "قريباً". #}
+    {% set active = request.endpoint %}
     <a href="{{ url_for('main.dashboard') }}"
-       class="flex items-center gap-3 rounded-lg px-3 py-2 bg-white/10 text-white font-medium">
-      <span class="h-2 w-2 rounded-full bg-brand-gold"></span> لوحة التحكم
+       class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active == 'main.dashboard' %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
+      <span class="h-2 w-2 rounded-full {% if active == 'main.dashboard' %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> لوحة التحكم
+    </a>
+    <a href="{{ url_for('staff.list_staff') }}"
+       class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('staff.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
+      <span class="h-2 w-2 rounded-full {% if active and active.startswith('staff.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> قاعدة بيانات الطاقم
     </a>
     {% set soon = [
-      'قاعدة بيانات الطاقم', 'الأقسام', 'التكريم والتقدير',
+      'الأقسام', 'التكريم والتقدير',
       'الأداء', 'الإشعارات والأخبار', 'التقارير', 'الإعدادات'
     ] %}
     {% for item in soon %}

@@ -20,6 +20,19 @@ class Roles:
 
     ALL = (SYSTEM_ADMIN, NURSING_DIRECTOR, DEPARTMENT_HEAD, STAFF_NURSE)
 
+    # Arabic display labels for UI dropdowns and tables.
+    LABELS_AR = {
+        SYSTEM_ADMIN: "مدير النظام",
+        NURSING_DIRECTOR: "مدير التمريض",
+        DEPARTMENT_HEAD: "رئيس قسم",
+        STAFF_NURSE: "ممرض/ممرضة",
+    }
+
+    @classmethod
+    def label(cls, role):
+        """Arabic label for a role value (falls back to the raw value)."""
+        return cls.LABELS_AR.get(role, role or "—")
+
 
 def role_required(*roles):
     """Restrict a view to users holding one of the given roles.

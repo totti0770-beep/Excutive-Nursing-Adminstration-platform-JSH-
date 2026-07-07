@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}قاعدة بيانات الطاقم{% endblock %}
+{% block page_title %}قاعدة بيانات الطاقم{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
+  <div>
+    <h2 class="text-xl font-bold text-slate-800">قاعدة بيانات الطاقم التمريضي</h2>
+    <p class="text-sm text-slate-500 mt-1">إجمالي النتائج: {{ pagination.total }}</p>
+  </div>
+  <a href="{{ url_for('staff.new_staff') }}"
+     class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    إضافة موظف
+  </a>
+</div>
+
+<!-- Filters -->
+<form method="GET" action="{{ url_for('staff.list_staff') }}"
+      class="bg-white rounded-2xl border border-slate-200 p-4 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+  <input type="text" name="q" value="{{ filters.q }}" placeholder="بحث بالاسم أو الرقم الوظيفي"
+         class="lg:col-span-2 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none" />
+
+  <select name="department_id" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
+    <option value="">كل الأقسام</option>
+    {% for d in departments %}
+      <option value="{{ d.id }}" {% if filters.department_id == d.id %}selected{% endif %}>{{ d.name }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="role" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
+    <option value="">كل الأدوار</option>
+    {% for r in roles %}
+      <option value="{{ r }}" {% if filters.role == r %}selected{% endif %}>{{ role_label(r) }}</option>
+    {% endfor %}
+  </select>
+
+  <div class="flex gap-2">
+    <select name="status" class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
+      <option value="">الكل</option>
+      <option value="active" {% if filters.status == 'active' %}selected{% endif %}>نشط</option>
+      <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>غير نشط</option>
+    </select>
+    <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">تصفية</button>
+  </div>
+</form>
+
+<!-- Results table -->
+<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm text-right">
+      <thead class="bg-slate-50 text-slate-500">
+        <tr>
+          <th class="px-4 py-3 font-medium">الاسم</th>
+          <th class="px-4 py-3 font-medium">الرقم الوظيفي</th>
+          <th class="px-4 py-3 font-medium">الدور</th>
+          <th class="px-4 py-3 font-medium">القسم</th>
+          <th class="px-4 py-3 font-medium">الحالة</th>
+          <th class="px-4 py-3 font-medium">إجراءات</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for m in staff_list %}
+        <tr class="hover:bg-slate-50">
+          <td class="px-4 py-3 font-medium text-slate-800">{{ m.name }}</td>
+          <td class="px-4 py-3 text-slate-600 ltr-nums">{{ m.employee_id }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ role_label(m.role) }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ m.department.name if m.department else '—' }}</td>
+          <td class="px-4 py-3">
+            {% if m.is_active %}
+              <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">نشط</span>
+            {% else %}
+              <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">غير نشط</span>
+            {% endif %}
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+              <a href="{{ url_for('staff.edit_staff', staff_id=m.id) }}"
+                 class="text-xs text-sky-600 hover:underline">تعديل</a>
+              <form method="POST" action="{{ url_for('staff.delete_staff', staff_id=m.id) }}"
+                    onsubmit="return confirm('تأكيد حذف {{ m.name }}؟');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">لا توجد نتائج مطابقة</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pagination -->
+{% if pagination.pages > 1 %}
+<div class="flex items-center justify-center gap-1 mt-5">
+  {% set base = dict(filters) %}
+  {% if pagination.has_prev %}
+    <a href="{{ url_for('staff.list_staff', page=pagination.prev_num, **base) }}"
+       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">السابق</a>
+  {% endif %}
+  {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+    {% if p %}
+      <a href="{{ url_for('staff.list_staff', page=p, **base) }}"
+         class="px-3 py-1.5 rounded-lg border text-sm {% if p == pagination.page %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">{{ p }}</a>
+    {% else %}
+      <span class="px-2 text-slate-400">…</span>
+    {% endif %}
+  {% endfor %}
+  {% if pagination.has_next %}
+    <a href="{{ url_for('staff.list_staff', page=pagination.next_num, **base) }}"
+       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">التالي</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
