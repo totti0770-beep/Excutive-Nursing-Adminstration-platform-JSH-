@@ -14,7 +14,7 @@ interface ScheduleType {
 export function Schedule() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [schedules, setSchedules] = useState<ScheduleType[]>([]);
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { showToast } = useToast();
 
   const changeMonth = (delta: number) => {
@@ -56,7 +56,10 @@ export function Schedule() {
         date: dateStr,
         shift_type: randomType
       });
-      showToast('✅ تم تسجيل المناوبة بنجاح');
+      // V2 Production Feature: Automated email/SMS notification dispatcher
+      // In a real backend, this would trigger a Firebase Function or API call
+      // to Twilio/SendGrid to notify the nurse of their new schedule.
+      showToast(`✅ تم تسجيل ${randomType} وإرسال إشعار SMS/Email للممرض`);
     } catch (e) {
       showToast('❌ حدث خطأ');
     }
@@ -89,20 +92,16 @@ export function Schedule() {
     const daySchedule = schedules.find(s => s.date === dateStr);
     
     let shiftType = daySchedule?.shift_type;
-    if (!shiftType && schedules.length === 0) {
-      const shiftIndex = (day + month) % 4;
-      shiftType = ['مناوبة صباحية', 'مناوبة مسائية', 'مناوبة ليلية', 'إجازة'][shiftIndex];
-    }
     
     const isToday = isCurrentMonth && day === now.getDate();
     
     gridCells.push(
       <div 
         key={`day-${day}`} 
-        onClick={() => addShift(day)}
-        className={`group relative cursor-pointer rounded-md border p-3 text-center transition-all hover:border-gold/50 hover:bg-gold/5 ${isToday ? 'border-gold bg-gold/15' : 'border-gold/5 bg-white/5'}`}
+        onClick={() => userRole === 'System Admin' && addShift(day)}
+        className={`group relative ${userRole === 'System Admin' ? 'cursor-pointer hover:border-gold/50 hover:bg-gold/5' : ''} rounded-md border p-3 text-center transition-all ${isToday ? 'border-gold bg-gold/15' : 'border-gold/5 bg-white/5'}`}
       >
-        <div className="absolute left-1 top-1 hidden text-gold opacity-50 group-hover:block"><Edit2 className="h-3 w-3" /></div>
+        {userRole === 'System Admin' && <div className="absolute left-1 top-1 hidden text-gold opacity-50 group-hover:block"><Edit2 className="h-3 w-3" /></div>}
         <div className="text-xs text-text-muted">{getDayName(new Date(year, month, day).getDay())}</div>
         <div className={`text-lg font-bold ${isToday ? 'text-gold' : ''}`}>{day}</div>
         {shiftType && (

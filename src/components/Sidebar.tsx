@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, UsersRound, Hospital, Calendar, 
   GraduationCap, ShieldCheck, Star, BarChart4, LogOut, Shield,
@@ -13,6 +14,18 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, activePage, onNavigate, onClose, onLogout }: SidebarProps) {
+  const [profileName, setProfileName] = useState('مشرف التمريض');
+
+  useEffect(() => {
+    const updateName = () => {
+      setProfileName(localStorage.getItem('profile_name') || 'مشرف التمريض');
+    };
+    
+    updateName();
+    window.addEventListener('profileNameChanged', updateName);
+    return () => window.removeEventListener('profileNameChanged', updateName);
+  }, []);
+
   const navItems = [
     { label: 'الرئيسية', items: [
       { id: 'dashboard', name: 'لوحة التحكم', icon: LayoutDashboard },
@@ -62,15 +75,15 @@ export function Sidebar({ isOpen, activePage, onNavigate, onClose, onLogout }: S
               </div>
               {group.items.map((item) => (
                 <button
-                  key={item.id}
-                  onClick={() => {
-                    onNavigate(item.id);
-                  }}
-                  className={`flex w-full items-center gap-3.5 rounded-md px-3.5 py-3 text-right text-[15px] font-medium transition-colors ${
-                    activePage === item.id 
-                      ? 'bg-gold/15 text-gold shadow-[inset_-4px_0_0_#4F46E5]' 
-                      : 'text-text-secondary hover:bg-gold/10 hover:text-text-primary'
-                  }`}
+                   key={item.id}
+                   onClick={() => {
+                     onNavigate(item.id);
+                   }}
+                   className={`flex w-full items-center gap-3.5 rounded-md px-3.5 py-3 text-right text-[15px] font-medium transition-colors ${
+                     activePage === item.id 
+                       ? 'bg-gold/15 text-gold shadow-[inset_-4px_0_0_#4F46E5]' 
+                       : 'text-text-secondary hover:bg-gold/10 hover:text-text-primary'
+                   }`}
                 >
                   <item.icon className={`h-[18px] w-[18px] ${activePage === item.id ? 'text-gold' : 'text-text-muted'}`} />
                   {item.name}
@@ -83,11 +96,11 @@ export function Sidebar({ isOpen, activePage, onNavigate, onClose, onLogout }: S
         <div className="mt-auto border-t border-gold/10 pt-4">
           <div className="flex items-center gap-3 rounded-md bg-white/5 p-2.5">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-gradient text-base font-bold text-white shadow-sm">
-              ع
+              {profileName.trim().charAt(0) || 'ع'}
             </div>
             <div className="flex-1">
-              <div className="text-sm font-semibold">عقاب أحمد مبارك</div>
-              <div className="text-xs font-bold uppercase tracking-widest text-text-muted">مشرف تمريض</div>
+              <div className="text-sm font-semibold">{profileName}</div>
+              <div className="text-xs font-bold uppercase tracking-widest text-text-muted">حساب معتمد</div>
             </div>
           </div>
           <button 
