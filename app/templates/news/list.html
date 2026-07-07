@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}الإشعارات والأخبار{% endblock %}
+{% block page_title %}الإشعارات والأخبار{% endblock %}
+
+{% set cat_styles = {
+  'news': 'bg-sky-50 text-sky-700',
+  'announcement': 'bg-amber-50 text-amber-700',
+  'event': 'bg-emerald-50 text-emerald-700'
+} %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
+  <div>
+    <h2 class="text-xl font-bold text-slate-800">الإشعارات والأخبار</h2>
+    <p class="text-sm text-slate-500 mt-1">إجمالي المنشورات: {{ pagination.total }}</p>
+  </div>
+  {% if can_manage %}
+  <a href="{{ url_for('news.new_announcement') }}"
+     class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    منشور جديد
+  </a>
+  {% endif %}
+</div>
+
+<!-- Category filter -->
+<form method="GET" class="flex items-center gap-2 mb-5 flex-wrap">
+  <a href="{{ url_for('news.feed') }}"
+     class="px-3 py-1.5 rounded-lg text-sm border {% if not filters.category %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">الكل</a>
+  {% for key, label in categories.items() %}
+    <a href="{{ url_for('news.feed', category=key) }}"
+       class="px-3 py-1.5 rounded-lg text-sm border {% if filters.category == key %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">{{ label }}</a>
+  {% endfor %}
+</form>
+
+<div class="space-y-4">
+  {% for a in items %}
+  <div class="bg-white rounded-2xl border border-slate-200 p-5">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span class="text-xs px-2 py-0.5 rounded {{ cat_styles.get(a.category, 'bg-slate-100 text-slate-600') }}">{{ categories.get(a.category, a.category) }}</span>
+          {% if a.pinned %}<span class="text-xs px-2 py-0.5 rounded bg-brand-gold/15 text-brand-gold">مثبّت</span>{% endif %}
+          {% if not a.is_published %}<span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-500">مسودة</span>{% endif %}
+        </div>
+        <a href="{{ url_for('news.detail', ann_id=a.id) }}" class="text-lg font-bold text-slate-800 hover:text-brand-gold transition">{{ a.title }}</a>
+        <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ a.body[:180] }}{% if a.body|length > 180 %}…{% endif %}</p>
+        <p class="text-[11px] text-slate-400 mt-2">
+          {{ a.created_at.strftime('%Y-%m-%d') }}{% if a.created_by %} · {{ a.created_by }}{% endif %}
+        </p>
+      </div>
+    </div>
+    <div class="mt-3 flex items-center gap-3">
+      <a href="{{ url_for('news.detail', ann_id=a.id) }}" class="text-sm text-sky-600 hover:underline">قراءة المزيد</a>
+      {% if can_manage %}
+        <a href="{{ url_for('news.edit_announcement', ann_id=a.id) }}" class="text-sm text-slate-500 hover:underline">تعديل</a>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center text-slate-400">لا توجد منشورات</div>
+  {% endfor %}
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="flex items-center justify-center gap-1 mt-6">
+  {% set base = dict(filters) %}
+  {% if pagination.has_prev %}
+    <a href="{{ url_for('news.feed', page=pagination.prev_num, **base) }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">السابق</a>
+  {% endif %}
+  {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+    {% if p %}
+      <a href="{{ url_for('news.feed', page=p, **base) }}"
+         class="px-3 py-1.5 rounded-lg border text-sm {% if p == pagination.page %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">{{ p }}</a>
+    {% else %}<span class="px-2 text-slate-400">…</span>{% endif %}
+  {% endfor %}
+  {% if pagination.has_next %}
+    <a href="{{ url_for('news.feed', page=pagination.next_num, **base) }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">التالي</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

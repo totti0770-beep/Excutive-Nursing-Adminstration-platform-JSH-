@@ -44,10 +44,28 @@ def create_app(config_object=None):
     from app.blueprints.auth import auth_bp
     from app.blueprints.staff import staff_bp
     from app.blueprints.recognition import recognition_bp
+    from app.blueprints.news import news_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(staff_bp)
     app.register_blueprint(recognition_bp)
+    app.register_blueprint(news_bp)
+
+    # Notification bell: recent (last 7 days) published announcements count,
+    # available to every template.
+    @app.context_processor
+    def inject_recent_news_count():
+        from datetime import datetime, timedelta
+
+        from flask_login import current_user
+        if not current_user.is_authenticated:
+            return {"recent_news_count": 0}
+        since = datetime.utcnow() - timedelta(days=7)
+        count = models.Announcement.query.filter(
+            models.Announcement.is_published.is_(True),
+            models.Announcement.created_at >= since,
+        ).count()
+        return {"recent_news_count": count}
 
     # Register CLI commands.
     from app.commands import register_commands
