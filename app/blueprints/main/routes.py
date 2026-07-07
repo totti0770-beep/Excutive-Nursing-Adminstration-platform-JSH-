@@ -1,5 +1,6 @@
 """Main blueprint routes."""
 from flask import render_template
+from flask_login import login_required
 from sqlalchemy import func
 
 from app.blueprints.main import main_bp
@@ -9,6 +10,7 @@ from app.security import Roles, role_required
 
 
 @main_bp.route("/")
+@login_required
 @role_required(Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR)
 def dashboard():
     """Executive dashboard with live KPI counts drawn from the database."""

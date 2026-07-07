@@ -1,13 +1,13 @@
-"""Role-Based Access Control (RBAC) scaffolding.
+"""Role-Based Access Control (RBAC).
 
-This is a *placeholder* for the foundation increment. It defines the canonical
-role vocabulary and a ``role_required`` decorator so that route handlers can be
-annotated with their intended access level today. Real enforcement (identifying
-the current user from an authenticated session) arrives with the authentication
-increment (Flask-Login); until then the decorator is intentionally permissive
-and simply records the required role on the view.
+Defines the canonical role vocabulary and a ``role_required`` decorator that
+enforces, against the authenticated Flask-Login user, that the current user
+holds one of the permitted roles.
 """
 from functools import wraps
+
+from flask import abort
+from flask_login import current_user
 
 
 class Roles:
@@ -22,19 +22,20 @@ class Roles:
 
 
 def role_required(*roles):
-    """Annotate a view with the roles permitted to access it.
+    """Restrict a view to users holding one of the given roles.
 
-    Placeholder behaviour: attaches the required roles to the view function
-    (so they are documented and testable) and passes through. The
-    authentication increment will replace the body with a real check against
-    the logged-in user's role and abort(403) on mismatch.
+    Unauthenticated users get 401 (Flask-Login's unauthorized handler will
+    redirect them to the login page); authenticated users lacking a permitted
+    role get 403.
     """
 
     def decorator(view):
         @wraps(view)
         def wrapped(*args, **kwargs):
-            # TODO(auth-increment): resolve current_user and enforce membership
-            # in ``roles``; abort(403) if not permitted.
+            if not current_user.is_authenticated:
+                abort(401)
+            if roles and current_user.role not in roles:
+                abort(403)
             return view(*args, **kwargs)
 
         wrapped.required_roles = roles

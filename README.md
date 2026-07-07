@@ -4,9 +4,10 @@
 An internal administrative & governance web portal for the Nursing Administration,
 built as a modular Flask application with a right-to-left (RTL) Arabic UI.
 
-> **Status:** Foundation increment. Project structure, configuration, database
-> models, and the RTL dashboard shell are in place. Feature modules
-> (authentication, staff database, recognition, notifications) are built
+> **Status:** Foundation + Authentication complete. Project structure,
+> configuration, database models, the RTL dashboard shell, and secure login
+> (Flask-Login, hashed passwords, CSRF, enforced RBAC) are in place. Remaining
+> feature modules (staff database, recognition, notifications) are built
 > incrementally in subsequent increments.
 
 ## Tech stack
@@ -65,14 +66,31 @@ flask db upgrade
 # 4. (optional) Seed sample data
 python seed.py
 
-# 5. Run
-flask run                         # http://localhost:5000
+# 5. Create an admin login (hashed password; no hardcoded credentials)
+#    Reads --email/--password, or ADMIN_EMAIL/ADMIN_PASSWORD, or prompts.
+flask create-admin --email admin@jazanhospital.com
+#    Note: reserved domains (e.g. *.local) are rejected.
+
+# 6. Run
+flask run                         # http://localhost:5000  (redirects to /login)
 ```
+
+## Authentication & security
+
+- **Login:** Flask-Login sessions; passwords hashed with Werkzeug (scrypt).
+  Unauthenticated requests to protected pages redirect to `/login`.
+- **RBAC:** `app/security.py` defines roles and a `role_required` decorator that
+  is enforced against the logged-in user (dashboard requires System Admin /
+  Nursing Director).
+- **CSRF:** all POST forms are protected app-wide via Flask-WTF `CSRFProtect`.
+- **No hardcoded credentials** (unlike the archived prototype); the first admin
+  is created via `flask create-admin`.
+- Session cookies are `HttpOnly` + `SameSite=Lax` (and `Secure` in production).
 
 ## Roadmap (next increments, each gated on review)
 
-1. Authentication & login (Flask-Login, hashed passwords, sessions)
+1. ~~Authentication & login (Flask-Login, hashed passwords, sessions)~~ ✅ done
 2. Nursing Staff Database (search & filter)
 3. Recognition / Awards module
 4. Notification center & news feed
-5. Reports, full RBAC enforcement, Tailwind build step, tests + CI
+5. Reports, per-page RBAC, Tailwind build step, tests + CI
