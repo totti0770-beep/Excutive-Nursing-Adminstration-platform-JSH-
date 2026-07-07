@@ -5,16 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>تسجيل الدخول — {{ config.APP_NAME_AR }}</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { theme: { extend: {
-      fontFamily: { sans: ['Tajawal', 'sans-serif'] },
-      colors: { brand: { gold: '#C9A227', dark: '#0f172a' } }
-    } } };
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <!-- Self-contained, locally built Tailwind + self-hosted Tajawal font (no external CDN) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}" />
 </head>
 <body class="min-h-screen bg-slate-100 font-sans antialiased flex items-center justify-center p-4">
   <div class="w-full max-w-md">

@@ -15,7 +15,8 @@ built as a modular Flask application with a right-to-left (RTL) Arabic UI.
 - **Backend:** Python + Flask (app-factory + blueprints, MVC structure)
 - **ORM / DB:** SQLAlchemy via Flask-SQLAlchemy; migrations via Flask-Migrate (Alembic)
   - Dev: SQLite (zero setup) · Prod: PostgreSQL (models are Postgres-compatible)
-- **UI:** Server-rendered Jinja2 templates + Tailwind CSS, RTL Arabic (Tajawal font)
+- **UI:** Server-rendered Jinja2 templates + Tailwind CSS (locally built, no CDN),
+  RTL Arabic with a **self-hosted Tajawal font** — fully self-contained for intranet use
 - **Config:** environment variables via `.env` (python-dotenv); no secrets in code
 
 ## Data model
@@ -74,6 +75,20 @@ flask create-admin --email admin@jazanhospital.com
 # 6. Run
 flask run                         # http://localhost:5000  (redirects to /login)
 ```
+
+### Front-end CSS build (Tailwind)
+
+The stylesheet at `app/static/css/tailwind.css` is committed and served directly, so the app
+runs without Node. Only rebuild it if you change templates/classes:
+
+```bash
+npm install            # one-time (installs Tailwind + self-hosted Tajawal font files)
+npm run build:css      # regenerate app/static/css/tailwind.css
+# npm run watch:css    # rebuild on change during development
+```
+
+The Tajawal font is self-hosted from `app/static/fonts/` (no Google Fonts / external CDN),
+so the UI renders fully styled on an isolated hospital intranet.
 
 ## Authentication & security
 
