@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-brand-teal: var(--brand-teal);
+  
+  --font-sans: 'Tajawal', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-primary: #F8FAFC;
+    --bg-secondary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F1F5F9;
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --gold: #4F46E5;
+    --gold-light: #818CF8;
+    --gold-dark: #3730A3;
+    --brand-teal: #06B6D4;
+    --accent-gradient: #4F46E5;
+    --card-gradient: #EEF2FF;
+    --white-5: #F1F5F9;
+    --white-5-hover: #E2E8F0;
+  }
+
+  :root.dark {
+    --bg-primary: #0b0e1a;
+    --bg-secondary: #11162b;
+    --bg-card: #161d3a;
+    --bg-card-hover: #1f274a;
+    --text-primary: #f0f2f8;
+    --text-secondary: #a8b2d9;
+    --text-muted: #6b7a9f;
+    --gold: #d4af37;
+    --gold-light: #f0d060;
+    --gold-dark: #b8962c;
+    --brand-teal: #2d9cdb;
+    --accent-gradient: linear-gradient(135deg, #d4af37, #f0d060, #b8962c);
+    --card-gradient: linear-gradient(135deg, rgba(212, 175, 55, 0.06), rgba(45, 156, 219, 0.04));
+    --white-5: rgba(255, 255, 255, 0.05);
+    --white-5-hover: rgba(255, 255, 255, 0.08);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg-primary text-text-primary font-sans;
+  }
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-bg-secondary;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold-light;
+  }
+}
+
+@layer utilities {
+  .bg-accent-gradient {
+    background: var(--accent-gradient);
+  }
+  .bg-card-gradient {
+    background: var(--card-gradient);
+  }
+}
+
+/* Map dark mode white transparent backgrounds to slate transparent backgrounds for light mode */
+.bg-white\/5 {
+  background-color: var(--white-5) !important;
+}
+.hover\:bg-white\/5:hover {
+  background-color: var(--white-5-hover) !important;
+}
+.border-white\/5 {
+  border-color: var(--white-5) !important;
+}
+

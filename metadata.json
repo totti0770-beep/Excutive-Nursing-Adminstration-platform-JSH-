@@ -1,0 +1,6 @@
+{
+  "name": "Nursing Administration Portal",
+  "description": "A comprehensive administration portal for Jazan Specialty Hospital nursing staff, featuring schedules, policies, quality metrics, and training modules.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

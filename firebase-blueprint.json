@@ -1,0 +1,167 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role_id": { "type": "string" },
+        "department_id": { "type": "string" },
+        "is_active": { "type": "boolean" }
+      }
+    },
+    "Department": {
+      "title": "Department",
+      "description": "Hospital Department",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "supervisor": { "type": "string" },
+        "nurses": { "type": "number" },
+        "shifts": { "type": "number" }
+      }
+    },
+    "Recognition": {
+      "title": "Recognition",
+      "description": "Nurse recognition",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "dept": { "type": "string" },
+        "votes": { "type": "number" },
+        "type": { "type": "string" }
+      }
+    },
+    "News": {
+      "title": "News",
+      "description": "News and announcements",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "status": { "type": "string" },
+        "priority": { "type": "string" },
+        "published_at": { "type": "timestamp" }
+      }
+    },
+    "Document": {
+      "title": "Document",
+      "description": "Policy and procedure documents",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "department_tags": { "type": "array" },
+        "status": { "type": "string" },
+        "effective_date": { "type": "timestamp" },
+        "uploaded_at": { "type": "timestamp" }
+      }
+    },
+    "SystemStats": {
+      "title": "SystemStats",
+      "description": "Global stats",
+      "type": "object",
+      "properties": {
+        "nurses": { "type": "number" },
+        "satisfaction": { "type": "number" },
+        "training": { "type": "number" },
+        "experience": { "type": "number" }
+      }
+    },
+    "Schedule": {
+      "title": "Schedule",
+      "description": "Nurse shifts",
+      "type": "object",
+      "properties": {
+        "nurse_id": { "type": "string" },
+        "department_id": { "type": "string" },
+        "date": { "type": "string" },
+        "shift_type": { "type": "string" }
+      }
+    },
+    "Survey": {
+      "title": "Survey",
+      "description": "Surveys and polls",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "active": { "type": "boolean" }
+      }
+    },
+    "Training": {
+      "title": "Training",
+      "description": "Training modules",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string" }
+      }
+    },
+    "Quality": {
+      "title": "Quality",
+      "description": "Quality metrics",
+      "type": "object",
+      "properties": {
+        "metric": { "type": "string" },
+        "score": { "type": "number" }
+      }
+    },
+    "Governance": {
+      "title": "Governance",
+      "description": "Governance minutes",
+      "type": "object",
+      "properties": {
+        "council": { "type": "string" },
+        "date": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/departments/{departmentId}": {
+      "schema": { "$ref": "#/entities/Department" },
+      "description": "Hospital departments"
+    },
+    "/recognitions/{recognitionId}": {
+      "schema": { "$ref": "#/entities/Recognition" },
+      "description": "Recognitions"
+    },
+    "/news/{newsId}": {
+      "schema": { "$ref": "#/entities/News" },
+      "description": "News and announcements"
+    },
+    "/documents/{documentId}": {
+      "schema": { "$ref": "#/entities/Document" },
+      "description": "Policies and procedures"
+    },
+    "/system/{systemId}": {
+      "schema": { "$ref": "#/entities/SystemStats" },
+      "description": "System config and stats"
+    },
+    "/schedules/{scheduleId}": {
+      "schema": { "$ref": "#/entities/Schedule" },
+      "description": "Schedules"
+    },
+    "/surveys/{surveyId}": {
+      "schema": { "$ref": "#/entities/Survey" },
+      "description": "Surveys"
+    },
+    "/training/{trainingId}": {
+      "schema": { "$ref": "#/entities/Training" },
+      "description": "Trainings"
+    },
+    "/quality/{qualityId}": {
+      "schema": { "$ref": "#/entities/Quality" },
+      "description": "Quality metrics"
+    },
+    "/governance/{governanceId}": {
+      "schema": { "$ref": "#/entities/Governance" },
+      "description": "Governance records"
+    }
+  }
+}
