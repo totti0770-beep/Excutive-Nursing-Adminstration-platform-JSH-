@@ -13,6 +13,9 @@ class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False, unique=True, index=True)
     location = db.Column(db.String(150), nullable=True)
+    # Display name of the department head (free text; may or may not match a
+    # Staff record).
+    head_name = db.Column(db.String(150), nullable=True)
 
     # One-to-many: Department -> Staff
     staff = db.relationship(

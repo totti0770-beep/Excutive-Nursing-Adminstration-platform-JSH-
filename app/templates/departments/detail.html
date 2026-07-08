@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}{{ dept.name }}{% endblock %}
+{% block page_title %}الأقسام{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('departments.list_departments') }}" class="text-sm text-slate-500 hover:underline">&#8594; العودة إلى الأقسام</a>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-3">
+  <!-- Department info -->
+  <div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>
+        </span>
+        <h2 class="text-lg font-bold text-slate-800">{{ dept.name }}</h2>
+      </div>
+      <dl class="space-y-2 text-sm">
+        <div class="flex justify-between"><dt class="text-slate-500">الموقع</dt><dd class="text-slate-700">{{ dept.location or '—' }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">رئيس القسم</dt><dd class="text-slate-700">{{ dept.head_name or '—' }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">عدد الموظفين</dt><dd class="text-slate-700 ltr-nums">{{ roster|length }}</dd></div>
+      </dl>
+      <div class="flex items-center gap-3 mt-5 pt-4 border-t border-slate-100">
+        <a href="{{ url_for('departments.edit_department', dept_id=dept.id) }}" class="text-sm text-sky-600 hover:underline">تعديل</a>
+        <a href="{{ url_for('staff.list_staff', department_id=dept.id) }}" class="text-sm text-slate-500 hover:underline">عرض في قاعدة بيانات الطاقم</a>
+        <form method="POST" action="{{ url_for('departments.delete_department', dept_id=dept.id) }}"
+              onsubmit="return confirm('تأكيد حذف قسم {{ dept.name }}؟');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="text-sm text-red-600 hover:underline">حذف</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff roster -->
+  <div class="lg:col-span-2">
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100">
+        <h3 class="font-bold text-slate-800">طاقم القسم</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-right">
+          <thead class="bg-slate-50 text-slate-500">
+            <tr>
+              <th class="px-4 py-3 font-medium">الاسم</th>
+              <th class="px-4 py-3 font-medium">الرقم الوظيفي</th>
+              <th class="px-4 py-3 font-medium">الدور</th>
+              <th class="px-4 py-3 font-medium">الحالة</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for m in roster %}
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3 font-medium text-slate-800">{{ m.name }}</td>
+              <td class="px-4 py-3 text-slate-600 ltr-nums">{{ m.employee_id }}</td>
+              <td class="px-4 py-3 text-slate-600">{{ role_label(m.role) }}</td>
+              <td class="px-4 py-3">
+                {% if m.is_active %}
+                  <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">نشط</span>
+                {% else %}
+                  <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">غير نشط</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">لا يوجد موظفون في هذا القسم</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

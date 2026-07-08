@@ -1,5 +1,5 @@
 """Main blueprint routes."""
-from flask import render_template
+from flask import render_template, url_for
 from flask_login import login_required
 from sqlalchemy import func
 
@@ -21,11 +21,12 @@ def dashboard():
 
     kpis = [
         {"label": "إجمالي طاقم التمريض", "value": total_staff, "icon": "users",
-         "accent": "amber"},
+         "accent": "amber", "href": url_for("staff.list_staff")},
         {"label": "الأقسام", "value": total_departments, "icon": "building",
-         "accent": "emerald"},
+         "accent": "emerald", "href": url_for("departments.list_departments")},
         {"label": "التكريمات الممنوحة", "value": total_recognitions,
-         "icon": "award", "accent": "violet"},
+         "icon": "award", "accent": "violet",
+         "href": url_for("recognition.list_recognition")},
         {"label": "متوسط الأداء", "icon": "activity", "accent": "sky",
          "value": f"{avg_performance:.1f}" if avg_performance is not None else "—"},
     ]

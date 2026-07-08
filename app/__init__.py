@@ -45,11 +45,13 @@ def create_app(config_object=None):
     from app.blueprints.staff import staff_bp
     from app.blueprints.recognition import recognition_bp
     from app.blueprints.news import news_bp
+    from app.blueprints.departments import departments_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(staff_bp)
     app.register_blueprint(recognition_bp)
     app.register_blueprint(news_bp)
+    app.register_blueprint(departments_bp)
 
     # Notification bell: recent (last 7 days) published announcements count,
     # available to every template.

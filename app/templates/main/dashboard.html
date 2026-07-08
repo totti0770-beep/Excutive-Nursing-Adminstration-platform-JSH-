@@ -18,7 +18,8 @@
 <!-- KPI cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
   {% for kpi in kpis %}
-  <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+  <{% if kpi.href %}a href="{{ kpi.href }}"{% else %}div{% endif %}
+     class="block bg-white rounded-2xl border border-slate-200 p-5 shadow-sm {% if kpi.href %}hover:border-brand-gold/60 hover:shadow transition{% endif %}">
     <div class="flex items-start justify-between">
       <div>
         <p class="text-sm text-slate-500">{{ kpi.label }}</p>
@@ -39,16 +40,17 @@
         </svg>
       </span>
     </div>
-  </div>
+  </{% if kpi.href %}a{% else %}div{% endif %}>
   {% endfor %}
 </div>
 
-<!-- Placeholder panel for upcoming modules -->
+<!-- Status panel -->
 <div class="mt-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-  <h3 class="font-bold text-slate-800">الوحدات القادمة</h3>
+  <h3 class="font-bold text-slate-800">الوحدات المتاحة</h3>
   <p class="text-sm text-slate-500 mt-1">
-    تم إرساء الأساس (البنية، قاعدة البيانات، الواجهة). الميزات التالية ستُبنى تِباعاً:
-    نظام تسجيل الدخول، قاعدة بيانات الطاقم، وحدة التكريم، ومركز الإشعارات.
+    تسجيل الدخول الآمن، قاعدة بيانات الطاقم، إدارة الأقسام، التكريم والتقدير،
+    ومركز الإشعارات والأخبار — جميعها متاحة من القائمة الجانبية.
+    الوحدات القادمة: الأداء، التقارير، والإعدادات.
   </p>
 </div>
 {% endblock %}
