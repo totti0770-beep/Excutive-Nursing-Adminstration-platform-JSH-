@@ -69,6 +69,14 @@ def create_app(config_object=None):
         ).count()
         return {"recent_news_count": count}
 
+    # Roles allowed to see the executive dashboard / manage-only sections,
+    # so templates (e.g. the sidebar) can render role-appropriate navigation.
+    @app.context_processor
+    def inject_dashboard_roles():
+        from app.security import Roles
+        return {"dashboard_roles": (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR,
+                                    Roles.DEPARTMENT_HEAD)}
+
     # Register CLI commands.
     from app.commands import register_commands
     register_commands(app)

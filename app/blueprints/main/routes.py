@@ -1,19 +1,28 @@
 """Main blueprint routes."""
-from flask import render_template, url_for
-from flask_login import login_required
+from flask import redirect, render_template, url_for
+from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from app.blueprints.main import main_bp
+from app.blueprints.news import CATEGORIES as NEWS_CATEGORIES
 from app.extensions import db
-from app.models import Department, Performance, Recognition, Staff
-from app.security import Roles, role_required
+from app.models import Announcement, Department, Performance, Recognition, Staff
+from app.security import Roles
+
+_DASHBOARD_ROLES = (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR, Roles.DEPARTMENT_HEAD)
 
 
 @main_bp.route("/")
 @login_required
-@role_required(Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR)
 def dashboard():
-    """Executive dashboard with live KPI counts drawn from the database."""
+    """Executive dashboard with live KPI counts drawn from the database.
+
+    Staff nurses (and any role without dashboard access) are sent to their own
+    landing page instead of hitting a 403 on the app's entry point.
+    """
+    if current_user.role not in _DASHBOARD_ROLES:
+        return redirect(url_for("main.my_home"))
+
     total_staff = db.session.scalar(select_count(Staff))
     total_departments = db.session.scalar(select_count(Department))
     total_recognitions = db.session.scalar(select_count(Recognition))
@@ -31,6 +40,34 @@ def dashboard():
          "value": f"{avg_performance:.1f}" if avg_performance is not None else "—"},
     ]
     return render_template("main/dashboard.html", kpis=kpis)
+
+
+@main_bp.route("/me")
+@login_required
+def my_home():
+    """Personal landing page for roles without dashboard/manage access
+    (e.g. staff nurses): their profile, their own awards, and recent news.
+    """
+    staff = current_user.staff if current_user.staff_id else None
+    my_recognitions = []
+    if staff is not None:
+        my_recognitions = (
+            Recognition.query.filter_by(staff_id=staff.id)
+            .order_by(Recognition.timestamp.desc())
+            .limit(10)
+            .all()
+        )
+    recent_news = (
+        Announcement.query.filter_by(is_published=True)
+        .order_by(Announcement.pinned.desc(), Announcement.created_at.desc())
+        .limit(3)
+        .all()
+    )
+    return render_template(
+        "main/my_home.html", staff=staff,
+        my_recognitions=my_recognitions, recent_news=recent_news,
+        news_categories=NEWS_CATEGORIES,
+    )
 
 
 def select_count(model):

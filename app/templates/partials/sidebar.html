@@ -18,8 +18,14 @@
   </div>
 
   <nav class="p-3 space-y-1 text-sm">
-    {# Live links use the endpoint; upcoming items are marked "قريباً". #}
+    {# Live links use the endpoint; upcoming items are marked "قريباً".
+       Manage-only sections (staff/departments/recognition-manage/dashboard)
+       are hidden for roles without dashboard access (e.g. staff nurses),
+       who get "الرئيسية" (their personal landing page) instead. #}
     {% set active = request.endpoint %}
+    {% set is_manager = current_user.is_authenticated and current_user.role in dashboard_roles %}
+
+    {% if is_manager %}
     <a href="{{ url_for('main.dashboard') }}"
        class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active == 'main.dashboard' %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
       <span class="h-2 w-2 rounded-full {% if active == 'main.dashboard' %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> لوحة التحكم
@@ -36,11 +42,19 @@
        class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('recognition.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
       <span class="h-2 w-2 rounded-full {% if active and active.startswith('recognition.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> التكريم والتقدير
     </a>
+    {% else %}
+    <a href="{{ url_for('main.my_home') }}"
+       class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active == 'main.my_home' %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
+      <span class="h-2 w-2 rounded-full {% if active == 'main.my_home' %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> الرئيسية
+    </a>
+    {% endif %}
+
     <a href="{{ url_for('news.feed') }}"
        class="flex items-center justify-between gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('news.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
       <span class="flex items-center gap-3"><span class="h-2 w-2 rounded-full {% if active and active.startswith('news.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> الإشعارات والأخبار</span>
       {% if recent_news_count and recent_news_count > 0 %}<span class="text-[10px] bg-red-500 text-white px-1.5 rounded-full">{{ recent_news_count }}</span>{% endif %}
     </a>
+    {% if is_manager %}
     {% set soon = ['الأداء', 'التقارير', 'الإعدادات'] %}
     {% for item in soon %}
     <span class="flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-slate-400 cursor-not-allowed">
@@ -48,5 +62,6 @@
       <span class="text-[10px] bg-white/5 px-1.5 py-0.5 rounded">قريباً</span>
     </span>
     {% endfor %}
+    {% endif %}
   </nav>
 </aside>
