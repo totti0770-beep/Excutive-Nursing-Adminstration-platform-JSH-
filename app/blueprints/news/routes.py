@@ -7,6 +7,7 @@ editing and deleting are restricted to administrators / directors.
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from app.audit import log_action
 from app.blueprints.news import CATEGORIES, news_bp
 from app.blueprints.news.forms import AnnouncementForm
 from app.extensions import db
@@ -74,6 +75,8 @@ def new_announcement():
             created_by=current_user.display_name,
         )
         db.session.add(ann)
+        db.session.flush()
+        log_action("create", "announcement", ann.id, ann.title)
         db.session.commit()
         flash("تم نشر المنشور بنجاح", "success")
         return redirect(url_for("news.feed"))
@@ -92,6 +95,7 @@ def edit_announcement(ann_id):
         ann.body = form.body.data.strip()
         ann.is_published = form.is_published.data
         ann.pinned = form.pinned.data
+        log_action("update", "announcement", ann.id, ann.title)
         db.session.commit()
         flash("تم تحديث المنشور", "success")
         return redirect(url_for("news.detail", ann_id=ann.id))
@@ -103,6 +107,7 @@ def edit_announcement(ann_id):
 @role_required(*_MANAGE_ROLES)
 def delete_announcement(ann_id):
     ann = db.get_or_404(Announcement, ann_id)
+    log_action("delete", "announcement", ann.id, ann.title)
     db.session.delete(ann)
     db.session.commit()
     flash("تم حذف المنشور", "success")

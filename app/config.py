@@ -62,6 +62,9 @@ class TestingConfig(BaseConfig):
     }
     # Disable CSRF for most tests; the dedicated CSRF test re-enables it.
     WTF_CSRF_ENABLED = False
+    # Disable rate limiting so repeated logins across tests aren't throttled;
+    # the dedicated rate-limit test re-enables it.
+    RATELIMIT_ENABLED = False
     SECRET_KEY = "testing-secret-key"
 
 

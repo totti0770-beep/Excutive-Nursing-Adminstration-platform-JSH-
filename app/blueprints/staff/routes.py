@@ -4,6 +4,7 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from sqlalchemy import or_
 
+from app.audit import log_action
 from app.blueprints.staff import staff_bp
 from app.blueprints.staff.forms import StaffForm
 from app.extensions import db
@@ -76,6 +77,8 @@ def new_staff():
             member = Staff()
             _apply(form, member)
             db.session.add(member)
+            db.session.flush()
+            log_action("create", "staff", member.id, member.name)
             db.session.commit()
             flash("تمت إضافة الموظف بنجاح", "success")
             return redirect(url_for("staff.list_staff"))
@@ -100,6 +103,7 @@ def edit_staff(staff_id):
             form.employee_id.errors.append("الرقم الوظيفي مستخدم بالفعل")
         else:
             _apply(form, member)
+            log_action("update", "staff", member.id, member.name)
             db.session.commit()
             flash("تم تحديث بيانات الموظف", "success")
             return redirect(url_for("staff.list_staff"))
@@ -112,6 +116,7 @@ def edit_staff(staff_id):
 @role_required(*_MANAGE_ROLES)
 def delete_staff(staff_id):
     member = db.get_or_404(Staff, staff_id)
+    log_action("delete", "staff", member.id, member.name)
     db.session.delete(member)
     db.session.commit()
     flash("تم حذف الموظف", "success")

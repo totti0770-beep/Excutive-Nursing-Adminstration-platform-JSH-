@@ -117,8 +117,21 @@ Every push and pull request runs the same gates via GitHub Actions
   Director / Department Head); staff nurses get a read-only personal landing page.
 - **CSRF:** all POST forms are protected app-wide via Flask-WTF `CSRFProtect`.
 - **No hardcoded credentials** (unlike the archived prototype); the first admin
-  is created via `flask create-admin`.
-- Session cookies are `HttpOnly` + `SameSite=Lax` (and `Secure` in production).
+  is created via `flask create-admin`. Users can change their own password at
+  `/account/password`.
+- **Audit trail:** every create/update/delete plus login/logout and failed
+  logins are written to an append-only `audit_logs` table (`app/audit.py`),
+  browsable by a System Admin at `/audit` (for CBAHI/JCI-style accountability).
+- **Account control:** deactivating a user takes effect on their next request
+  (enforced in the Flask-Login `user_loader`), not just at next login.
+- **Rate limiting:** `/login` is throttled via Flask-Limiter to blunt
+  brute-force attempts.
+- **Security headers:** Flask-Talisman sets a strict `Content-Security-Policy`
+  (`default-src 'self'` — the app ships no inline JS/CSS), `X-Frame-Options`,
+  `X-Content-Type-Options`, and HSTS (over HTTPS). Set `FORCE_HTTPS=1` in
+  production to force TLS.
+- Session cookies are `HttpOnly` + `SameSite=Lax` (and `Secure` in production),
+  with an 8-hour sliding idle timeout.
 
 ## Delivered modules
 

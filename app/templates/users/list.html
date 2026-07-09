@@ -66,7 +66,7 @@
               <a href="{{ url_for('users.edit_user', user_id=u.id) }}" class="text-xs text-sky-600 hover:underline">تعديل</a>
               {% if u.id != current_user.id %}
               <form method="POST" action="{{ url_for('users.delete_user', user_id=u.id) }}"
-                    onsubmit="return confirm('تأكيد حذف المستخدم {{ u.email }}؟');">
+                    data-confirm="تأكيد حذف المستخدم {{ u.email }}؟">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
               </form>

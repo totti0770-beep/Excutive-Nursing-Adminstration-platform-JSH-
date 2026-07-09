@@ -80,7 +80,7 @@
               <a href="{{ url_for('staff.edit_staff', staff_id=m.id) }}"
                  class="text-xs text-sky-600 hover:underline">تعديل</a>
               <form method="POST" action="{{ url_for('staff.delete_staff', staff_id=m.id) }}"
-                    onsubmit="return confirm('تأكيد حذف {{ m.name }}؟');">
+                    data-confirm="تأكيد حذف {{ m.name }}؟">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
               </form>

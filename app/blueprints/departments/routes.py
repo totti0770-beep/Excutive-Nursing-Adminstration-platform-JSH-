@@ -4,6 +4,7 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from sqlalchemy import func
 
+from app.audit import log_action
 from app.blueprints.departments import departments_bp
 from app.blueprints.departments.forms import DepartmentForm
 from app.extensions import db
@@ -69,6 +70,8 @@ def new_department():
                 head_name=(form.head_name.data or "").strip() or None,
             )
             db.session.add(dept)
+            db.session.flush()
+            log_action("create", "department", dept.id, dept.name)
             db.session.commit()
             flash("تمت إضافة القسم بنجاح", "success")
             return redirect(url_for("departments.list_departments"))
@@ -92,6 +95,7 @@ def edit_department(dept_id):
             dept.name = name
             dept.location = (form.location.data or "").strip() or None
             dept.head_name = (form.head_name.data or "").strip() or None
+            log_action("update", "department", dept.id, dept.name)
             db.session.commit()
             flash("تم تحديث بيانات القسم", "success")
             return redirect(url_for("departments.detail", dept_id=dept.id))
@@ -111,6 +115,7 @@ def delete_department(dept_id):
             "error",
         )
         return redirect(url_for("departments.detail", dept_id=dept.id))
+    log_action("delete", "department", dept.id, dept.name)
     db.session.delete(dept)
     db.session.commit()
     flash("تم حذف القسم", "success")

@@ -5,6 +5,7 @@ metadata so Flask-Migrate/Alembic can autogenerate migrations for all tables.
 """
 
 from app.models.announcement import Announcement
+from app.models.audit import AuditLog
 from app.models.department import Department
 from app.models.performance import Performance
 from app.models.recognition import Recognition
@@ -18,4 +19,5 @@ __all__ = [
     "Recognition",
     "User",
     "Announcement",
+    "AuditLog",
 ]

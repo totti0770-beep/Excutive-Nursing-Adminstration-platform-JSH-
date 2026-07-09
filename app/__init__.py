@@ -5,11 +5,13 @@ configs (development, production, testing) and so extensions are bound in a
 single, well-defined place.
 """
 
+from datetime import timedelta
+
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, session
 
 from app.config import get_config
-from app.extensions import csrf, db, login_manager, migrate
+from app.extensions import csrf, db, limiter, login_manager, migrate, talisman
 
 
 def create_app(config_object=None):
@@ -23,6 +25,8 @@ def create_app(config_object=None):
     app.config.setdefault("SESSION_COOKIE_HTTPONLY", True)
     app.config.setdefault("SESSION_COOKIE_SAMESITE", "Lax")
     app.config.setdefault("SESSION_COOKIE_SECURE", not app.config.get("DEBUG", False))
+    # Idle session timeout (sliding; refreshed on each request).
+    app.config.setdefault("PERMANENT_SESSION_LIFETIME", timedelta(hours=8))
 
     # Initialise extensions.
     db.init_app(app)
@@ -31,6 +35,15 @@ def create_app(config_object=None):
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
     login_manager.login_message = "الرجاء تسجيل الدخول للوصول إلى هذه الصفحة."
+    limiter.init_app(app)
+    # Security headers. HTTPS redirect only in production; a strict CSP is
+    # possible because there is no inline JS/CSS (see static/js/app.js).
+    talisman.init_app(
+        app,
+        force_https=app.config.get("FORCE_HTTPS", False),
+        session_cookie_secure=app.config.get("SESSION_COOKIE_SECURE", False),
+        content_security_policy={"default-src": "'self'"},
+    )
 
     # Import models so they are registered on the metadata (needed for
     # migrations and for `flask shell` convenience).
@@ -38,9 +51,18 @@ def create_app(config_object=None):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return db.session.get(models.User, int(user_id))
+        user = db.session.get(models.User, int(user_id))
+        # A user deactivated mid-session is logged out on their next request.
+        if user is not None and not user.is_active:
+            return None
+        return user
+
+    @app.before_request
+    def _make_session_permanent():
+        session.permanent = True
 
     # Register blueprints.
+    from app.blueprints.audit import audit_bp
     from app.blueprints.auth import auth_bp
     from app.blueprints.departments import departments_bp
     from app.blueprints.main import main_bp
@@ -56,6 +78,7 @@ def create_app(config_object=None):
     app.register_blueprint(news_bp)
     app.register_blueprint(departments_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(audit_bp)
 
     # Notification bell: recent (last 7 days) published announcements count,
     # available to every template.

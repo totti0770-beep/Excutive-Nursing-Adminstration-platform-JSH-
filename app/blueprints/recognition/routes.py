@@ -6,6 +6,7 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
+from app.audit import log_action
 from app.blueprints.recognition import AWARD_TYPES, recognition_bp
 from app.blueprints.recognition.forms import RecognitionForm
 from app.extensions import db
@@ -90,6 +91,8 @@ def new_recognition():
             timestamp=ts,
         )
         db.session.add(rec)
+        db.session.flush()
+        log_action("create", "recognition", rec.id, rec.award_type)
         db.session.commit()
         flash("تم منح التكريم بنجاح", "success")
         return redirect(url_for("recognition.list_recognition"))
@@ -102,6 +105,7 @@ def new_recognition():
 @role_required(*_MANAGE_ROLES)
 def delete_recognition(rec_id):
     rec = db.get_or_404(Recognition, rec_id)
+    log_action("delete", "recognition", rec.id, rec.award_type)
     db.session.delete(rec)
     db.session.commit()
     flash("تم حذف التكريم", "success")

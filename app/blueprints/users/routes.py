@@ -3,6 +3,7 @@
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from app.audit import log_action
 from app.blueprints.users import users_bp
 from app.blueprints.users.forms import UserForm
 from app.extensions import db
@@ -90,6 +91,8 @@ def new_user():
             )
             user.set_password(password)
             db.session.add(user)
+            db.session.flush()
+            log_action("create", "user", user.id, user.email)
             db.session.commit()
             flash("تمت إضافة المستخدم بنجاح", "success")
             return redirect(url_for("users.list_users"))
@@ -127,6 +130,7 @@ def edit_user(user_id):
             user.is_active = form.is_active.data
             if password:  # blank keeps the current password
                 user.set_password(password)
+            log_action("update", "user", user.id, user.email)
             db.session.commit()
             flash("تم تحديث بيانات المستخدم", "success")
             return redirect(url_for("users.list_users"))
@@ -142,6 +146,7 @@ def delete_user(user_id):
     if user.id == current_user.id:
         flash("لا يمكنك حذف حسابك الحالي", "error")
         return redirect(url_for("users.list_users"))
+    log_action("delete", "user", user.id, user.email)
     db.session.delete(user)
     db.session.commit()
     flash("تم حذف المستخدم", "success")
