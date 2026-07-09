@@ -1,16 +1,7 @@
 {% extends 'base.html' %}
+{% from 'partials/_macros.html' import field %}
 {% block title %}{% if mode == 'edit' %}تعديل موظف{% else %}إضافة موظف{% endif %}{% endblock %}
 {% block page_title %}{% if mode == 'edit' %}تعديل موظف{% else %}إضافة موظف{% endif %}{% endblock %}
-
-{% macro field(f, ltr=false) %}
-  <div>
-    {{ f.label(class="block text-sm font-medium text-slate-700 mb-1") }}
-    {{ f(class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none" + (' ltr-nums' if ltr else '')) }}
-    {% for err in f.errors %}
-      <p class="text-xs text-red-600 mt-1">{{ err }}</p>
-    {% endfor %}
-  </div>
-{% endmacro %}
 
 {% block content %}
 <div class="max-w-2xl">

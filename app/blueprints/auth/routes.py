@@ -1,4 +1,5 @@
 """Auth routes."""
+
 from urllib.parse import urlparse
 
 from flask import flash, redirect, render_template, request, url_for

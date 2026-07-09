@@ -1,4 +1,5 @@
 """Staff blueprint: the Nursing Staff Database (list, search, filter, CRUD)."""
+
 from flask import Blueprint
 
 staff_bp = Blueprint("staff", __name__, url_prefix="/staff")

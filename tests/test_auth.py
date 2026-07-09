@@ -1,4 +1,5 @@
 """Authentication and session tests."""
+
 from tests.conftest import ADMIN_EMAIL, PASSWORD, login
 
 
@@ -33,6 +34,7 @@ def test_logout_clears_session(client):
 
 def test_password_is_hashed(app):
     from app.models import User
+
     u = User.query.filter_by(email=ADMIN_EMAIL).first()
     assert u.password_hash != PASSWORD
     assert u.check_password(PASSWORD)

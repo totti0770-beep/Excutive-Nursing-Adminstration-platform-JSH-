@@ -1,5 +1,6 @@
 """Departments tests."""
-from app.models import Department, Staff
+
+from app.models import Department
 from tests.conftest import NURSE_EMAIL, login
 
 
@@ -11,9 +12,15 @@ def test_list_requires_manage_role(client):
 def test_create_department(client, app):
     login(client)
     before = Department.query.count()
-    r = client.post("/departments/new", data={
-        "name": "قسم جديد", "location": "C-1", "head_name": "د. أحمد",
-    }, follow_redirects=False)
+    r = client.post(
+        "/departments/new",
+        data={
+            "name": "قسم جديد",
+            "location": "C-1",
+            "head_name": "د. أحمد",
+        },
+        follow_redirects=False,
+    )
     assert r.status_code == 302
     assert Department.query.count() == before + 1
 
@@ -44,6 +51,7 @@ def test_empty_department_can_be_deleted(client, app):
     login(client)
     d = Department(name="فارغ")
     from app.extensions import db
+
     db.session.add(d)
     db.session.commit()
     did = d.id

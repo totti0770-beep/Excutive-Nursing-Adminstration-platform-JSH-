@@ -1,4 +1,5 @@
 """Department model."""
+
 from app.extensions import db
 
 

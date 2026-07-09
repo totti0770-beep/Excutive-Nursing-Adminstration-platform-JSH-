@@ -4,6 +4,7 @@ Uses the app-factory pattern so the app can be instantiated with different
 configs (development, production, testing) and so extensions are bound in a
 single, well-defined place.
 """
+
 from dotenv import load_dotenv
 from flask import Flask
 
@@ -40,13 +41,14 @@ def create_app(config_object=None):
         return db.session.get(models.User, int(user_id))
 
     # Register blueprints.
-    from app.blueprints.main import main_bp
     from app.blueprints.auth import auth_bp
-    from app.blueprints.staff import staff_bp
-    from app.blueprints.recognition import recognition_bp
-    from app.blueprints.news import news_bp
     from app.blueprints.departments import departments_bp
+    from app.blueprints.main import main_bp
+    from app.blueprints.news import news_bp
+    from app.blueprints.recognition import recognition_bp
+    from app.blueprints.staff import staff_bp
     from app.blueprints.users import users_bp
+
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(staff_bp)
@@ -62,6 +64,7 @@ def create_app(config_object=None):
         from datetime import datetime, timedelta
 
         from flask_login import current_user
+
         if not current_user.is_authenticated:
             return {"recent_news_count": 0}
         since = datetime.utcnow() - timedelta(days=7)
@@ -76,14 +79,19 @@ def create_app(config_object=None):
     @app.context_processor
     def inject_dashboard_roles():
         from app.security import Roles
+
         return {
-            "dashboard_roles": (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR,
-                                Roles.DEPARTMENT_HEAD),
+            "dashboard_roles": (
+                Roles.SYSTEM_ADMIN,
+                Roles.NURSING_DIRECTOR,
+                Roles.DEPARTMENT_HEAD,
+            ),
             "system_admin_role": Roles.SYSTEM_ADMIN,
         }
 
     # Register CLI commands.
     from app.commands import register_commands
+
     register_commands(app)
 
     return app

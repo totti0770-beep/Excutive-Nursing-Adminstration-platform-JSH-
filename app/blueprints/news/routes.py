@@ -3,6 +3,7 @@
 The feed and detail views are visible to any authenticated user; creating,
 editing and deleting are restricted to administrators / directors.
 """
+
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
@@ -30,10 +31,9 @@ def feed():
     if category in CATEGORIES:
         query = query.filter(Announcement.category == category)
 
-    pagination = (
-        query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc())
-        .paginate(page=page, per_page=PER_PAGE, error_out=False)
-    )
+    pagination = query.order_by(
+        Announcement.pinned.desc(), Announcement.created_at.desc()
+    ).paginate(page=page, per_page=PER_PAGE, error_out=False)
 
     return render_template(
         "news/list.html",
@@ -52,9 +52,11 @@ def detail(ann_id):
     # Non-managers can only view published items.
     if not ann.is_published and not _can_manage():
         from flask import abort
+
         abort(404)
-    return render_template("news/detail.html", ann=ann,
-                           categories=CATEGORIES, can_manage=_can_manage())
+    return render_template(
+        "news/detail.html", ann=ann, categories=CATEGORIES, can_manage=_can_manage()
+    )
 
 
 @news_bp.route("/new", methods=["GET", "POST"])

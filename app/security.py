@@ -4,6 +4,7 @@ Defines the canonical role vocabulary and a ``role_required`` decorator that
 enforces, against the authenticated Flask-Login user, that the current user
 holds one of the permitted roles.
 """
+
 from functools import wraps
 
 from flask import abort

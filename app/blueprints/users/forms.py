@@ -1,4 +1,5 @@
 """User (login account) add/edit form."""
+
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.validators import DataRequired, Email, Length, Optional
@@ -9,8 +10,11 @@ from app.security import Roles
 class UserForm(FlaskForm):
     email = StringField(
         "البريد الإلكتروني",
-        validators=[DataRequired(message="الرجاء إدخال البريد الإلكتروني"),
-                    Email(message="بريد إلكتروني غير صالح"), Length(max=255)],
+        validators=[
+            DataRequired(message="الرجاء إدخال البريد الإلكتروني"),
+            Email(message="بريد إلكتروني غير صالح"),
+            Length(max=255),
+        ],
     )
     role = SelectField(
         "الدور",

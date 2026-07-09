@@ -1,4 +1,5 @@
 """Recognition (Awards) tests."""
+
 from app.models import Recognition, Staff
 from tests.conftest import NURSE_EMAIL, login
 
@@ -12,10 +13,17 @@ def test_assign_award(client, app):
     login(client)
     sid = Staff.query.first().id
     before = Recognition.query.count()
-    r = client.post("/recognition/new", data={
-        "staff_id": sid, "award_type": "ممرض/ممرضة الشهر",
-        "granted_by": "لجنة", "awarded_on": "2026-07-01", "note": "متميز",
-    }, follow_redirects=False)
+    r = client.post(
+        "/recognition/new",
+        data={
+            "staff_id": sid,
+            "award_type": "ممرض/ممرضة الشهر",
+            "granted_by": "لجنة",
+            "awarded_on": "2026-07-01",
+            "note": "متميز",
+        },
+        follow_redirects=False,
+    )
     assert r.status_code == 302
     assert Recognition.query.count() == before + 1
 

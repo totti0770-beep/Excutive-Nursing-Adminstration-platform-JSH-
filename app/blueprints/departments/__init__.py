@@ -1,4 +1,5 @@
 """Departments blueprint: department directory and management."""
+
 from flask import Blueprint
 
 departments_bp = Blueprint("departments", __name__, url_prefix="/departments")

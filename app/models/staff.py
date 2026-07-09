@@ -1,4 +1,5 @@
 """Staff (nursing personnel) model."""
+
 from app.extensions import db
 
 

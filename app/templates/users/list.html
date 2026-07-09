@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'partials/_macros.html' import pagination as pager %}
 {% block title %}إدارة المستخدمين{% endblock %}
 {% block page_title %}إدارة المستخدمين{% endblock %}
 
@@ -83,24 +84,5 @@
   </div>
 </div>
 
-<!-- Pagination -->
-{% if pagination.pages > 1 %}
-<div class="flex items-center justify-center gap-1 mt-5">
-  {% set base = dict(filters) %}
-  {% if pagination.has_prev %}
-    <a href="{{ url_for('users.list_users', page=pagination.prev_num, **base) }}"
-       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">السابق</a>
-  {% endif %}
-  {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
-    {% if p %}
-      <a href="{{ url_for('users.list_users', page=p, **base) }}"
-         class="px-3 py-1.5 rounded-lg border text-sm {% if p == pagination.page %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">{{ p }}</a>
-    {% else %}<span class="px-2 text-slate-400">…</span>{% endif %}
-  {% endfor %}
-  {% if pagination.has_next %}
-    <a href="{{ url_for('users.list_users', page=pagination.next_num, **base) }}"
-       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">التالي</a>
-  {% endif %}
-</div>
-{% endif %}
+{{ pager(pagination, 'users.list_users', filters) }}
 {% endblock %}

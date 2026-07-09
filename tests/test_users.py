@@ -1,4 +1,5 @@
 """User management tests (System Admin only)."""
+
 from app.models import Staff, User
 from tests.conftest import ADMIN_EMAIL, HEAD_EMAIL, NURSE_EMAIL, login
 
@@ -24,10 +25,17 @@ def test_create_user_linked_to_staff(client, app):
     login(client)
     # EMP-1002 (محمد حسن) is not linked to any user in the seed.
     staff = Staff.query.filter_by(employee_id="EMP-1002").first()
-    r = client.post("/users/new", data={
-        "email": "new@jazanhospital.com", "role": "staff_nurse",
-        "staff_id": staff.id, "password": "StrongPass123", "is_active": "y",
-    }, follow_redirects=False)
+    r = client.post(
+        "/users/new",
+        data={
+            "email": "new@jazanhospital.com",
+            "role": "staff_nurse",
+            "staff_id": staff.id,
+            "password": "StrongPass123",
+            "is_active": "y",
+        },
+        follow_redirects=False,
+    )
     assert r.status_code == 302
     u = User.query.filter_by(email="new@jazanhospital.com").first()
     assert u is not None and u.staff_id == staff.id
@@ -38,10 +46,16 @@ def test_linked_user_sees_profile_on_my_home(client, app):
     # Admin creates a login linked to a staff record...
     login(client)
     staff = Staff.query.filter_by(employee_id="EMP-1002").first()
-    client.post("/users/new", data={
-        "email": "mh@jazanhospital.com", "role": "staff_nurse",
-        "staff_id": staff.id, "password": "StrongPass123", "is_active": "y",
-    })
+    client.post(
+        "/users/new",
+        data={
+            "email": "mh@jazanhospital.com",
+            "role": "staff_nurse",
+            "staff_id": staff.id,
+            "password": "StrongPass123",
+            "is_active": "y",
+        },
+    )
     # ...then that user logs in and sees the linked profile on /me.
     # (Reuse the same client with a logout in between so Flask-Login resets
     # its per-app-context cached user.)
@@ -53,20 +67,30 @@ def test_linked_user_sees_profile_on_my_home(client, app):
 
 def test_short_password_rejected(client):
     login(client)
-    r = client.post("/users/new", data={
-        "email": "x@jazanhospital.com", "role": "staff_nurse",
-        "staff_id": 0, "password": "short",
-    })
+    r = client.post(
+        "/users/new",
+        data={
+            "email": "x@jazanhospital.com",
+            "role": "staff_nurse",
+            "staff_id": 0,
+            "password": "short",
+        },
+    )
     assert r.status_code == 200
     assert "٨ أحرف على الأقل" in r.get_data(as_text=True)
 
 
 def test_duplicate_email_rejected(client):
     login(client)
-    r = client.post("/users/new", data={
-        "email": ADMIN_EMAIL, "role": "staff_nurse",
-        "staff_id": 0, "password": "StrongPass123",
-    })
+    r = client.post(
+        "/users/new",
+        data={
+            "email": ADMIN_EMAIL,
+            "role": "staff_nurse",
+            "staff_id": 0,
+            "password": "StrongPass123",
+        },
+    )
     assert r.status_code == 200
     assert "مستخدم بالفعل" in r.get_data(as_text=True)
 
@@ -75,10 +99,15 @@ def test_one_user_per_staff_enforced(client, app):
     login(client)
     # The seeded nurse is already linked to EMP-1001 (سارة علي).
     linked_staff = Staff.query.filter_by(employee_id="EMP-1001").first()
-    r = client.post("/users/new", data={
-        "email": "second@jazanhospital.com", "role": "staff_nurse",
-        "staff_id": linked_staff.id, "password": "StrongPass123",
-    })
+    r = client.post(
+        "/users/new",
+        data={
+            "email": "second@jazanhospital.com",
+            "role": "staff_nurse",
+            "staff_id": linked_staff.id,
+            "password": "StrongPass123",
+        },
+    )
     assert r.status_code == 200
     assert "مرتبط بحساب آخر" in r.get_data(as_text=True)
 
@@ -87,10 +116,17 @@ def test_edit_can_unlink_staff(client, app):
     login(client)
     nurse = User.query.filter_by(email=NURSE_EMAIL).first()
     assert nurse.staff_id is not None
-    client.post(f"/users/{nurse.id}/edit", data={
-        "email": NURSE_EMAIL, "role": "staff_nurse", "staff_id": 0,
-        "password": "", "is_active": "y",
-    }, follow_redirects=False)
+    client.post(
+        f"/users/{nurse.id}/edit",
+        data={
+            "email": NURSE_EMAIL,
+            "role": "staff_nurse",
+            "staff_id": 0,
+            "password": "",
+            "is_active": "y",
+        },
+        follow_redirects=False,
+    )
     assert User.query.filter_by(email=NURSE_EMAIL).first().staff_id is None
 
 

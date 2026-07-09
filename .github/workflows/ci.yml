@@ -9,7 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      FLASK_ENV: testing
+      FLASK_APP: run.py
       SECRET_KEY: ci-testing-secret
 
     steps:
@@ -26,5 +26,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run test suite
-        run: pytest
+      - name: Lint (ruff)
+        run: |
+          ruff check app tests run.py seed.py
+          ruff format --check app tests run.py seed.py
+
+      - name: Test suite with coverage
+        env:
+          FLASK_ENV: testing
+        run: pytest --cov=app --cov-report=term-missing --cov-fail-under=80
+
+      - name: Migration drift check
+        env:
+          FLASK_ENV: development
+          DATABASE_URL: sqlite:///ci_drift.sqlite3
+        run: |
+          flask db upgrade
+          flask db check

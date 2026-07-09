@@ -1,4 +1,5 @@
 """Departments routes: list (with staff counts), detail, and CRUD."""
+
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from sqlalchemy import func
@@ -29,8 +30,9 @@ def list_departments():
     if q:
         query = query.filter(Department.name.ilike(f"%{q}%"))
 
-    pagination = (query.order_by(Department.name)
-                       .paginate(page=page, per_page=PER_PAGE, error_out=False))
+    pagination = query.order_by(Department.name).paginate(
+        page=page, per_page=PER_PAGE, error_out=False
+    )
 
     return render_template(
         "departments/list.html",
@@ -45,10 +47,10 @@ def list_departments():
 @role_required(*_MANAGE_ROLES)
 def detail(dept_id):
     dept = db.get_or_404(Department, dept_id)
-    roster = (Staff.query.filter_by(department_id=dept.id)
-              .order_by(Staff.name).all())
-    return render_template("departments/detail.html", dept=dept, roster=roster,
-                           role_label=Roles.label)
+    roster = Staff.query.filter_by(department_id=dept.id).order_by(Staff.name).all()
+    return render_template(
+        "departments/detail.html", dept=dept, roster=roster, role_label=Roles.label
+    )
 
 
 @departments_bp.route("/new", methods=["GET", "POST"])
@@ -81,8 +83,9 @@ def edit_department(dept_id):
     form = DepartmentForm(obj=dept)
     if form.validate_on_submit():
         name = form.name.data.strip()
-        clash = Department.query.filter(Department.name == name,
-                                        Department.id != dept.id).first()
+        clash = Department.query.filter(
+            Department.name == name, Department.id != dept.id
+        ).first()
         if clash:
             form.name.errors.append("اسم القسم مستخدم بالفعل")
         else:

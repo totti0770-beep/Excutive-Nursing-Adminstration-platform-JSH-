@@ -1,4 +1,5 @@
 """Announcement create/edit form."""
+
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired, Length

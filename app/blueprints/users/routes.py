@@ -1,4 +1,5 @@
 """User management routes: list, create, edit, delete (System Admin only)."""
+
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
@@ -46,8 +47,9 @@ def list_users():
     if role:
         query = query.filter(User.role == role)
 
-    pagination = (query.order_by(User.email)
-                       .paginate(page=page, per_page=PER_PAGE, error_out=False))
+    pagination = query.order_by(User.email).paginate(
+        page=page, per_page=PER_PAGE, error_out=False
+    )
 
     return render_template(
         "users/list.html",
@@ -75,12 +77,17 @@ def new_user():
             form.email.errors.append("البريد الإلكتروني مستخدم بالفعل")
         elif len(password) < MIN_PASSWORD_LEN:
             form.password.errors.append(
-                f"كلمة المرور يجب أن تكون {MIN_PASSWORD_LEN} أحرف على الأقل")
+                f"كلمة المرور يجب أن تكون {MIN_PASSWORD_LEN} أحرف على الأقل"
+            )
         elif _staff_link_conflict(staff_id):
             form.staff_id.errors.append("هذا الموظف مرتبط بحساب آخر بالفعل")
         else:
-            user = User(email=email, role=form.role.data,
-                        staff_id=staff_id, is_active=form.is_active.data)
+            user = User(
+                email=email,
+                role=form.role.data,
+                staff_id=staff_id,
+                is_active=form.is_active.data,
+            )
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
@@ -104,13 +111,13 @@ def edit_user(user_id):
         email = form.email.data.strip().lower()
         password = form.password.data or ""
         staff_id = form.staff_id.data or None
-        clash = User.query.filter(User.email == email,
-                                  User.id != user.id).first()
+        clash = User.query.filter(User.email == email, User.id != user.id).first()
         if clash:
             form.email.errors.append("البريد الإلكتروني مستخدم بالفعل")
         elif password and len(password) < MIN_PASSWORD_LEN:
             form.password.errors.append(
-                f"كلمة المرور يجب أن تكون {MIN_PASSWORD_LEN} أحرف على الأقل")
+                f"كلمة المرور يجب أن تكون {MIN_PASSWORD_LEN} أحرف على الأقل"
+            )
         elif _staff_link_conflict(staff_id, exclude_user_id=user.id):
             form.staff_id.errors.append("هذا الموظف مرتبط بحساب آخر بالفعل")
         else:

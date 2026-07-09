@@ -1,4 +1,5 @@
 """Staff (Nursing Staff Database) routes: list, search, filter, and CRUD."""
+
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_required
 from sqlalchemy import or_
@@ -14,10 +15,7 @@ _MANAGE_ROLES = (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR, Roles.DEPARTMENT_HE
 
 
 def _department_choices():
-    return [
-        (d.id, d.name)
-        for d in Department.query.order_by(Department.name).all()
-    ]
+    return [(d.id, d.name) for d in Department.query.order_by(Department.name).all()]
 
 
 @staff_bp.route("/")
@@ -33,8 +31,7 @@ def list_staff():
     query = Staff.query
     if q:
         like = f"%{q}%"
-        query = query.filter(or_(Staff.name.ilike(like),
-                                 Staff.employee_id.ilike(like)))
+        query = query.filter(or_(Staff.name.ilike(like), Staff.employee_id.ilike(like)))
     if department_id:
         query = query.filter(Staff.department_id == department_id)
     if role:
@@ -44,8 +41,9 @@ def list_staff():
     elif status == "inactive":
         query = query.filter(Staff.is_active.is_(False))
 
-    pagination = (query.order_by(Staff.name)
-                       .paginate(page=page, per_page=PER_PAGE, error_out=False))
+    pagination = query.order_by(Staff.name).paginate(
+        page=page, per_page=PER_PAGE, error_out=False
+    )
 
     return render_template(
         "staff/list.html",
@@ -54,7 +52,12 @@ def list_staff():
         departments=Department.query.order_by(Department.name).all(),
         roles=Roles.ALL,
         role_label=Roles.label,
-        filters={"q": q, "department_id": department_id, "role": role, "status": status},
+        filters={
+            "q": q,
+            "department_id": department_id,
+            "role": role,
+            "status": status,
+        },
     )
 
 
@@ -90,8 +93,9 @@ def edit_staff(staff_id):
 
     if form.validate_on_submit():
         emp_id = form.employee_id.data.strip()
-        clash = Staff.query.filter(Staff.employee_id == emp_id,
-                                   Staff.id != member.id).first()
+        clash = Staff.query.filter(
+            Staff.employee_id == emp_id, Staff.id != member.id
+        ).first()
         if clash:
             form.employee_id.errors.append("الرقم الوظيفي مستخدم بالفعل")
         else:

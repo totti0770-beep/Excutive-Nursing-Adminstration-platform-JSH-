@@ -1,4 +1,5 @@
 """Recognition (Awards) routes: list, assign, delete."""
+
 from datetime import datetime
 
 from flask import flash, redirect, render_template, request, url_for
@@ -36,8 +37,9 @@ def list_recognition():
     if department_id:
         query = query.filter(Staff.department_id == department_id)
 
-    pagination = (query.order_by(Recognition.timestamp.desc())
-                       .paginate(page=page, per_page=PER_PAGE, error_out=False))
+    pagination = query.order_by(Recognition.timestamp.desc()).paginate(
+        page=page, per_page=PER_PAGE, error_out=False
+    )
 
     # Top recipients (by award count).
     top_recipients = (
@@ -75,8 +77,11 @@ def new_recognition():
 
     if form.validate_on_submit():
         awarded_on = form.awarded_on.data
-        ts = (datetime.combine(awarded_on, datetime.min.time())
-              if awarded_on else datetime.utcnow())
+        ts = (
+            datetime.combine(awarded_on, datetime.min.time())
+            if awarded_on
+            else datetime.utcnow()
+        )
         rec = Recognition(
             staff_id=form.staff_id.data,
             award_type=form.award_type.data,

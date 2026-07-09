@@ -1,6 +1,7 @@
 """Staff add/edit form (Flask-WTF)."""
+
 from flask_wtf import FlaskForm
-from wtforms import (BooleanField, DateField, SelectField, StringField)
+from wtforms import BooleanField, DateField, SelectField, StringField
 from wtforms.validators import DataRequired, Email, Length, Optional
 
 from app.security import Roles
@@ -22,12 +23,17 @@ class StaffForm(FlaskForm):
     )
     # Department choices are populated per-request in the route.
     department_id = SelectField(
-        "القسم", coerce=int,
+        "القسم",
+        coerce=int,
         validators=[DataRequired(message="الرجاء اختيار القسم")],
     )
     email = StringField(
         "البريد الإلكتروني",
-        validators=[Optional(), Email(message="بريد إلكتروني غير صالح"), Length(max=255)],
+        validators=[
+            Optional(),
+            Email(message="بريد إلكتروني غير صالح"),
+            Length(max=255),
+        ],
     )
     phone = StringField("الهاتف", validators=[Optional(), Length(max=40)])
     hire_date = DateField("تاريخ التعيين", validators=[Optional()])

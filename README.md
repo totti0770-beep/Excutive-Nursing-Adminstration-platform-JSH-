@@ -90,16 +90,22 @@ npm run build:css      # regenerate app/static/css/tailwind.css
 The Tajawal font is self-hosted from `app/static/fonts/` (no Google Fonts / external CDN),
 so the UI renders fully styled on an isolated hospital intranet.
 
-## Tests & CI
+## Tests, lint & CI
 
 The suite runs against an isolated in-memory SQLite database (no dev data touched):
 
 ```bash
-pytest            # runs tests/ (auth, staff, recognition, news, departments, RBAC)
+pytest --cov=app                    # tests (auth, staff, recognition, news, departments, users, RBAC)
+ruff check app tests run.py seed.py # lint (pyflakes, pycodestyle, isort, pyupgrade, bugbear)
+ruff format app tests run.py seed.py# auto-format
 ```
 
-Every push and pull request runs the same suite via GitHub Actions
-(`.github/workflows/ci.yml`) on Python 3.11.
+Every push and pull request runs the same gates via GitHub Actions
+(`.github/workflows/ci.yml`) on Python 3.11:
+- **ruff** lint + format check
+- **pytest** with an **80% coverage floor** (`--cov-fail-under=80`)
+- **migration-drift check** (`flask db upgrade && flask db check`) so a model change
+  without a matching migration fails CI
 
 ## Authentication & security
 

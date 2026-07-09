@@ -5,6 +5,7 @@ Configuration is driven entirely by environment variables (loaded from a local
 environment-specific value is ever hard-coded. Select a config class through
 the ``FLASK_ENV`` variable; the app factory resolves it automatically.
 """
+
 import os
 
 from sqlalchemy.pool import StaticPool
@@ -38,8 +39,12 @@ class ProductionConfig(BaseConfig):
 
     def __init__(self):
         # Fail fast if a real secret was not supplied in production.
-        if self.SECRET_KEY in (None, "", "dev-insecure-change-me",
-                               "change-me-in-production"):
+        if self.SECRET_KEY in (
+            None,
+            "",
+            "dev-insecure-change-me",
+            "change-me-in-production",
+        ):
             raise RuntimeError(
                 "SECRET_KEY must be set to a secure value in production."
             )

@@ -1,4 +1,5 @@
 """Custom Flask CLI commands."""
+
 import getpass
 import os
 
@@ -12,8 +13,11 @@ from app.security import Roles
 def register_commands(app):
     @app.cli.command("create-admin")
     @click.option("--email", default=None, help="Admin email (or set ADMIN_EMAIL).")
-    @click.option("--password", default=None,
-                  help="Admin password (or set ADMIN_PASSWORD). Prompted if omitted.")
+    @click.option(
+        "--password",
+        default=None,
+        help="Admin password (or set ADMIN_PASSWORD). Prompted if omitted.",
+    )
     def create_admin(email, password):
         """Create (or update) a System Admin user with a hashed password.
 
@@ -29,10 +33,11 @@ def register_commands(app):
         # validator (e.g. reserved domains like *.local), otherwise the
         # account could be created but never able to sign in.
         from email_validator import EmailNotValidError, validate_email
+
         try:
             email = validate_email(email, check_deliverability=False).normalized.lower()
         except EmailNotValidError as exc:
-            raise click.ClickException(f"Invalid email: {exc}")
+            raise click.ClickException(f"Invalid email: {exc}") from exc
 
         password = password or os.environ.get("ADMIN_PASSWORD")
         if not password:

@@ -1,4 +1,5 @@
 """Recognition (Awards) blueprint."""
+
 from flask import Blueprint
 
 recognition_bp = Blueprint("recognition", __name__, url_prefix="/recognition")

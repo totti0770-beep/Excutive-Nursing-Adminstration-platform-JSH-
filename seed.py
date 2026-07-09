@@ -3,6 +3,7 @@
 Idempotent: running it repeatedly will not create duplicates (it checks for an
 existing seeded department first). Run with:  python seed.py
 """
+
 from datetime import date, datetime
 
 from app import create_app
@@ -27,39 +28,81 @@ def seed():
 
         # Staff
         staff = [
-            Staff(name="عقاب أحمد مبارك", employee_id="EMP-1001",
-                  role=Roles.DEPARTMENT_HEAD, department=icu),
-            Staff(name="سارة علي", employee_id="EMP-1002",
-                  role=Roles.STAFF_NURSE, department=icu),
-            Staff(name="محمد حسن", employee_id="EMP-1003",
-                  role=Roles.STAFF_NURSE, department=er),
-            Staff(name="نورة عبدالله", employee_id="EMP-1004",
-                  role=Roles.STAFF_NURSE, department=peds),
+            Staff(
+                name="عقاب أحمد مبارك",
+                employee_id="EMP-1001",
+                role=Roles.DEPARTMENT_HEAD,
+                department=icu,
+            ),
+            Staff(
+                name="سارة علي",
+                employee_id="EMP-1002",
+                role=Roles.STAFF_NURSE,
+                department=icu,
+            ),
+            Staff(
+                name="محمد حسن",
+                employee_id="EMP-1003",
+                role=Roles.STAFF_NURSE,
+                department=er,
+            ),
+            Staff(
+                name="نورة عبدالله",
+                employee_id="EMP-1004",
+                role=Roles.STAFF_NURSE,
+                department=peds,
+            ),
         ]
         db.session.add_all(staff)
         db.session.flush()
 
         # Performance records
-        db.session.add_all([
-            Performance(staff=staff[0], metric_name="رضا المرضى", value=92.5,
-                        date=date.today()),
-            Performance(staff=staff[1], metric_name="رضا المرضى", value=88.0,
-                        date=date.today()),
-            Performance(staff=staff[2], metric_name="الالتزام بالمناوبات", value=95.0,
-                        date=date.today()),
-        ])
+        db.session.add_all(
+            [
+                Performance(
+                    staff=staff[0],
+                    metric_name="رضا المرضى",
+                    value=92.5,
+                    date=date.today(),
+                ),
+                Performance(
+                    staff=staff[1],
+                    metric_name="رضا المرضى",
+                    value=88.0,
+                    date=date.today(),
+                ),
+                Performance(
+                    staff=staff[2],
+                    metric_name="الالتزام بالمناوبات",
+                    value=95.0,
+                    date=date.today(),
+                ),
+            ]
+        )
 
         # Recognitions
-        db.session.add_all([
-            Recognition(staff=staff[0], award_type="جائزة فلورنس",
-                        granted_by="إدارة التمريض", timestamp=datetime.utcnow()),
-            Recognition(staff=staff[3], award_type="ممرض الشهر",
-                        granted_by="رئيس القسم", timestamp=datetime.utcnow()),
-        ])
+        db.session.add_all(
+            [
+                Recognition(
+                    staff=staff[0],
+                    award_type="جائزة فلورنس",
+                    granted_by="إدارة التمريض",
+                    timestamp=datetime.utcnow(),
+                ),
+                Recognition(
+                    staff=staff[3],
+                    award_type="ممرض الشهر",
+                    granted_by="رئيس القسم",
+                    timestamp=datetime.utcnow(),
+                ),
+            ]
+        )
 
         db.session.commit()
-        print("Seeded: {} departments, {} staff, performance & recognition rows.".format(
-            Department.query.count(), Staff.query.count()))
+        print(
+            f"Seeded: {Department.query.count()} departments, "
+            f"{Staff.query.count()} staff, performance & recognition rows."
+        )
 
 
 if __name__ == "__main__":

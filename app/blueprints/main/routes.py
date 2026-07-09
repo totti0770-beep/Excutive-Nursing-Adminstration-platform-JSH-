@@ -1,4 +1,5 @@
 """Main blueprint routes."""
+
 from flask import redirect, render_template, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func
@@ -29,15 +30,33 @@ def dashboard():
     avg_performance = db.session.scalar(db.select(func.avg(Performance.value)))
 
     kpis = [
-        {"label": "إجمالي طاقم التمريض", "value": total_staff, "icon": "users",
-         "accent": "amber", "href": url_for("staff.list_staff")},
-        {"label": "الأقسام", "value": total_departments, "icon": "building",
-         "accent": "emerald", "href": url_for("departments.list_departments")},
-        {"label": "التكريمات الممنوحة", "value": total_recognitions,
-         "icon": "award", "accent": "violet",
-         "href": url_for("recognition.list_recognition")},
-        {"label": "متوسط الأداء", "icon": "activity", "accent": "sky",
-         "value": f"{avg_performance:.1f}" if avg_performance is not None else "—"},
+        {
+            "label": "إجمالي طاقم التمريض",
+            "value": total_staff,
+            "icon": "users",
+            "accent": "amber",
+            "href": url_for("staff.list_staff"),
+        },
+        {
+            "label": "الأقسام",
+            "value": total_departments,
+            "icon": "building",
+            "accent": "emerald",
+            "href": url_for("departments.list_departments"),
+        },
+        {
+            "label": "التكريمات الممنوحة",
+            "value": total_recognitions,
+            "icon": "award",
+            "accent": "violet",
+            "href": url_for("recognition.list_recognition"),
+        },
+        {
+            "label": "متوسط الأداء",
+            "icon": "activity",
+            "accent": "sky",
+            "value": f"{avg_performance:.1f}" if avg_performance is not None else "—",
+        },
     ]
     return render_template("main/dashboard.html", kpis=kpis)
 
@@ -64,8 +83,10 @@ def my_home():
         .all()
     )
     return render_template(
-        "main/my_home.html", staff=staff,
-        my_recognitions=my_recognitions, recent_news=recent_news,
+        "main/my_home.html",
+        staff=staff,
+        my_recognitions=my_recognitions,
+        recent_news=recent_news,
         news_categories=NEWS_CATEGORIES,
     )
 

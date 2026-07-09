@@ -1,4 +1,5 @@
 """Main blueprint: dashboard and top-level pages."""
+
 from flask import Blueprint
 
 main_bp = Blueprint("main", __name__)
