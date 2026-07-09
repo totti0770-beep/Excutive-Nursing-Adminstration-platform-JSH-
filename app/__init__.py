@@ -46,12 +46,14 @@ def create_app(config_object=None):
     from app.blueprints.recognition import recognition_bp
     from app.blueprints.news import news_bp
     from app.blueprints.departments import departments_bp
+    from app.blueprints.users import users_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(staff_bp)
     app.register_blueprint(recognition_bp)
     app.register_blueprint(news_bp)
     app.register_blueprint(departments_bp)
+    app.register_blueprint(users_bp)
 
     # Notification bell: recent (last 7 days) published announcements count,
     # available to every template.
@@ -74,8 +76,11 @@ def create_app(config_object=None):
     @app.context_processor
     def inject_dashboard_roles():
         from app.security import Roles
-        return {"dashboard_roles": (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR,
-                                    Roles.DEPARTMENT_HEAD)}
+        return {
+            "dashboard_roles": (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR,
+                                Roles.DEPARTMENT_HEAD),
+            "system_admin_role": Roles.SYSTEM_ADMIN,
+        }
 
     # Register CLI commands.
     from app.commands import register_commands

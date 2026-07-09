@@ -42,6 +42,12 @@
        class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('recognition.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
       <span class="h-2 w-2 rounded-full {% if active and active.startswith('recognition.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> التكريم والتقدير
     </a>
+    {% if current_user.role == system_admin_role %}
+    <a href="{{ url_for('users.list_users') }}"
+       class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('users.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
+      <span class="h-2 w-2 rounded-full {% if active and active.startswith('users.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> إدارة المستخدمين
+    </a>
+    {% endif %}
     {% else %}
     <a href="{{ url_for('main.my_home') }}"
        class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active == 'main.my_home' %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
