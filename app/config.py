@@ -7,6 +7,8 @@ the ``FLASK_ENV`` variable; the app factory resolves it automatically.
 """
 import os
 
+from sqlalchemy.pool import StaticPool
+
 
 class BaseConfig:
     """Settings shared by every environment."""
@@ -45,7 +47,17 @@ class ProductionConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     TESTING = True
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    # A single shared connection so the in-memory DB persists across requests
+    # within a test (default pooling would give each connection a fresh DB).
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "connect_args": {"check_same_thread": False},
+        "poolclass": StaticPool,
+    }
+    # Disable CSRF for most tests; the dedicated CSRF test re-enables it.
+    WTF_CSRF_ENABLED = False
+    SECRET_KEY = "testing-secret-key"
 
 
 _CONFIG_BY_ENV = {

@@ -90,22 +90,43 @@ npm run build:css      # regenerate app/static/css/tailwind.css
 The Tajawal font is self-hosted from `app/static/fonts/` (no Google Fonts / external CDN),
 so the UI renders fully styled on an isolated hospital intranet.
 
+## Tests & CI
+
+The suite runs against an isolated in-memory SQLite database (no dev data touched):
+
+```bash
+pytest            # runs tests/ (auth, staff, recognition, news, departments, RBAC)
+```
+
+Every push and pull request runs the same suite via GitHub Actions
+(`.github/workflows/ci.yml`) on Python 3.11.
+
 ## Authentication & security
 
 - **Login:** Flask-Login sessions; passwords hashed with Werkzeug (scrypt).
   Unauthenticated requests to protected pages redirect to `/login`.
 - **RBAC:** `app/security.py` defines roles and a `role_required` decorator that
-  is enforced against the logged-in user (dashboard requires System Admin /
-  Nursing Director).
+  is enforced against the logged-in user. Management sections (dashboard, staff,
+  departments, recognition) require a manager role (System Admin / Nursing
+  Director / Department Head); staff nurses get a read-only personal landing page.
 - **CSRF:** all POST forms are protected app-wide via Flask-WTF `CSRFProtect`.
 - **No hardcoded credentials** (unlike the archived prototype); the first admin
   is created via `flask create-admin`.
 - Session cookies are `HttpOnly` + `SameSite=Lax` (and `Secure` in production).
 
-## Roadmap (next increments, each gated on review)
+## Delivered modules
 
-1. ~~Authentication & login (Flask-Login, hashed passwords, sessions)~~ ✅ done
-2. Nursing Staff Database (search & filter)
-3. Recognition / Awards module
-4. Notification center & news feed
-5. Reports, per-page RBAC, Tailwind build step, tests + CI
+1. ~~Authentication & login (Flask-Login, hashed passwords, sessions, CSRF)~~ ✅
+2. ~~Nursing Staff Database (search & filter, CRUD)~~ ✅
+3. ~~Recognition / Awards module~~ ✅
+4. ~~Notification center & news feed~~ ✅
+5. ~~Departments management (CRUD, staff rosters)~~ ✅
+6. ~~Self-hosted Tailwind + Arabic font (no CDN)~~ ✅
+7. ~~Staff-nurse landing page + per-page RBAC~~ ✅
+8. ~~Automated tests (pytest) + CI (GitHub Actions)~~ ✅
+
+### Possible next steps
+
+- Performance/metrics module, reports & exports, system settings
+- Link every `User` to a `Staff` profile in the admin UI (self-service directory)
+- Move to PostgreSQL for the pilot; add a production WSGI server (gunicorn) config
