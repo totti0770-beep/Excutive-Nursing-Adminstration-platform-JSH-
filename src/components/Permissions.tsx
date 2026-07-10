@@ -42,14 +42,14 @@ const INITIAL_PERMISSIONS: PermissionRow[] = [
 ];
 
 const MOCK_NURSING_STAFF = [
-  { id: 'nurse_1', name: 'أميرة محمد مضوي', email: 'amira.madawi@jazanhospital.com', role_id: 'Head Nurse', department_id: 'العناية المركزة', is_active: true },
-  { id: 'nurse_2', name: 'عائشة ولي حكمي', email: 'aisha.hakami@jazanhospital.com', role_id: 'Quality Officer', department_id: 'الطوارئ', is_active: true },
+  { id: 'nurse_1', name: 'أميرة محمد مضوي', email: 'amira.madawi@jazanhospital.com', role_id: 'Head Nurse', department_id: 'العناية المركزة كبار/ أطفال', is_active: true },
+  { id: 'nurse_2', name: 'عائشة ولي حكمي', email: 'aisha.hakami@jazanhospital.com', role_id: 'Quality Officer', department_id: 'قسم الطوارئ', is_active: true },
   { id: 'nurse_3', name: 'خريبة محمد كاملي', email: 'khriba.kamli@jazanhospital.com', role_id: 'Nurse', department_id: 'العيادات الخارجية', is_active: true },
-  { id: 'nurse_4', name: 'أشواق محمد مبارك', email: 'ashwaq.mubarak@jazanhospital.com', role_id: 'Nurse', department_id: 'النساء والولادة', is_active: true },
-  { id: 'nurse_5', name: 'مها حسن عقدي', email: 'maha.aqdi@jazanhospital.com', role_id: 'Nurse', department_id: 'مركز السكري', is_active: true },
-  { id: 'nurse_6', name: 'نجوم حسن حكمي', email: 'nujoom.hakami@jazanhospital.com', role_id: 'Head Nurse', department_id: 'غرف العمليات', is_active: true },
-  { id: 'nurse_7', name: 'نورة علي حطاباني', email: 'noura.hatabani@jazanhospital.com', role_id: 'Nurse', department_id: 'العناية المركزة', is_active: true },
-  { id: 'nurse_8', name: 'أمل مجرشي', email: 'amal.majrashi@jazanhospital.com', role_id: 'Nurse', department_id: 'الطوارئ', is_active: true }
+  { id: 'nurse_4', name: 'أشواق محمد مبارك', email: 'ashwaq.mubarak@jazanhospital.com', role_id: 'Nurse', department_id: 'العناية المركزة كبار/ أطفال', is_active: true },
+  { id: 'nurse_5', name: 'مها حسن عقدي', email: 'maha.aqdi@jazanhospital.com', role_id: 'Nurse', department_id: 'قسم الطوارئ', is_active: true },
+  { id: 'nurse_6', name: 'نجوم حسن حكمي', email: 'nujoom.hakami@jazanhospital.com', role_id: 'Head Nurse', department_id: 'العمليات', is_active: true },
+  { id: 'nurse_7', name: 'نورة علي حطاباني', email: 'noura.hatabani@jazanhospital.com', role_id: 'Nurse', department_id: 'العناية المركزة كبار/ أطفال', is_active: true },
+  { id: 'nurse_8', name: 'أمل مجرشي', email: 'amal.majrashi@jazanhospital.com', role_id: 'Nurse', department_id: 'قسم الطوارئ', is_active: true }
 ];
 
 export function Permissions() {
@@ -79,7 +79,7 @@ export function Permissions() {
 
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserDept, setNewUserDept] = useState('العناية المركزة');
+  const [newUserDept, setNewUserDept] = useState('العناية المركزة كبار/ أطفال');
   const [newUserRole, setNewUserRole] = useState('Nurse');
 
   const [newRoleName, setNewRoleName] = useState('');
@@ -298,7 +298,7 @@ export function Permissions() {
     setSelectedUser(user);
     setEditUserName(user.name || '');
     setEditUserRole(user.role_id || 'Nurse');
-    setEditUserDept(user.department_id || 'العناية المركزة');
+    setEditUserDept(user.department_id || 'العناية المركزة كبار/ أطفال');
     setIsEditUserOpen(true);
   };
 
@@ -691,15 +691,15 @@ export function Permissions() {
               onChange={(e) => setEditUserDept(e.target.value)}
               className="w-full rounded-xl border border-gold/25 bg-bg-primary px-3 py-2.5 text-sm outline-none focus:border-gold"
             >
-              <option value="العناية المركزة">العناية المركزة</option>
-              <option value="الطوارئ">الطوارئ</option>
+              <option value="العناية المركزة كبار/ أطفال">العناية المركزة كبار/ أطفال</option>
+              <option value="قسم الطوارئ">قسم الطوارئ</option>
               <option value="العيادات الخارجية">العيادات الخارجية</option>
-              <option value="النساء والولادة">النساء والولادة</option>
-              <option value="مركز السكري">مركز السكري</option>
-              <option value="غرف العمليات">غرف العمليات</option>
-              <option value="الحروق">الحروق</option>
-              <option value="باطنة وجراحة">باطنة وجراحة</option>
-              <option value="الأطفال">الأطفال</option>
+              <option value="العمليات">العمليات</option>
+              <option value="أمراض الدم">أمراض الدم</option>
+              <option value="قسم الأورام - كبار">قسم الأورام - كبار</option>
+              <option value="جراحة الأورام">جراحة الأورام</option>
+              <option value="عناية اليوم الواحد">عناية اليوم الواحد</option>
+              <option value="الأورام - أطفال">الأورام - أطفال</option>
             </select>
           </div>
 
@@ -752,15 +752,15 @@ export function Permissions() {
                 onChange={(e) => setNewUserDept(e.target.value)}
                 className="w-full rounded-xl border border-gold/25 bg-bg-primary px-3 py-2.5 text-sm outline-none focus:border-gold"
               >
-                <option value="العناية المركزة">العناية المركزة</option>
-                <option value="الطوارئ">الطوارئ</option>
+                <option value="العناية المركزة كبار/ أطفال">العناية المركزة كبار/ أطفال</option>
+                <option value="قسم الطوارئ">قسم الطوارئ</option>
                 <option value="العيادات الخارجية">العيادات الخارجية</option>
-                <option value="النساء والولادة">النساء والولادة</option>
-                <option value="مركز السكري">مركز السكري</option>
-                <option value="غرف العمليات">غرف العمليات</option>
-                <option value="الحروق">الحروق</option>
-                <option value="باطنة وجراحة">باطنة وجراحة</option>
-                <option value="الأطفال">الأطفال</option>
+                <option value="العمليات">العمليات</option>
+                <option value="أمراض الدم">أمراض الدم</option>
+                <option value="قسم الأورام - كبار">قسم الأورام - كبار</option>
+                <option value="جراحة الأورام">جراحة الأورام</option>
+                <option value="عناية اليوم الواحد">عناية اليوم الواحد</option>
+                <option value="الأورام - أطفال">الأورام - أطفال</option>
               </select>
             </div>
 

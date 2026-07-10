@@ -76,16 +76,16 @@ export function Recognition() {
 
   const resetToDefaults = () => {
     const defaults: RecognitionType[] = [
-      { id: 'n1', name: '', dept: 'العناية المركزة', votes: 4900, type: 'nurse' },
-      { id: 'n2', name: '', dept: 'الطوارئ', votes: 4200, type: 'nurse' },
+      { id: 'n1', name: '', dept: 'العناية المركزة كبار/ أطفال', votes: 4900, type: 'nurse' },
+      { id: 'n2', name: '', dept: 'قسم الطوارئ', votes: 4200, type: 'nurse' },
       { id: 'n3', name: '', dept: 'العيادات الخارجية', votes: 3800, type: 'nurse' },
-      { id: 'n4', name: '', dept: 'النساء والولادة', votes: 3400, type: 'nurse' },
-      { id: 'n5', name: '', dept: 'مركز السكري', votes: 3100, type: 'nurse' },
+      { id: 'n4', name: '', dept: 'العمليات', votes: 3400, type: 'nurse' },
+      { id: 'n5', name: '', dept: 'أمراض الدم', votes: 3100, type: 'nurse' },
       { id: 'h1', name: '', dept: 'قسم التمريض', votes: 5303, type: 'head' },
-      { id: 'h2', name: '', dept: 'العناية المركزة', votes: 4800, type: 'head' },
-      { id: 'h3', name: '', dept: 'الحروق', votes: 4100, type: 'head' },
-      { id: 'h4', name: '', dept: 'الطوارئ', votes: 3700, type: 'head' },
-      { id: 'h5', name: '', dept: 'العيادات الخارجية', votes: 3300, type: 'head' }
+      { id: 'h2', name: '', dept: 'قسم الأورام - كبار', votes: 4800, type: 'head' },
+      { id: 'h3', name: '', dept: 'جراحة الأورام', votes: 4100, type: 'head' },
+      { id: 'h4', name: '', dept: 'عناية اليوم الواحد', votes: 3700, type: 'head' },
+      { id: 'h5', name: '', dept: 'الأورام - أطفال', votes: 3300, type: 'head' }
     ];
     setRecognitions(defaults);
     localStorage.setItem('nursing_recognition_list', JSON.stringify(defaults));
