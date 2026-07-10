@@ -65,7 +65,11 @@
       {% if recent_news_count and recent_news_count > 0 %}<span class="text-[10px] bg-red-500 text-white px-1.5 rounded-full">{{ recent_news_count }}</span>{% endif %}
     </a>
     {% if is_manager %}
-    {% set soon = ['الأداء', 'التقارير', 'الإعدادات'] %}
+    <a href="{{ url_for('performance.list_performance') }}"
+       class="flex items-center gap-3 rounded-lg px-3 py-2 {% if active and active.startswith('performance.') %}bg-white/10 text-white font-medium{% else %}text-slate-300 hover:bg-white/5{% endif %}">
+      <span class="h-2 w-2 rounded-full {% if active and active.startswith('performance.') %}bg-brand-gold{% else %}bg-slate-600{% endif %}"></span> الأداء
+    </a>
+    {% set soon = ['التقارير', 'الإعدادات'] %}
     {% for item in soon %}
     <span class="flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-slate-400 cursor-not-allowed">
       <span class="flex items-center gap-3"><span class="h-2 w-2 rounded-full bg-slate-600"></span>{{ item }}</span>

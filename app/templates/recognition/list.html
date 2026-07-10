@@ -9,12 +9,18 @@
     <h2 class="text-xl font-bold text-slate-800">التكريم والتقدير</h2>
     <p class="text-sm text-slate-500 mt-1">إجمالي التكريمات: {{ pagination.total }}</p>
   </div>
-  <a href="{{ url_for('recognition.new_recognition') }}"
-     class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-    منح تكريم
-  </a>
+  <div class="flex items-center gap-2">
+    <a href="{{ url_for('recognition.export_csv', **filters) }}"
+       class="inline-flex items-center gap-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition">
+      تصدير CSV
+    </a>
+    <a href="{{ url_for('recognition.new_recognition') }}"
+       class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+      منح تكريم
+    </a>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">

@@ -67,6 +67,7 @@ def dashboard():
             "icon": "activity",
             "accent": "sky",
             "value": f"{avg_performance:.1f}" if avg_performance is not None else "—",
+            "href": url_for("performance.list_performance"),
         },
     ]
     return render_template("main/dashboard.html", kpis=kpis)

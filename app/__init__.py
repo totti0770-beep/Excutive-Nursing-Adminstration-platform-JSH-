@@ -67,6 +67,7 @@ def create_app(config_object=None):
     from app.blueprints.departments import departments_bp
     from app.blueprints.main import main_bp
     from app.blueprints.news import news_bp
+    from app.blueprints.performance import performance_bp
     from app.blueprints.recognition import recognition_bp
     from app.blueprints.staff import staff_bp
     from app.blueprints.users import users_bp
@@ -79,6 +80,7 @@ def create_app(config_object=None):
     app.register_blueprint(departments_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(audit_bp)
+    app.register_blueprint(performance_bp)
 
     # Notification bell: recent (last 7 days) published announcements count,
     # available to every template.

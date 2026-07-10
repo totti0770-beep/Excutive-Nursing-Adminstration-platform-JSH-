@@ -9,6 +9,7 @@ from sqlalchemy import func
 from app.audit import log_action
 from app.blueprints.recognition import AWARD_TYPES, recognition_bp
 from app.blueprints.recognition.forms import RecognitionForm
+from app.exports import csv_response
 from app.extensions import db
 from app.models import Department, Recognition, Staff
 from app.security import Roles, role_required
@@ -24,19 +25,23 @@ def _staff_choices():
     ]
 
 
-@recognition_bp.route("/")
-@login_required
-@role_required(*_MANAGE_ROLES)
-def list_recognition():
+def _filtered_query():
     award_type = request.args.get("award_type", "", type=str).strip()
     department_id = request.args.get("department_id", type=int)
-    page = request.args.get("page", 1, type=int)
-
     query = Recognition.query.join(Staff)
     if award_type:
         query = query.filter(Recognition.award_type == award_type)
     if department_id:
         query = query.filter(Staff.department_id == department_id)
+    return query, {"award_type": award_type, "department_id": department_id}
+
+
+@recognition_bp.route("/")
+@login_required
+@role_required(*_MANAGE_ROLES)
+def list_recognition():
+    page = request.args.get("page", 1, type=int)
+    query, filters = _filtered_query()
 
     pagination = query.order_by(Recognition.timestamp.desc()).paginate(
         page=page, per_page=PER_PAGE, error_out=False
@@ -59,8 +64,30 @@ def list_recognition():
         award_types=AWARD_TYPES,
         departments=Department.query.order_by(Department.name).all(),
         top_recipients=top_recipients,
-        filters={"award_type": award_type, "department_id": department_id},
+        filters=filters,
     )
+
+
+@recognition_bp.route("/export.csv")
+@login_required
+@role_required(*_MANAGE_ROLES)
+def export_csv():
+    query, _ = _filtered_query()
+    rows = [
+        [
+            r.staff.name if r.staff else "",
+            r.staff.department.name if r.staff and r.staff.department else "",
+            r.award_type,
+            r.granted_by or "",
+            r.note or "",
+            r.timestamp.strftime("%Y-%m-%d"),
+        ]
+        for r in query.order_by(Recognition.timestamp.desc()).all()
+    ]
+    log_action("export", "recognition", detail=f"{len(rows)} rows")
+    db.session.commit()
+    header = ["الموظف", "القسم", "نوع التكريم", "مُنح بواسطة", "السبب", "التاريخ"]
+    return csv_response("recognition.csv", header, rows)
 
 
 @recognition_bp.route("/new", methods=["GET", "POST"])

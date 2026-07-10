@@ -9,3 +9,12 @@ document.addEventListener("submit", function (e) {
     }
   }
 });
+
+// Set progress-bar widths from data-bar-width (avoids inline styles under CSP).
+document.addEventListener("DOMContentLoaded", function () {
+  var bars = document.querySelectorAll("[data-bar-width]");
+  bars.forEach(function (el) {
+    var pct = Math.max(0, Math.min(100, parseFloat(el.getAttribute("data-bar-width")) || 0));
+    el.style.width = pct + "%";
+  });
+});
