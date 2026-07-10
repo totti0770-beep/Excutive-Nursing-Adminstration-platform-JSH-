@@ -24,6 +24,9 @@ class BaseConfig:
         "DATABASE_URL", "sqlite:///nursing.sqlite3"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # pool_pre_ping recycles dead connections (important behind a PostgreSQL
+    # connection pooler / after idle periods).
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
     # Organisation display name, surfaced in templates.
     ORG_NAME_AR = "مستشفى جازان التخصصي"

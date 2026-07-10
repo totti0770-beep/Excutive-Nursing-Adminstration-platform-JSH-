@@ -1,14 +1,25 @@
 """Main blueprint routes."""
 
-from flask import redirect, render_template, url_for
+from flask import jsonify, redirect, render_template, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from app.blueprints.main import main_bp
 from app.blueprints.news import CATEGORIES as NEWS_CATEGORIES
 from app.extensions import db
 from app.models import Announcement, Department, Performance, Recognition, Staff
 from app.security import Roles
+
+
+@main_bp.route("/healthz")
+def healthz():
+    """Liveness/readiness probe for load balancers (no auth). Pings the DB."""
+    try:
+        db.session.execute(text("SELECT 1"))
+        return jsonify(status="ok"), 200
+    except Exception:  # pragma: no cover - only on a real DB outage
+        return jsonify(status="error"), 503
+
 
 _DASHBOARD_ROLES = (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR, Roles.DEPARTMENT_HEAD)
 

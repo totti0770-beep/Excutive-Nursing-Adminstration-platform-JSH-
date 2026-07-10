@@ -112,9 +112,34 @@ def create_app(config_object=None):
             "system_admin_role": Roles.SYSTEM_ADMIN,
         }
 
+    # Branded RTL error pages (403/404/500).
+    from app.errors import register_error_handlers
+
+    register_error_handlers(app)
+
+    # Structured logging to stdout (skipped under tests to keep output clean).
+    if not app.config.get("TESTING"):
+        _configure_logging(app)
+
     # Register CLI commands.
     from app.commands import register_commands
 
     register_commands(app)
 
     return app
+
+
+def _configure_logging(app):
+    """Send app logs to stdout so a container platform can collect them."""
+    import logging
+    import sys
+
+    level = getattr(logging, app.config.get("LOG_LEVEL", "INFO").upper(), logging.INFO)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(
+        logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+    )
+    # Avoid duplicate handlers on repeated app creation.
+    if not any(isinstance(h, logging.StreamHandler) for h in app.logger.handlers):
+        app.logger.addHandler(handler)
+    app.logger.setLevel(level)

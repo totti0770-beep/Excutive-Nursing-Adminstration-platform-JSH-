@@ -10,6 +10,8 @@ SQLAlchemy==2.0.34
 python-dotenv==1.0.1
 # Postgres driver (used when DATABASE_URL points at PostgreSQL in production)
 psycopg2-binary==2.9.9
+# Production WSGI server
+gunicorn==23.0.0
 
 # --- testing & tooling ---
 pytest==8.3.3

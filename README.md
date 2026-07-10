@@ -90,6 +90,45 @@ npm run build:css      # regenerate app/static/css/tailwind.css
 The Tajawal font is self-hosted from `app/static/fonts/` (no Google Fonts / external CDN),
 so the UI renders fully styled on an isolated hospital intranet.
 
+## Production deployment
+
+The app is served by **gunicorn** (`wsgi:app`) and ships a `Dockerfile`, `Procfile`,
+and `gunicorn.conf.py`. Set at minimum `SECRET_KEY`, `DATABASE_URL`, and `FLASK_ENV=production`
+(add `FORCE_HTTPS=1` behind TLS).
+
+**PostgreSQL** (recommended for pilot/production — the models are Postgres-compatible):
+
+```bash
+export DATABASE_URL="postgresql+psycopg2://user:pass@host:5432/nursing"
+flask db upgrade          # apply migrations
+flask create-admin        # create the first System Admin
+```
+
+Connections use `pool_pre_ping` to survive idle drops behind a connection pooler.
+
+**Run with gunicorn** (migrations run first):
+
+```bash
+flask db upgrade && gunicorn -c gunicorn.conf.py wsgi:app   # serves on :8000
+```
+
+**Docker:**
+
+```bash
+docker build -t jsh-nursing .
+docker run -p 8000:8000 \
+  -e SECRET_KEY=... -e DATABASE_URL=postgresql+psycopg2://... \
+  -e FORCE_HTTPS=1 jsh-nursing
+```
+
+The container entrypoint runs `flask db upgrade` before starting gunicorn (also wired as the
+`release` phase in the `Procfile` for buildpack platforms).
+
+- **Health check:** `GET /healthz` (no auth) returns `{"status":"ok"}` and pings the DB — point
+  your load balancer / orchestrator at it.
+- **Logs** go to stdout/stderr (app + gunicorn access/error) for container log collection.
+- **Error pages:** branded RTL 403/404/500.
+
 ## Tests, lint & CI
 
 The suite runs against an isolated in-memory SQLite database (no dev data touched):
