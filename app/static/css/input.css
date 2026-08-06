@@ -1,0 +1,64 @@
+/* Tailwind entry file. Build with:  npm run build:css
+   Produces app/static/css/tailwind.css (committed, self-contained). */
+
+/* --- Self-hosted Tajawal (from @fontsource/tajawal; no external CDN) --- */
+/* Arabic + Latin subsets per weight, selected via unicode-range. */
+
+/* 400 */
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../fonts/tajawal-arabic-400-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../fonts/tajawal-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD;
+}
+/* 500 */
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 500; font-display: swap;
+  src: url('../fonts/tajawal-arabic-500-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 500; font-display: swap;
+  src: url('../fonts/tajawal-latin-500-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD;
+}
+/* 700 */
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('../fonts/tajawal-arabic-700-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('../fonts/tajawal-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD;
+}
+/* 800 */
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 800; font-display: swap;
+  src: url('../fonts/tajawal-arabic-800-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Tajawal'; font-style: normal; font-weight: 800; font-display: swap;
+  src: url('../fonts/tajawal-latin-800-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Small custom helpers (migrated from app.css) --- */
+@layer base {
+  html { scroll-behavior: smooth; }
+}
+
+@layer utilities {
+  /* Render numbers left-to-right inside RTL text. */
+  .ltr-nums { direction: ltr; unicode-bidi: embed; }
+}

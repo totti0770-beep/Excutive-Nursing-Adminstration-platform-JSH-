@@ -1,0 +1,44 @@
+{#
+  Shared UI macros.
+
+  pagination(pg, endpoint, filters) — renders the standard pager. `pg` is a
+  Flask-SQLAlchemy Pagination object, `endpoint` the list route name, and
+  `filters` a dict of active query params to preserve across pages (None values
+  are dropped automatically by url_for).
+
+  field(f, ltr) — renders a WTForms field as label + input + inline errors,
+  matching the app's form styling. Pass ltr=true for LTR content (emails, ids).
+#}
+
+{% macro pagination(pg, endpoint, filters={}) %}
+{% if pg.pages > 1 %}
+<div class="flex items-center justify-center gap-1 mt-5">
+  {% if pg.has_prev %}
+    <a href="{{ url_for(endpoint, page=pg.prev_num, **filters) }}"
+       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">السابق</a>
+  {% endif %}
+  {% for p in pg.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+    {% if p %}
+      <a href="{{ url_for(endpoint, page=p, **filters) }}"
+         class="px-3 py-1.5 rounded-lg border text-sm {% if p == pg.page %}bg-brand-dark text-white border-brand-dark{% else %}border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">{{ p }}</a>
+    {% else %}
+      <span class="px-2 text-slate-400">…</span>
+    {% endif %}
+  {% endfor %}
+  {% if pg.has_next %}
+    <a href="{{ url_for(endpoint, page=pg.next_num, **filters) }}"
+       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">التالي</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro field(f, ltr=false) %}
+  <div>
+    {{ f.label(class="block text-sm font-medium text-slate-700 mb-1") }}
+    {{ f(class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none" + (' ltr-nums' if ltr else '')) }}
+    {% for err in f.errors %}
+      <p class="text-xs text-red-600 mt-1">{{ err }}</p>
+    {% endfor %}
+  </div>
+{% endmacro %}

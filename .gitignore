@@ -6,3 +6,16 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Python / Flask
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+instance/
+*.sqlite3
+*.db
+.pytest_cache/
+.coverage
+htmlcov/

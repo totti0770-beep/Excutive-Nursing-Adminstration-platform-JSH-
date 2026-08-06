@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{% if mode == 'edit' %}تعديل قسم{% else %}إضافة قسم{% endif %}{% endblock %}
+{% block page_title %}{% if mode == 'edit' %}تعديل قسم{% else %}إضافة قسم{% endif %}{% endblock %}
+
+{% from 'partials/_macros.html' import field %}
+
+{% block content %}
+<div class="max-w-xl">
+  <div class="bg-white rounded-2xl border border-slate-200 p-6">
+    <form method="POST" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="space-y-4">
+        {{ field(form.name) }}
+        {{ field(form.location) }}
+        {{ field(form.head_name) }}
+      </div>
+      <div class="flex items-center gap-3 mt-6">
+        <button type="submit" class="rounded-lg bg-brand-dark text-white text-sm font-medium px-5 py-2.5 hover:bg-slate-800 transition">
+          {% if mode == 'edit' %}حفظ التغييرات{% else %}إضافة{% endif %}
+        </button>
+        <a href="{{ url_for('departments.list_departments') }}" class="text-sm text-slate-500 hover:underline">إلغاء</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
