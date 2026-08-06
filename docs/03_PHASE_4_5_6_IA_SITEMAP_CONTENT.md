@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered IA/site-map/content documents.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `10_Site_Map.md`, `11_Navigation_Structure.md`, `12_Content_Strategy.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 4, 5, & 6: Information Architecture, Site Map, & Content Strategy
 
 ## Project: Nursing Administration Portal

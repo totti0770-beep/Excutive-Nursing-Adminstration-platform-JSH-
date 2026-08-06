@@ -1,42 +1,120 @@
 # Document 20: Solution Architecture
-## Project: Nursing Administration Portal
+## Project: Nursing Executive Administration System
 **Client:** Jazan Specialty Hospital (JSH)
-**Phase:** 5 - System Design
-**Version:** 1.0
+**Phase:** 5 — System Design
+**Version:** 2.0 · **Status:** CURRENT — reflects the implemented system
+
+> **Revision note (v2.0):** v1.0 described a React SPA on Firebase/Firestore (BaaS).
+> That architecture was **not** built. The delivered system is a server-rendered
+> **Flask + SQLAlchemy** application on a relational database. This document has been
+> rewritten to describe what actually ships. The React/Firebase prototype is retained
+> under `legacy/` for reference only and is not deployed.
 
 ---
 
 ## 1. Overview (نظرة عامة)
-The Nursing Administration Portal is designed as a modern, cloud-native, Single Page Application (SPA). It leverages a serverless backend architecture to ensure high availability, scalability, and ease of maintenance, aligning with the hospital's digital transformation goals.
+
+The portal is a **server-rendered web application**. HTML is generated on the server by
+Jinja2 templates and delivered to the browser; there is no client-side SPA framework and no
+client-side data layer. All business logic, data access, and access control execute on the
+server, which is the central reason this architecture was chosen over the original BaaS design
+(see §6).
 
 ## 2. Architecture Pattern (نمط البنية)
-The system follows a **Client-Server Serverless Architecture**:
-*   **Client (Frontend):** A React-based SPA that handles all UI rendering, routing, and user interactions directly in the browser.
-*   **Backend (BaaS):** Firebase acts as the Backend-as-a-Service, handling authentication, database operations, and file storage without the need to provision or manage dedicated backend servers.
+
+**Classic three-tier MVC**, using the Flask *application factory* pattern:
+
+| Tier | Implementation |
+|---|---|
+| Presentation | Jinja2 templates (`app/templates/`), Tailwind CSS, RTL Arabic |
+| Application | Flask blueprints — one per functional module (`app/blueprints/`) |
+| Data | SQLAlchemy ORM models (`app/models/`) over a relational database |
+
+The factory (`app/__init__.py::create_app`) builds an app from a config class, initialises
+extensions, registers blueprints, error handlers, context processors, and CLI commands. This
+allows dev / production / testing instances to be created independently — the test suite
+builds a fully isolated app against an in-memory database.
 
 ## 3. Technology Stack (التقنيات المستخدمة)
 
-### 3.1 Frontend (واجهة المستخدم)
-*   **Core Framework:** React 18+ (with TypeScript for type safety).
-*   **Build Tool:** Vite (for fast, optimized bundling).
-*   **Styling:** Tailwind CSS (utility-first styling, ensuring consistency and rapid development).
-*   **UI Components:** Radix UI primitives or Headless UI, styled with Tailwind (following the iOS/Apple Health aesthetic).
-*   **State Management:** React Context API (for global state like Auth and Theme) and React Query / SWR (for data fetching and caching).
-*   **Icons:** Lucide React.
-*   **Animation:** Framer Motion (for smooth page transitions and micro-interactions).
+### 3.1 Application
+- **Language/Framework:** Python 3.11, Flask 3
+- **ORM:** SQLAlchemy 2 via Flask-SQLAlchemy; schema migrations via Flask-Migrate (Alembic)
+- **Auth:** Flask-Login (server-side sessions); passwords hashed with Werkzeug (**scrypt**)
+- **Forms/CSRF:** Flask-WTF (WTForms) with app-wide `CSRFProtect`
+- **Security:** Flask-Talisman (security headers/CSP), Flask-Limiter (rate limiting)
+- **Config:** environment variables via python-dotenv; no secrets in source
 
-### 3.2 Backend Services (خدمات الواجهة الخلفية - Firebase)
-*   **Database:** Firebase Firestore (NoSQL document database) for storing user profiles, news articles, document metadata, and logs.
-*   **Authentication:** Firebase Auth (Email/Password, with potential future integration for SAML/Active Directory).
-*   **Storage:** Firebase Cloud Storage for storing binary files (PDF policies, schedule images, user avatars).
-*   **Hosting:** The React application static assets will be served via a secure, CDN-backed hosting environment (e.g., Google Cloud Run, Firebase Hosting).
+### 3.2 Presentation
+- **Templating:** Jinja2, with shared macros in `app/templates/partials/_macros.html`
+- **CSS:** Tailwind CSS, **compiled at build time** and committed
+  (`app/static/css/tailwind.css`) — no runtime CDN
+- **Fonts:** Tajawal, **self-hosted** from `app/static/fonts/`
+- **JS:** a single progressive-enhancement file (`app/static/js/app.js`). No inline
+  JavaScript or inline styles anywhere, which is what makes the strict CSP viable.
 
-## 4. System Components & Interactions (مكونات النظام والتفاعلات)
-1.  **User Browser/Mobile:** Accesses the portal via URL. Downloads the React application bundle.
-2.  **Firebase Auth:** The React app communicates directly with Firebase Auth to authenticate the user and retrieve a secure JSON Web Token (JWT).
-3.  **Firestore Database:** The React app queries Firestore directly using the Firebase Client SDK. Data access is strictly controlled via Firestore Security Rules, ensuring users can only read/write data permitted by their role.
-4.  **Cloud Storage:** When a Quality Officer uploads a policy, the PDF goes directly to Cloud Storage. The resulting URL and metadata (title, expiry) are then saved as a document in Firestore.
+### 3.3 Data
+- **Development:** SQLite (zero setup) via `DATABASE_URL`
+- **Production:** PostgreSQL (models are written to be Postgres-compatible);
+  `pool_pre_ping` is enabled to survive idle connection drops behind a pooler
 
-## 5. Security Architecture Integration (تكامل البنية الأمنية)
-*   **No Direct Server Access:** Because there is no traditional Node.js/PHP backend server handling data requests, the attack surface is significantly reduced.
-*   **Rule-Based Access:** All security logic resides in Firebase Security Rules (evaluated at the database level), meaning even if the frontend client is compromised or bypassed, unauthorized data access is blocked by the database itself.
+### 3.4 Runtime
+- **WSGI server:** gunicorn (`wsgi:app`, config in `gunicorn.conf.py`)
+- **Container:** `Dockerfile` (python:3.11-slim, non-root user); `Procfile` for
+  buildpack platforms, with `flask db upgrade` as the release phase
+- **Health:** `GET /healthz` (unauthenticated) pings the database for load balancers
+- **Logs:** application + gunicorn access/error logs to stdout/stderr
+
+## 4. Component Map (خريطة المكونات)
+
+| Blueprint | Prefix | Responsibility |
+|---|---|---|
+| `main` | `/` | Executive dashboard (live KPIs), personal landing `/me`, `/healthz` |
+| `auth` | `/` | Login, logout, self-service password change |
+| `staff` | `/staff` | Nursing staff database — search, filter, CRUD, CSV export |
+| `departments` | `/departments` | Departments, staff rosters, CRUD |
+| `recognition` | `/recognition` | Awards — assign, filter, top recipients, CSV export |
+| `performance` | `/performance` | Performance metrics, per-metric averages, CSV export |
+| `news` | `/news` | Announcements/news feed and notification centre |
+| `users` | `/users` | Login-account management and staff linking |
+| `audit` | `/audit` | Read-only audit-trail viewer |
+
+Cross-cutting modules: `app/security.py` (roles + `role_required`), `app/audit.py`
+(`log_action`), `app/exports.py` (CSV), `app/errors.py` (RTL error pages),
+`app/extensions.py` (shared extension instances), `app/commands.py` (`flask create-admin`).
+
+## 5. Request Flow (مسار الطلب)
+
+1. Browser issues an HTTP request to gunicorn.
+2. Flask-Login resolves the session cookie to a `User` via the `user_loader`, which
+   **rejects deactivated accounts** so a disabled user is logged out on their next request.
+3. Route decorators enforce access: `@login_required`, then `@role_required(...)`.
+4. The view queries via SQLAlchemy, applies business rules, and — for state changes —
+   writes an `AuditLog` row in the same transaction.
+5. Jinja2 renders RTL HTML; Talisman attaches security headers to the response.
+
+## 6. Why this replaced the original BaaS design (مبرر التغيير)
+
+The v1.0 architecture put security in client-evaluated database rules with no server tier.
+In the delivered prototype that assumption failed in practice: the Firestore rules shipped as
+`allow read, write: if true`, and role checks existed only in the UI. Moving to a server tier
+makes authorisation **non-bypassable** — a browser cannot reach the database directly, every
+query passes through server-side role checks, and every mutation is audited. It also brings
+referential integrity (foreign keys), reviewable schema migrations, and a testable
+application layer.
+
+## 7. Constraints & Trade-offs (القيود والمفاضلات)
+
+- **No offline/real-time push.** Server-rendered pages mean no live document sync;
+  acceptable for an administrative portal, and it removes the client data layer entirely.
+- **Stateful sessions.** Horizontal scaling requires sticky sessions or a shared session
+  store; single-instance deployment is sufficient for the expected user base.
+- **In-memory rate-limit storage.** Fine for one process; a multi-worker or multi-instance
+  deployment should point Flask-Limiter at Redis.
+- **Intranet-safe by design.** No external CDN, font, or script dependency at runtime, so
+  the UI renders fully on an isolated hospital network.
+
+## 8. Related Documents
+
+`21_Database_Design.md` · `22_ER_Diagram.md` · `23_API_Design.md` ·
+`24_Security_Architecture.md` · `25_Testing_Strategy.md`

@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document assumes a Firebase deployment; the delivered system deploys via gunicorn/Docker.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: the repository `README.md` (Production deployment) and `25_Testing_Strategy.md`. See `docs/README.md` for the index.
+
+---
+
 # Document 28: Go-Live Plan
 ## Project: Nursing Administration Portal
 **Client:** Jazan Specialty Hospital (JSH)

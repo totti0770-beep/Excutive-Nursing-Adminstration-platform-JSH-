@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document references the Firebase stack in its technical constraints (the NFR targets themselves remain valid goals).
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `24_Security_Architecture.md` and `25_Testing_Strategy.md`. See `docs/README.md` for the index.
+
+---
+
 # Document 07: Non-Functional Requirements
 ## Project: Nursing Administration Portal
 **Client:** Jazan Specialty Hospital (JSH)

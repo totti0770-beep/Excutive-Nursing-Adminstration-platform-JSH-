@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document describes the Firebase/React stack and Firestore access patterns, neither of which was built.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `20_Solution_Architecture.md` and `23_API_Design.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 20, 21, & 22: Architecture, Tech Stack, & API Design
 
 ## Project: Nursing Administration Portal

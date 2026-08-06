@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered requirements documents and its RBAC model predates server-enforced roles.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `24_Security_Architecture.md` §3 and `23_API_Design.md` §2. See `docs/README.md` for the index.
+
+---
+
 # Phase 10, 11, & 12: Functional Requirements, NFRs, & RBAC Matrix
 
 ## Project: Nursing Administration Portal

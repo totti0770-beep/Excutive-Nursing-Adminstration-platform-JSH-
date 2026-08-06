@@ -1,57 +1,127 @@
-# Document 23: API Design
-## Project: Nursing Administration Portal
+# Document 23: Route & Interface Design
+## Project: Nursing Executive Administration System
 **Client:** Jazan Specialty Hospital (JSH)
-**Phase:** 5 - System Design
-**Version:** 1.0
+**Phase:** 5 — System Design
+**Version:** 2.0 · **Status:** CURRENT — transcribed from the application URL map
+
+> **Revision note (v2.0):** v1.0 stated that "we do not build traditional API endpoints"
+> because the React client talked to Firestore directly via the Firebase SDK. That is no
+> longer true. The delivered system is server-rendered and exposes **HTTP routes**; the
+> browser never touches the database. The table below is the complete route map.
 
 ---
 
-## 1. Overview (نظرة عامة)
-Because this project utilizes Firebase as a Backend-as-a-Service (BaaS), we do not build traditional RESTful API endpoints (like `GET /api/users`). Instead, the React frontend uses the **Firebase Client SDK** to interact directly with Firestore and Storage via RPC (Remote Procedure Call) over WebSockets. 
+## 1. Interface Style (نمط الواجهة)
 
-However, we must define the **Data Access Patterns** (equivalent to API design) to ensure efficient querying and strict security.
+Routes are **HTML-returning, form-driven endpoints**, not a JSON REST API:
 
-## 2. Authentication Flow (مسار المصادقة)
-*   **Method:** `signInWithEmailAndPassword(auth, email, password)`
-*   **Payload:** `{ email, password }`
-*   **Response:** JWT (JSON Web Token) securely stored in memory/IndexedDB by the SDK.
-*   **Context:** The JWT is automatically attached to all subsequent database queries.
+- `GET` returns a rendered Jinja2 page.
+- `POST` accepts an `application/x-www-form-urlencoded` submission, applies the change, and
+  issues a **redirect** (POST/Redirect/GET) so a refresh cannot double-submit.
+- Two exceptions return non-HTML: `GET /healthz` returns JSON, and the three
+  `*/export.csv` routes return `text/csv`.
+- **Every `POST` requires a valid CSRF token** (app-wide `CSRFProtect`); a missing or stale
+  token is rejected with **400**.
 
-## 3. Data Access Patterns (Firestore Queries)
+There is currently **no public/JSON API** for third-party integration. If HR or HIS
+integration is required later, it should be added as a separate, token-authenticated
+blueprint rather than by opening these session-authenticated routes.
 
-### 3.1 Users & Auth
-*   **Get Current User Profile:**
-    *   `doc(db, 'users', currentUser.uid)`
-    *   *Usage:* Fetches the role and department upon login to set up the UI context.
+## 2. Access Control Legend (مفتاح الصلاحيات)
 
-### 3.2 News & Announcements
-*   **Fetch Active News Feed:**
-    *   `collection(db, 'news')`
-    *   `where('status', '==', 'published')`
-    *   `orderBy('published_at', 'desc')`
-    *   `limit(10)`
-    *   *Usage:* Renders the homepage feed.
+| Tag | Roles permitted |
+|---|---|
+| **Public** | No authentication |
+| **Any** | Any authenticated user |
+| **Manage** | `system_admin`, `nursing_director`, `department_head` |
+| **Director+** | `system_admin`, `nursing_director` |
+| **Admin** | `system_admin` only |
 
-*   **Fetch Urgent Alerts:**
-    *   `collection(db, 'news')`
-    *   `where('status', '==', 'published')`
-    *   `where('priority', '==', 'high')`
-    *   *Usage:* Renders the red banner at the top of the app.
+Enforcement is server-side via `@login_required` and `@role_required(...)`
+(`app/security.py`): unauthenticated → **401** → redirected to the login page;
+authenticated but wrong role → **403** (branded RTL page).
 
-### 3.3 Document Library (Policies)
-*   **Search Active Policies:**
-    *   `collection(db, 'documents')`
-    *   `where('status', '==', 'published')`
-    *   *Note:* Firestore lacks native full-text search. For global search (FR-071), the frontend will either perform client-side filtering on a cached subset of active documents, or integrate with a 3rd party search service (like Algolia) if the document count exceeds thousands.
+## 3. Route Map (خريطة المسارات)
 
-### 3.4 Schedules
-*   **Fetch Department Schedule:**
-    *   `collection(db, 'schedules')`
-    *   `where('department_id', '==', user.department_id)`
-    *   `where('month', '==', currentMonth)`
-    *   *Usage:* Displays the roster to the nurse on their schedule tab.
+### 3.1 System & Session
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/healthz` | Public | Liveness/readiness probe; pings the DB, returns `{"status":"ok"}` |
+| GET, POST | `/login` | Public | Login form. **POST rate-limited to 10/min per IP** |
+| POST | `/logout` | Any | Ends the session |
+| GET, POST | `/account/password` | Any | Self-service password change (verifies current password, min 8 chars) |
 
-## 4. Cloud Functions (Server-side Logic)
-While most logic is handled client-side, Firebase Cloud Functions (Node.js) may be required for operations that cannot be trusted to the client:
-*   **`deleteUserAccount` (Callable Function):** Standard clients cannot delete auth accounts. An admin calls this function; the backend verifies the caller is an Admin, then deletes the user from Firebase Auth and updates the Firestore document to `is_active: false`.
-*   **`archiveExpiredDocuments` (Scheduled Cron Job):** Runs daily at 00:00. Queries all documents where `expiry_date < now()` and updates their status to `archived`.
+### 3.2 Landing
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/` | Any | Executive dashboard (live KPI counts). Roles outside **Manage** are redirected to `/me` rather than receiving a 403 |
+| GET | `/me` | Any | Personal landing: linked staff profile, own awards, latest news |
+
+### 3.3 Staff (`/staff`)
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/staff/` | Manage | List. Query params: `q` (name or employee ID), `department_id`, `role`, `status`, `page` |
+| GET, POST | `/staff/new` | Manage | Create (unique `employee_id` enforced) |
+| GET, POST | `/staff/<id>/edit` | Manage | Update (uniqueness re-checked, self excluded) |
+| POST | `/staff/<id>/delete` | Manage | Delete |
+| GET | `/staff/export.csv` | Manage | CSV of the **current filter selection** |
+
+### 3.4 Departments (`/departments`)
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/departments/` | Manage | List with per-department staff counts (single `GROUP BY`); `q`, `page` |
+| GET | `/departments/<id>` | Manage | Detail + staff roster |
+| GET, POST | `/departments/new` | Manage | Create (unique name) |
+| GET, POST | `/departments/<id>/edit` | Manage | Update |
+| POST | `/departments/<id>/delete` | Manage | Delete — **blocked while staff are assigned** |
+
+### 3.5 Recognition (`/recognition`)
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/recognition/` | Manage | Awards list + top recipients; `award_type`, `department_id`, `page` |
+| GET, POST | `/recognition/new` | Manage | Grant an award |
+| POST | `/recognition/<id>/delete` | Manage | Delete |
+| GET | `/recognition/export.csv` | Manage | CSV of the current filter selection |
+
+### 3.6 Performance (`/performance`)
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/performance/` | Manage | Metrics list + per-metric averages; `metric`, `department_id`, `page` |
+| GET, POST | `/performance/new` | Manage | Record a metric (value validated 0–100) |
+| POST | `/performance/<id>/delete` | Manage | Delete |
+| GET | `/performance/export.csv` | Manage | CSV of the current filter selection |
+
+### 3.7 News & Announcements (`/news`)
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/news/` | **Any** | Feed — published items, pinned first; `category`, `page` |
+| GET | `/news/<id>` | **Any** | Detail (unpublished visible only to Director+) |
+| GET, POST | `/news/new` | **Director+** | Create |
+| GET, POST | `/news/<id>/edit` | **Director+** | Update |
+| POST | `/news/<id>/delete` | **Director+** | Delete |
+
+*The feed is deliberately the one module every role can read; authoring is narrower than
+the other modules (no `department_head`).*
+
+### 3.8 Administration
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/users/` | **Admin** | Login accounts; `q` (email), `role`, `page` |
+| GET, POST | `/users/new` | **Admin** | Create account (unique email, min 8-char password, optional staff link) |
+| GET, POST | `/users/<id>/edit` | **Admin** | Update role/link/active; blank password keeps the current one |
+| POST | `/users/<id>/delete` | **Admin** | Delete — **cannot delete your own account** |
+| GET | `/audit/` | **Admin** | Read-only audit trail; `action`, `entity_type`, `page` |
+
+## 4. Conventions (الاتفاقيات)
+
+- **Pagination:** `?page=N`; page size is per-module (10 staff/departments/recognition,
+  15 performance, 8 news, 25 audit). Filters are preserved across page links.
+- **Filtering:** blank/absent query params mean "no filter". Export routes reuse the exact
+  same query builder as their list view, so an export always matches what is on screen.
+- **Validation:** WTForms validators server-side; failures re-render the form with inline
+  Arabic messages and **HTTP 200** (no redirect), so nothing is lost.
+- **Uniqueness conflicts** (duplicate `employee_id`, department name, user email) are
+  reported as field errors, not exceptions.
+- **Errors:** 403 / 404 / 500 render branded RTL pages; 500 rolls back the session.
+- **Audit:** every create / update / delete, plus login, logout, failed login, password
+  change, and CSV export, writes an `AuditLog` row in the same transaction.

@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered launch/maintenance documents and assumes a Firebase deployment.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `25_Testing_Strategy.md` and the repository `README.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 25 to 30: Launch, Training, & Support Strategy
 
 ## Project: Nursing Administration Portal
