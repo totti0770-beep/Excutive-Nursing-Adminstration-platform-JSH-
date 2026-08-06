@@ -1,0 +1,26 @@
+{# Language switcher.
+
+   A POST form rather than a link: switching language writes the choice to the
+   signed-in user's profile, and every state change in this app goes through a
+   CSRF-protected POST. `next` returns the visitor to the page they were on.
+
+   Language names are shown in their own language (never translated), which is
+   the convention that lets someone who cannot read the current interface still
+   find their way out of it. #}
+{% set _lang_names = {'ar': 'العربية', 'en': 'English'} %}
+<div class="flex items-center gap-1">
+  {% for code in available_locales %}
+    {% if code != current_locale %}
+    <form method="POST" action="{{ url_for('main.set_language', locale=code) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <input type="hidden" name="next" value="{{ request.full_path if request.query_string else request.path }}" />
+      <button type="submit" lang="{{ code }}"
+              title="{{ _('تغيير اللغة') }}"
+              class="inline-flex items-center rounded-lg border border-slate-200 px-2.5 py-1.5
+                     text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+        {{ _lang_names.get(code, code) }}
+      </button>
+    </form>
+    {% endif %}
+  {% endfor %}
+</div>

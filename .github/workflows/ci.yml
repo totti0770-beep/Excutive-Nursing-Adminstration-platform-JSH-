@@ -31,6 +31,15 @@ jobs:
           ruff check app tests run.py seed.py
           ruff format --check app tests run.py seed.py
 
+      - name: Translation catalogs are in sync with the source
+        # Fails if a new or changed translatable string has not been merged
+        # into the catalogs (a stale catalog would silently ship English
+        # message ids, or leave a string untranslated).
+        run: make i18n-check
+
+      - name: Compile translation catalogs
+        run: make i18n-compile
+
       - name: Test suite with coverage
         env:
           FLASK_ENV: testing

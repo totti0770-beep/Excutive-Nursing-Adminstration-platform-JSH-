@@ -8,6 +8,7 @@ the ``FLASK_ENV`` variable; the app factory resolves it automatically.
 
 import os
 
+from flask_babel import lazy_gettext as _l
 from sqlalchemy.pool import StaticPool
 
 
@@ -28,9 +29,17 @@ class BaseConfig:
     # connection pooler / after idle periods).
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
-    # Organisation display name, surfaced in templates.
-    ORG_NAME_AR = "مستشفى جازان التخصصي"
-    APP_NAME_AR = "نظام إدارة التمريض التنفيذي"
+    # Organisation and product names, surfaced in templates. Wrapped in lazy
+    # gettext so they resolve per-request against the active locale; they are
+    # only ever rendered inside a request context.
+    ORG_NAME = _l("مستشفى جازان التخصصي")
+    APP_NAME = _l("نظام إدارة التمريض التنفيذي")
+
+    # Localisation. Arabic is the primary language and the source language of
+    # the message ids, so a missing translation falls back to correct Arabic.
+    LANGUAGES = ["ar", "en"]
+    BABEL_DEFAULT_LOCALE = "ar"
+    BABEL_DEFAULT_TIMEZONE = "Asia/Riyadh"
 
 
 class DevelopmentConfig(BaseConfig):

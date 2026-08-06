@@ -1,0 +1,257 @@
+# English translations for Nursing Executive Administration System.
+# Copyright (C) 2026 Jazan Specialty Hospital
+# This file is distributed under the same license as the Nursing Executive
+# Administration System project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Nursing Executive Administration System 1.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-08-06 17:36+0000\n"
+"PO-Revision-Date: 2026-08-06 17:24+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app/__init__.py:38
+msgid "الرجاء تسجيل الدخول للوصول إلى هذه الصفحة."
+msgstr "Please sign in to access this page."
+
+#: app/config.py:35
+msgid "مستشفى جازان التخصصي"
+msgstr "Jazan Specialty Hospital"
+
+#: app/config.py:36
+msgid "نظام إدارة التمريض التنفيذي"
+msgstr "Nursing Executive Administration System"
+
+#: app/errors.py:9
+msgid "غير مصرّح"
+msgstr "Access denied"
+
+#: app/errors.py:9
+msgid "ليس لديك صلاحية الوصول إلى هذه الصفحة."
+msgstr "You do not have permission to access this page."
+
+#: app/errors.py:10
+msgid "الصفحة غير موجودة"
+msgstr "Page not found"
+
+#: app/errors.py:10
+msgid "تعذّر العثور على الصفحة المطلوبة."
+msgstr "The requested page could not be found."
+
+#: app/errors.py:12
+msgid "خطأ في الخادم"
+msgstr "Server error"
+
+#: app/errors.py:13
+msgid "حدث خطأ غير متوقع. تم تسجيل المشكلة وسنعمل على معالجتها."
+msgstr ""
+"An unexpected error occurred. The problem has been logged and will be "
+"addressed."
+
+#: app/blueprints/auth/forms.py:11
+msgid "البريد الإلكتروني"
+msgstr "Email address"
+
+#: app/blueprints/auth/forms.py:13
+msgid "الرجاء إدخال البريد الإلكتروني"
+msgstr "Please enter your email address"
+
+#: app/blueprints/auth/forms.py:14
+msgid "بريد إلكتروني غير صالح"
+msgstr "Invalid email address"
+
+#: app/blueprints/auth/forms.py:18
+msgid "كلمة المرور"
+msgstr "Password"
+
+#: app/blueprints/auth/forms.py:20
+msgid "الرجاء إدخال كلمة المرور"
+msgstr "Please enter your password"
+
+#: app/blueprints/auth/forms.py:24
+msgid "تذكرني"
+msgstr "Remember me"
+
+#: app/blueprints/auth/forms.py:29
+msgid "كلمة المرور الحالية"
+msgstr "Current password"
+
+#: app/blueprints/auth/forms.py:30
+msgid "الرجاء إدخال كلمة المرور الحالية"
+msgstr "Please enter your current password"
+
+#: app/blueprints/auth/forms.py:33
+msgid "كلمة المرور الجديدة"
+msgstr "New password"
+
+#: app/blueprints/auth/forms.py:35
+msgid "الرجاء إدخال كلمة المرور الجديدة"
+msgstr "Please enter a new password"
+
+#: app/blueprints/auth/forms.py:36
+msgid "كلمة المرور يجب أن تكون 8 أحرف على الأقل"
+msgstr "Password must be at least 8 characters"
+
+#: app/blueprints/auth/forms.py:40
+msgid "تأكيد كلمة المرور"
+msgstr "Confirm password"
+
+#: app/blueprints/auth/forms.py:42
+msgid "الرجاء تأكيد كلمة المرور"
+msgstr "Please confirm your password"
+
+#: app/blueprints/auth/forms.py:43
+msgid "كلمتا المرور غير متطابقتين"
+msgstr "Passwords do not match"
+
+#: app/blueprints/auth/routes.py:29
+msgid "بيانات الدخول غير صحيحة"
+msgstr "Incorrect sign-in details"
+
+#: app/blueprints/auth/routes.py:35
+msgid "هذا الحساب غير مُفعّل"
+msgstr "This account is not active"
+
+#: app/blueprints/auth/routes.py:54
+msgid "تم تسجيل الخروج بنجاح"
+msgstr "Signed out successfully"
+
+#: app/blueprints/auth/routes.py:64
+msgid "كلمة المرور الحالية غير صحيحة"
+msgstr "Current password is incorrect"
+
+#: app/blueprints/auth/routes.py:69
+msgid "تم تغيير كلمة المرور بنجاح"
+msgstr "Password changed successfully"
+
+#: app/blueprints/main/routes.py:93
+msgid "إجمالي طاقم التمريض"
+msgstr "Total nursing staff"
+
+#: app/blueprints/main/routes.py:100 app/templates/partials/sidebar.html:43
+msgid "الأقسام"
+msgstr "Departments"
+
+#: app/blueprints/main/routes.py:107
+msgid "التكريمات الممنوحة"
+msgstr "Awards granted"
+
+#: app/blueprints/main/routes.py:114
+msgid "متوسط الأداء"
+msgstr "Average performance"
+
+#: app/templates/auth/change_password.html:3
+#: app/templates/auth/change_password.html:4
+#: app/templates/partials/header.html:36
+msgid "تغيير كلمة المرور"
+msgstr "Change password"
+
+#: app/templates/auth/change_password.html:17
+msgid "حفظ"
+msgstr "Save"
+
+#: app/templates/auth/change_password.html:18
+msgid "إلغاء"
+msgstr "Cancel"
+
+#: app/templates/auth/login.html:6 app/templates/auth/login.html:21
+msgid "تسجيل الدخول"
+msgstr "Sign in"
+
+#: app/templates/auth/login.html:15 app/templates/errors/error.html:11
+#: app/templates/partials/sidebar.html:17
+msgid "ت"
+msgstr "N"
+
+#: app/templates/auth/login.html:53
+msgid "دخول"
+msgstr "Sign in"
+
+#: app/templates/errors/error.html:17
+msgid "العودة إلى الصفحة الرئيسية"
+msgstr "Back to home"
+
+#: app/templates/main/dashboard.html:2 app/templates/main/dashboard.html:3
+#: app/templates/partials/header.html:14 app/templates/partials/sidebar.html:35
+msgid "لوحة التحكم"
+msgstr "Dashboard"
+
+#: app/templates/main/dashboard.html:14
+msgid "نظرة عامة تنفيذية"
+msgstr "Executive overview"
+
+#: app/templates/main/dashboard.html:15
+msgid "مؤشرات الأداء الرئيسية لإدارة التمريض"
+msgstr "Key performance indicators for nursing administration"
+
+#: app/templates/main/dashboard.html:49
+msgid "الوحدات المتاحة"
+msgstr "Available modules"
+
+#: app/templates/main/dashboard.html:51
+msgid ""
+"تسجيل الدخول الآمن، قاعدة بيانات الطاقم، إدارة الأقسام، التكريم والتقدير،"
+" الأداء، ومركز الإشعارات والأخبار — جميعها متاحة من القائمة الجانبية. "
+"الوحدات القادمة: التقارير والإعدادات."
+msgstr ""
+"Secure sign-in, the staff database, department management, recognition "
+"and awards, performance, and the notifications and news centre are all "
+"available from the sidebar. Coming next: reports and settings."
+
+#: app/templates/partials/header.html:20 app/templates/partials/sidebar.html:68
+msgid "الإشعارات والأخبار"
+msgstr "Notifications & news"
+
+#: app/templates/partials/header.html:51
+msgid "خروج"
+msgstr "Sign out"
+
+#: app/templates/partials/language_switch.html:18
+msgid "تغيير اللغة"
+msgstr "Change language"
+
+#: app/templates/partials/sidebar.html:39
+msgid "قاعدة بيانات الطاقم"
+msgstr "Staff database"
+
+#: app/templates/partials/sidebar.html:47
+msgid "التكريم والتقدير"
+msgstr "Recognition & awards"
+
+#: app/templates/partials/sidebar.html:52
+msgid "إدارة المستخدمين"
+msgstr "User management"
+
+#: app/templates/partials/sidebar.html:56
+msgid "سجل التدقيق"
+msgstr "Audit trail"
+
+#: app/templates/partials/sidebar.html:62
+msgid "الرئيسية"
+msgstr "Home"
+
+#: app/templates/partials/sidebar.html:74
+msgid "الأداء"
+msgstr "Performance"
+
+#: app/templates/partials/sidebar.html:76
+msgid "التقارير"
+msgstr "Reports"
+
+#: app/templates/partials/sidebar.html:76
+msgid "الإعدادات"
+msgstr "Settings"
+
+#: app/templates/partials/sidebar.html:80
+msgid "قريباً"
+msgstr "Coming soon"
+

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}لوحة التحكم{% endblock %}
-{% block page_title %}لوحة التحكم{% endblock %}
+{% block title %}{{ _('لوحة التحكم') }}{% endblock %}
+{% block page_title %}{{ _('لوحة التحكم') }}{% endblock %}
 
 {% set accents = {
   'amber':   'bg-amber-50 text-amber-600 ring-amber-100',
@@ -11,8 +11,8 @@
 
 {% block content %}
 <div class="mb-6">
-  <h2 class="text-xl font-bold text-slate-800">نظرة عامة تنفيذية</h2>
-  <p class="text-sm text-slate-500 mt-1">مؤشرات الأداء الرئيسية لإدارة التمريض</p>
+  <h2 class="text-xl font-bold text-slate-800">{{ _('نظرة عامة تنفيذية') }}</h2>
+  <p class="text-sm text-slate-500 mt-1">{{ _('مؤشرات الأداء الرئيسية لإدارة التمريض') }}</p>
 </div>
 
 <!-- KPI cards -->
@@ -46,11 +46,9 @@
 
 <!-- Status panel -->
 <div class="mt-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-  <h3 class="font-bold text-slate-800">الوحدات المتاحة</h3>
+  <h3 class="font-bold text-slate-800">{{ _('الوحدات المتاحة') }}</h3>
   <p class="text-sm text-slate-500 mt-1">
-    تسجيل الدخول الآمن، قاعدة بيانات الطاقم، إدارة الأقسام، التكريم والتقدير،
-    ومركز الإشعارات والأخبار — جميعها متاحة من القائمة الجانبية.
-    الوحدات القادمة: الأداء، التقارير، والإعدادات.
+    {{ _('تسجيل الدخول الآمن، قاعدة بيانات الطاقم، إدارة الأقسام، التكريم والتقدير، الأداء، ومركز الإشعارات والأخبار — جميعها متاحة من القائمة الجانبية. الوحدات القادمة: التقارير والإعدادات.') }}
   </p>
 </div>
 {% endblock %}

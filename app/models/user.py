@@ -25,6 +25,9 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(80), nullable=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    # Preferred interface language ("ar"/"en"). NULL means "not chosen yet",
+    # so the browser's Accept-Language decides until the user picks one.
+    locale = db.Column(db.String(5), nullable=True)
 
     # Optional link to a staff profile.
     staff_id = db.Column(

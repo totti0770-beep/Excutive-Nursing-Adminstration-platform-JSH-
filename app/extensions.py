@@ -5,6 +5,7 @@ imports: models and blueprints import ``db`` from here, and the app factory
 initialises these against the application in one place.
 """
 
+from flask_babel import Babel
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
@@ -19,3 +20,4 @@ login_manager = LoginManager()
 csrf = CSRFProtect()
 limiter = Limiter(key_func=get_remote_address, storage_uri="memory://")
 talisman = Talisman()
+babel = Babel()

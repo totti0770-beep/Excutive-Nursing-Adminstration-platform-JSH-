@@ -6,9 +6,22 @@ holds one of the permitted roles.
 """
 
 from functools import wraps
+from urllib.parse import urlparse
 
 from flask import abort
 from flask_login import current_user
+
+
+def is_safe_redirect_target(target):
+    """True only for same-host relative paths (prevents open redirects).
+
+    Used for the post-login ``next`` parameter and for returning the user to
+    the page they came from after switching language.
+    """
+    if not target:
+        return False
+    parsed = urlparse(target)
+    return not parsed.netloc and not parsed.scheme and target.startswith("/")
 
 
 class Roles:
