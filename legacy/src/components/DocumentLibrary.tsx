@@ -19,7 +19,7 @@ export function DocumentLibrary() {
   const [documents, setDocuments] = useState<DocumentType[]>([]);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
   const { showToast } = useToast();
 
   const isAdminOrQuality = userRole === 'System Admin' || userRole === 'Quality Officer';
@@ -37,6 +37,23 @@ export function DocumentLibrary() {
     });
     return () => unsub();
   }, []);
+
+  const handleDownload = async (doc: DocumentType) => {
+    try {
+      if (user) {
+        await addDoc(collection(db, 'audit_logs'), {
+          user_id: user.uid,
+          document_id: doc.id,
+          document_title: doc.title,
+          action: 'view',
+          timestamp: serverTimestamp()
+        });
+      }
+      showToast('📥 جاري التحميل...');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -130,7 +147,7 @@ export function DocumentLibrary() {
                   </span>
                 </td>
                 <td className="border-b border-white/5 px-4.5 py-3.5 text-left">
-                  <button className="rounded-full p-1.5 text-text-muted hover:bg-gold/10 hover:text-gold transition-colors">
+                  <button onClick={() => handleDownload(doc)} className="rounded-full p-1.5 text-text-muted hover:bg-gold/10 hover:text-gold transition-colors">
                     <Download className="h-4 w-4" />
                   </button>
                   {isAdminOrQuality && (

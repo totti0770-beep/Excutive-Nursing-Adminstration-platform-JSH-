@@ -93,6 +93,20 @@ export function Login() {
             </button>
           </form>
           
+          <div className="my-6 flex items-center justify-between">
+            <div className="h-px w-full bg-gold/10"></div>
+            <span className="px-3 text-[13px] font-medium text-text-muted">أو</span>
+            <div className="h-px w-full bg-gold/10"></div>
+          </div>
+
+          <button
+            type="button"
+            className="flex w-full items-center justify-center rounded-xl border border-gold/20 bg-transparent py-3.5 text-[15px] font-bold text-gold transition-all hover:bg-gold/5"
+            onClick={() => showToast('SSO is configured for V2 Production')}
+          >
+            تسجيل الدخول الموحد (Enterprise SSO)
+          </button>
+          
           <div className="mt-8 text-center text-sm text-text-muted">
             <p>للمساعدة التقنية، يرجى التواصل مع قسم تقنية المعلومات</p>
           </div>
