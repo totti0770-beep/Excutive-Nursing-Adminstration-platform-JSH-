@@ -24,6 +24,23 @@ SESSION_KEY = "locale"
 _RTL_LOCALES = {"ar"}
 
 
+def N_(message):
+    """Mark a literal for extraction without translating it (gettext no-op).
+
+    Used for vocabularies whose Arabic string *is* the value persisted to the
+    database — award types and performance metric names. Those must stay
+    identical no matter which language the record was created in, or rows would
+    fragment by the author's interface language and the filters would stop
+    matching across languages.
+
+    So the constant keeps its plain Arabic value and this only registers it in
+    the catalog; the translation is applied at render time with ``gettext``.
+    ``N_`` is one of pybabel's default extraction keywords, so it needs no
+    Makefile change.
+    """
+    return message
+
+
 def supported_locales():
     """Locale codes this application ships, in display order."""
     return current_app.config.get("LANGUAGES", ["ar"])

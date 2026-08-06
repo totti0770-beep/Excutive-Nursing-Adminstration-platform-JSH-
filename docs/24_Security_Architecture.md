@@ -65,7 +65,11 @@ Roles (`app/security.py`): `system_admin`, `nursing_director`, `department_head`
 - **All mutations are POST.** No state changes via GET, so they cannot be triggered by a
   link, image, or prefetch.
 - **Open-redirect protection:** the post-login `next` parameter is accepted only if it is a
-  same-host relative path.
+  same-host relative path (`app/security.py::is_safe_redirect_target`). The language switch
+  returns the visitor to their previous page through the same guard.
+- **The language switch is a POST**, not a link. It writes the choice to the signed-in
+  user's profile, so it is treated as a state change: CSRF applies, and the language cannot
+  be flipped by a third-party link, image, or prefetch.
 
 ## 6. Security Headers & Content Policy (ترويسات الأمان)
 

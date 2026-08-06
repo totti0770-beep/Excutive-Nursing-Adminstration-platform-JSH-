@@ -11,7 +11,7 @@
         <line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
     </label>
-    <h1 class="text-base sm:text-lg font-bold text-slate-800">{% block page_title %}{{ _('لوحة التحكم') }}{% endblock %}</h1>
+    <h1 class="text-base sm:text-lg font-bold text-slate-800">{{ page_heading or _('لوحة التحكم') }}</h1>
   </div>
 
   <div class="flex items-center gap-3">

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% from 'partials/_macros.html' import field %}
-{% block title %}تسجيل مؤشر{% endblock %}
-{% block page_title %}تسجيل مؤشر أداء{% endblock %}
+{% block title %}{{ _('تسجيل مؤشر') }}{% endblock %}
+{% block page_title %}{{ _('تسجيل مؤشر أداء') }}{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl">
@@ -15,8 +15,8 @@
         {{ field(form.date, ltr=true) }}
       </div>
       <div class="flex items-center gap-3 mt-6">
-        <button type="submit" class="rounded-lg bg-brand-dark text-white text-sm font-medium px-5 py-2.5 hover:bg-slate-800 transition">تسجيل</button>
-        <a href="{{ url_for('performance.list_performance') }}" class="text-sm text-slate-500 hover:underline">إلغاء</a>
+        <button type="submit" class="rounded-lg bg-brand-dark text-white text-sm font-medium px-5 py-2.5 hover:bg-slate-800 transition">{{ _('تسجيل') }}</button>
+        <a href="{{ url_for('performance.list_performance') }}" class="text-sm text-slate-500 hover:underline">{{ _('إلغاء') }}</a>
       </div>
     </form>
   </div>

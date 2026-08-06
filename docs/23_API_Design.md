@@ -50,6 +50,7 @@ authenticated but wrong role → **403** (branded RTL page).
 | GET, POST | `/login` | Public | Login form. **POST rate-limited to 10/min per IP** |
 | POST | `/logout` | Any | Ends the session |
 | GET, POST | `/account/password` | Any | Self-service password change (verifies current password, min 8 chars) |
+| POST | `/lang/<locale>` | Public | Switch interface language (`ar` / `en`); unknown locale → 404. **POST, not GET**, because it writes the choice to the signed-in user's profile — so CSRF applies and the language cannot be flipped by a link, image, or prefetch. Returns to the originating page via the same open-redirect guard as post-login `next`. Open to anonymous visitors so the login page can be switched. |
 
 ### 3.2 Landing
 | Method | Path | Access | Purpose |

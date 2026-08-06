@@ -2,8 +2,9 @@
 ## Nursing Executive Administration System — Jazan Specialty Hospital (JSH)
 
 This folder holds the SDLC documentation set. It was originally written **before** the system
-was built, against a React + Firebase/Firestore design. The delivered system is a
-**Flask + SQLAlchemy** application, so parts of this set no longer describe reality.
+was built, against a React + Firebase/Firestore design. The delivered system is a bilingual
+(Arabic/English) **Flask + SQLAlchemy** application, so parts of this set no longer describe
+reality.
 
 **Read this page first** to know which documents are authoritative.
 
@@ -82,6 +83,7 @@ combined drafts:
 | Routes & permissions | `23_API_Design.md` | `app/blueprints/*/routes.py`, `app/security.py` |
 | Security controls | `24_Security_Architecture.md` | `app/security.py`, `app/audit.py`, `app/__init__.py` |
 | Test coverage | `25_Testing_Strategy.md` | `tests/`, `.github/workflows/ci.yml` |
+| Localisation | `20_Solution_Architecture.md` §3.2, `21_Database_Design.md` §7 | `app/i18n.py`, `app/translations/`, `Makefile` |
 | Project status | `00_PROJECT_AUDIT.md` | — |
 
 ## Maintaining these documents
@@ -91,4 +93,8 @@ combined drafts:
 - Adding or re-gating a route? Update the route map in `23_API_Design.md`.
 - Changing an auth/session/header control? Update `24_Security_Architecture.md`, including
   its **known gaps** section.
+- Adding or rewording a user-facing string? Run `make i18n-update`, fill in the new English
+  entries in `app/translations/en/LC_MESSAGES/messages.po`, then `make i18n-compile`. CI
+  fails on a missing, untranslated, or `fuzzy` entry. Never hand-edit the extraction command:
+  `lazy_gettext` is aliased to `_l`, which a bare `pybabel extract` silently skips.
 - Shipping a module from the "not yet built" list? Move it in `00_PROJECT_AUDIT.md`.

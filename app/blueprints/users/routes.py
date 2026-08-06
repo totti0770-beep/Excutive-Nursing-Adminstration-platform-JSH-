@@ -1,6 +1,7 @@
 """User management routes: list, create, edit, delete (System Admin only)."""
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from flask_login import current_user, login_required
 
 from app.audit import log_action
@@ -16,7 +17,7 @@ MIN_PASSWORD_LEN = 8
 
 def _staff_choices():
     """(0, 'not linked') followed by all staff, labelled with employee id."""
-    choices = [(0, "— غير مرتبط —")]
+    choices = [(0, _("— غير مرتبط —"))]
     choices += [
         (s.id, f"{s.name} ({s.employee_id})")
         for s in Staff.query.order_by(Staff.name).all()
@@ -75,13 +76,16 @@ def new_user():
         staff_id = form.staff_id.data or None
 
         if User.query.filter_by(email=email).first():
-            form.email.errors.append("البريد الإلكتروني مستخدم بالفعل")
+            form.email.errors.append(_("البريد الإلكتروني مستخدم بالفعل"))
         elif len(password) < MIN_PASSWORD_LEN:
             form.password.errors.append(
-                f"كلمة المرور يجب أن تكون {MIN_PASSWORD_LEN} أحرف على الأقل"
+                _(
+                    "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل",
+                    n=MIN_PASSWORD_LEN,
+                )
             )
         elif _staff_link_conflict(staff_id):
-            form.staff_id.errors.append("هذا الموظف مرتبط بحساب آخر بالفعل")
+            form.staff_id.errors.append(_("هذا الموظف مرتبط بحساب آخر بالفعل"))
         else:
             user = User(
                 email=email,
@@ -94,7 +98,7 @@ def new_user():
             db.session.flush()
             log_action("create", "user", user.id, user.email)
             db.session.commit()
-            flash("تمت إضافة المستخدم بنجاح", "success")
+            flash(_("تمت إضافة المستخدم بنجاح"), "success")
             return redirect(url_for("users.list_users"))
 
     return render_template("users/form.html", form=form, mode="new")
@@ -116,13 +120,16 @@ def edit_user(user_id):
         staff_id = form.staff_id.data or None
         clash = User.query.filter(User.email == email, User.id != user.id).first()
         if clash:
-            form.email.errors.append("البريد الإلكتروني مستخدم بالفعل")
+            form.email.errors.append(_("البريد الإلكتروني مستخدم بالفعل"))
         elif password and len(password) < MIN_PASSWORD_LEN:
             form.password.errors.append(
-                f"كلمة المرور يجب أن تكون {MIN_PASSWORD_LEN} أحرف على الأقل"
+                _(
+                    "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل",
+                    n=MIN_PASSWORD_LEN,
+                )
             )
         elif _staff_link_conflict(staff_id, exclude_user_id=user.id):
-            form.staff_id.errors.append("هذا الموظف مرتبط بحساب آخر بالفعل")
+            form.staff_id.errors.append(_("هذا الموظف مرتبط بحساب آخر بالفعل"))
         else:
             user.email = email
             user.role = form.role.data
@@ -132,7 +139,7 @@ def edit_user(user_id):
                 user.set_password(password)
             log_action("update", "user", user.id, user.email)
             db.session.commit()
-            flash("تم تحديث بيانات المستخدم", "success")
+            flash(_("تم تحديث بيانات المستخدم"), "success")
             return redirect(url_for("users.list_users"))
 
     return render_template("users/form.html", form=form, mode="edit", user=user)
@@ -144,10 +151,10 @@ def edit_user(user_id):
 def delete_user(user_id):
     user = db.get_or_404(User, user_id)
     if user.id == current_user.id:
-        flash("لا يمكنك حذف حسابك الحالي", "error")
+        flash(_("لا يمكنك حذف حسابك الحالي"), "error")
         return redirect(url_for("users.list_users"))
     log_action("delete", "user", user.id, user.email)
     db.session.delete(user)
     db.session.commit()
-    flash("تم حذف المستخدم", "success")
+    flash(_("تم حذف المستخدم"), "success")
     return redirect(url_for("users.list_users"))

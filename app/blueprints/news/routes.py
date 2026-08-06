@@ -5,6 +5,7 @@ editing and deleting are restricted to administrators / directors.
 """
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from flask_login import current_user, login_required
 
 from app.audit import log_action
@@ -78,7 +79,7 @@ def new_announcement():
         db.session.flush()
         log_action("create", "announcement", ann.id, ann.title)
         db.session.commit()
-        flash("تم نشر المنشور بنجاح", "success")
+        flash(_("تم نشر المنشور بنجاح"), "success")
         return redirect(url_for("news.feed"))
     return render_template("news/form.html", form=form, mode="new")
 
@@ -97,7 +98,7 @@ def edit_announcement(ann_id):
         ann.pinned = form.pinned.data
         log_action("update", "announcement", ann.id, ann.title)
         db.session.commit()
-        flash("تم تحديث المنشور", "success")
+        flash(_("تم تحديث المنشور"), "success")
         return redirect(url_for("news.detail", ann_id=ann.id))
     return render_template("news/form.html", form=form, mode="edit", ann=ann)
 
@@ -110,5 +111,5 @@ def delete_announcement(ann_id):
     log_action("delete", "announcement", ann.id, ann.title)
     db.session.delete(ann)
     db.session.commit()
-    flash("تم حذف المنشور", "success")
+    flash(_("تم حذف المنشور"), "success")
     return redirect(url_for("news.feed"))

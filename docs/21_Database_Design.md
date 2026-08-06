@@ -71,6 +71,7 @@ diverge, the code wins and this document must be regenerated.
 | `role` | String(80) | NOT NULL — RBAC role |
 | `is_active` | Boolean | NOT NULL, default `true` |
 | `created_at` | DateTime | NOT NULL |
+| `locale` | String(5) | nullable — preferred interface language (`ar` / `en`); NULL means "not chosen yet", so `Accept-Language` decides |
 | `staff_id` | Integer | **FK → `staff.id`** `ON DELETE SET NULL`, nullable, indexed |
 
 *A login is optionally linked to one staff profile. The application enforces **at most one
@@ -139,4 +140,20 @@ Alembic migrations live in `migrations/versions/` and are applied with `flask db
 that no model change is missing a migration — this runs in CI on every push.
 
 Applied migrations, in order: foundation schema → users table → staff profile fields →
-recognition `note` → announcements table → department `head_name` → audit logs table.
+recognition `note` → announcements table → department `head_name` → audit logs table →
+user `locale` preference.
+
+## 7. Localised values vs. stored values (القيم المخزّنة مقابل المعروضة)
+
+The interface is bilingual, but **stored values never vary with the interface language**.
+Two patterns are in use:
+
+| Pattern | Columns | How it works |
+|---|---|---|
+| Key + label | `users.role`, `announcements.category` | A stable ASCII key (`system_admin`, `news`) is stored; the label is translated for display only. |
+| Canonical value | `recognition.award_type`, `performance.metric_name` | The **Arabic string itself** is the stored value. It is registered for translation with a gettext no-op (`app/i18n.py::N_`) and translated only when rendered. |
+
+The second pattern is deliberate. If the English interface stored English award types, rows
+would fragment by the language of whoever created them and the award-type/metric filters
+would stop matching across languages. Regression tests in `tests/test_i18n.py` assert that a
+record created while the interface is in English still stores the Arabic canonical value.

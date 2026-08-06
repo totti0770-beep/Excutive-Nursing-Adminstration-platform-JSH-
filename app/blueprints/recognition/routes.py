@@ -3,6 +3,7 @@
 from datetime import datetime
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
@@ -72,7 +73,10 @@ def list_recognition():
 @login_required
 @role_required(*_MANAGE_ROLES)
 def export_csv():
-    query, _ = _filtered_query()
+    # CSV headers and the status values are deliberately NOT translated:
+    # an export is data interchange, and a header that changed with the
+    # exporter's interface language would break downstream consumers.
+    query, _filters = _filtered_query()
     rows = [
         [
             r.staff.name if r.staff else "",
@@ -100,7 +104,7 @@ def new_recognition():
         form.granted_by.data = current_user.display_name
 
     if not form.staff_id.choices:
-        flash("لا يوجد موظفون. الرجاء إضافة موظف أولاً.", "info")
+        flash(_("لا يوجد موظفون. الرجاء إضافة موظف أولاً."), "info")
         return redirect(url_for("staff.list_staff"))
 
     if form.validate_on_submit():
@@ -121,7 +125,7 @@ def new_recognition():
         db.session.flush()
         log_action("create", "recognition", rec.id, rec.award_type)
         db.session.commit()
-        flash("تم منح التكريم بنجاح", "success")
+        flash(_("تم منح التكريم بنجاح"), "success")
         return redirect(url_for("recognition.list_recognition"))
 
     return render_template("recognition/form.html", form=form)
@@ -135,5 +139,5 @@ def delete_recognition(rec_id):
     log_action("delete", "recognition", rec.id, rec.award_type)
     db.session.delete(rec)
     db.session.commit()
-    flash("تم حذف التكريم", "success")
+    flash(_("تم حذف التكريم"), "success")
     return redirect(url_for("recognition.list_recognition"))

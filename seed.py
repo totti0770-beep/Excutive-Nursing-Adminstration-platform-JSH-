@@ -7,6 +7,8 @@ existing seeded department first). Run with:  python seed.py
 from datetime import date, datetime
 
 from app import create_app
+from app.blueprints.performance import METRICS
+from app.blueprints.recognition import AWARD_TYPES
 from app.extensions import db
 from app.models import Department, Performance, Recognition, Staff
 from app.security import Roles
@@ -61,19 +63,19 @@ def seed():
             [
                 Performance(
                     staff=staff[0],
-                    metric_name="رضا المرضى",
+                    metric_name=METRICS[0],
                     value=92.5,
                     date=date.today(),
                 ),
                 Performance(
                     staff=staff[1],
-                    metric_name="رضا المرضى",
+                    metric_name=METRICS[0],
                     value=88.0,
                     date=date.today(),
                 ),
                 Performance(
                     staff=staff[2],
-                    metric_name="الالتزام بالمناوبات",
+                    metric_name=METRICS[1],
                     value=95.0,
                     date=date.today(),
                 ),
@@ -85,13 +87,13 @@ def seed():
             [
                 Recognition(
                     staff=staff[0],
-                    award_type="جائزة فلورنس",
+                    award_type=AWARD_TYPES[0],  # Florence Nightingale Award
                     granted_by="إدارة التمريض",
                     timestamp=datetime.utcnow(),
                 ),
                 Recognition(
                     staff=staff[3],
-                    award_type="ممرض الشهر",
+                    award_type=AWARD_TYPES[1],  # Nurse of the Month
                     granted_by="رئيس القسم",
                     timestamp=datetime.utcnow(),
                 ),

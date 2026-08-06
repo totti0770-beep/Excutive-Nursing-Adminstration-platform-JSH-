@@ -68,6 +68,7 @@ erDiagram
         string role
         bool is_active
         datetime created_at
+        string locale
         int staff_id FK
     }
     PERFORMANCE {

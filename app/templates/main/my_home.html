@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}الرئيسية{% endblock %}
-{% block page_title %}الرئيسية{% endblock %}
+{% block title %}{{ _('الرئيسية') }}{% endblock %}
+{% block page_title %}{{ _('الرئيسية') }}{% endblock %}
 
 {% set cat_styles = {
   'news': 'bg-sky-50 text-sky-700',
@@ -11,7 +11,7 @@
 {% block content %}
 <div class="mb-6">
   <h2 class="text-xl font-bold text-slate-800">
-    مرحباً{% if staff %}، {{ staff.name }}{% endif %}
+    {% if staff %}{{ _('مرحباً، %(name)s', name=staff.name) }}{% else %}{{ _('مرحباً') }}{% endif %}
   </h2>
   <p class="text-sm text-slate-500 mt-1">{{ config.ORG_NAME }}</p>
 </div>
@@ -20,19 +20,19 @@
   <!-- Profile card -->
   <div>
     <div class="bg-white rounded-2xl border border-slate-200 p-5">
-      <h3 class="font-bold text-slate-800 mb-3">ملفي الشخصي</h3>
+      <h3 class="font-bold text-slate-800 mb-3">{{ _('ملفي الشخصي') }}</h3>
       {% if staff %}
       <dl class="space-y-2 text-sm">
-        <div class="flex justify-between"><dt class="text-slate-500">الاسم</dt><dd class="text-slate-700">{{ staff.name }}</dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">الرقم الوظيفي</dt><dd class="text-slate-700 ltr-nums">{{ staff.employee_id }}</dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">القسم</dt><dd class="text-slate-700">{{ staff.department.name if staff.department else '—' }}</dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">الحالة</dt><dd>
-          {% if staff.is_active %}<span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">نشط</span>
-          {% else %}<span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">غير نشط</span>{% endif %}
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('الاسم') }}</dt><dd class="text-slate-700">{{ staff.name }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('الرقم الوظيفي') }}</dt><dd class="text-slate-700 ltr-nums">{{ staff.employee_id }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('القسم') }}</dt><dd class="text-slate-700">{{ staff.department.name if staff.department else '—' }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('الحالة') }}</dt><dd>
+          {% if staff.is_active %}<span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">{{ _('نشط') }}</span>
+          {% else %}<span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{{ _('غير نشط') }}</span>{% endif %}
         </dd></div>
       </dl>
       {% else %}
-      <p class="text-sm text-slate-400">لم يتم ربط حسابك بملف موظف بعد. الرجاء التواصل مع إدارة النظام.</p>
+      <p class="text-sm text-slate-400">{{ _('لم يتم ربط حسابك بملف موظف بعد. الرجاء التواصل مع إدارة النظام.') }}</p>
       {% endif %}
     </div>
   </div>
@@ -40,7 +40,7 @@
   <!-- My awards + recent news -->
   <div class="lg:col-span-2 space-y-5">
     <div class="bg-white rounded-2xl border border-slate-200 p-5">
-      <h3 class="font-bold text-slate-800 mb-3">تكريماتي</h3>
+      <h3 class="font-bold text-slate-800 mb-3">{{ _('تكريماتي') }}</h3>
       {% if my_recognitions %}
       <ul class="space-y-3">
         {% for r in my_recognitions %}
@@ -49,7 +49,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
           </span>
           <div>
-            <p class="text-sm font-medium text-slate-800">{{ r.award_type }}</p>
+            <p class="text-sm font-medium text-slate-800">{{ _(r.award_type) }}</p>
             {% if r.note %}<p class="text-xs text-slate-500">{{ r.note }}</p>{% endif %}
             <p class="text-[11px] text-slate-400">{{ r.timestamp.strftime('%Y-%m-%d') }}</p>
           </div>
@@ -57,14 +57,14 @@
         {% endfor %}
       </ul>
       {% else %}
-      <p class="text-sm text-slate-400">لا توجد تكريمات بعد</p>
+      <p class="text-sm text-slate-400">{{ _('لا توجد تكريمات بعد') }}</p>
       {% endif %}
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 p-5">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-slate-800">آخر الأخبار</h3>
-        <a href="{{ url_for('news.feed') }}" class="text-xs text-sky-600 hover:underline">عرض الكل</a>
+        <h3 class="font-bold text-slate-800">{{ _('آخر الأخبار') }}</h3>
+        <a href="{{ url_for('news.feed') }}" class="text-xs text-sky-600 hover:underline">{{ _('عرض الكل') }}</a>
       </div>
       {% if recent_news %}
       <ul class="space-y-3">
@@ -77,7 +77,7 @@
         {% endfor %}
       </ul>
       {% else %}
-      <p class="text-sm text-slate-400">لا توجد أخبار حالياً</p>
+      <p class="text-sm text-slate-400">{{ _('لا توجد أخبار حالياً') }}</p>
       {% endif %}
     </div>
   </div>

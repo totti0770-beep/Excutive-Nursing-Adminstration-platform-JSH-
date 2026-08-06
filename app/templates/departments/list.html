@@ -1,28 +1,28 @@
 {% extends 'base.html' %}
 {% from 'partials/_macros.html' import pagination as pager %}
-{% block title %}الأقسام{% endblock %}
-{% block page_title %}الأقسام{% endblock %}
+{% block title %}{{ _('الأقسام') }}{% endblock %}
+{% block page_title %}{{ _('الأقسام') }}{% endblock %}
 
 {% block content %}
 <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
   <div>
-    <h2 class="text-xl font-bold text-slate-800">أقسام إدارة التمريض</h2>
-    <p class="text-sm text-slate-500 mt-1">إجمالي الأقسام: {{ pagination.total }}</p>
+    <h2 class="text-xl font-bold text-slate-800">{{ _('أقسام إدارة التمريض') }}</h2>
+    <p class="text-sm text-slate-500 mt-1">{{ _('إجمالي الأقسام:') }} {{ pagination.total }}</p>
   </div>
   <a href="{{ url_for('departments.new_department') }}"
      class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
          stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    إضافة قسم
+    {{ _('إضافة قسم') }}
   </a>
 </div>
 
 <!-- Search -->
 <form method="GET" action="{{ url_for('departments.list_departments') }}"
       class="bg-white rounded-2xl border border-slate-200 p-4 mb-5 flex gap-3">
-  <input type="text" name="q" value="{{ filters.q }}" placeholder="بحث باسم القسم"
+  <input type="text" name="q" value="{{ filters.q }}" placeholder="{{ _('بحث باسم القسم') }}"
          class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none" />
-  <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">بحث</button>
+  <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">{{ _('بحث') }}</button>
 </form>
 
 <!-- Departments table -->
@@ -31,11 +31,11 @@
     <table class="w-full text-sm text-start">
       <thead class="bg-slate-50 text-slate-500">
         <tr>
-          <th class="px-4 py-3 font-medium">القسم</th>
-          <th class="px-4 py-3 font-medium">الموقع</th>
-          <th class="px-4 py-3 font-medium">رئيس القسم</th>
-          <th class="px-4 py-3 font-medium">عدد الموظفين</th>
-          <th class="px-4 py-3 font-medium">إجراءات</th>
+          <th class="px-4 py-3 font-medium">{{ _('القسم') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('الموقع') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('رئيس القسم') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('عدد الموظفين') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('إجراءات') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -52,13 +52,13 @@
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center gap-2">
-              <a href="{{ url_for('departments.detail', dept_id=dept.id) }}" class="text-xs text-sky-600 hover:underline">عرض</a>
-              <a href="{{ url_for('departments.edit_department', dept_id=dept.id) }}" class="text-xs text-slate-500 hover:underline">تعديل</a>
+              <a href="{{ url_for('departments.detail', dept_id=dept.id) }}" class="text-xs text-sky-600 hover:underline">{{ _('عرض') }}</a>
+              <a href="{{ url_for('departments.edit_department', dept_id=dept.id) }}" class="text-xs text-slate-500 hover:underline">{{ _('تعديل') }}</a>
             </div>
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">لا توجد أقسام مطابقة</td></tr>
+        <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">{{ _('لا توجد أقسام مطابقة') }}</td></tr>
         {% endfor %}
       </tbody>
     </table>

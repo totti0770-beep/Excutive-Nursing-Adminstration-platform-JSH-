@@ -3,6 +3,7 @@
 from datetime import date as date_cls
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from flask_login import login_required
 from sqlalchemy import func
 
@@ -73,7 +74,7 @@ def new_performance():
     form = PerformanceForm()
     form.staff_id.choices = _staff_choices()
     if not form.staff_id.choices:
-        flash("لا يوجد موظفون. الرجاء إضافة موظف أولاً.", "info")
+        flash(_("لا يوجد موظفون. الرجاء إضافة موظف أولاً."), "info")
         return redirect(url_for("staff.list_staff"))
 
     if form.validate_on_submit():
@@ -87,7 +88,7 @@ def new_performance():
         db.session.flush()
         log_action("create", "performance", rec.id, rec.metric_name)
         db.session.commit()
-        flash("تم تسجيل المؤشر بنجاح", "success")
+        flash(_("تم تسجيل المؤشر بنجاح"), "success")
         return redirect(url_for("performance.list_performance"))
 
     return render_template("performance/form.html", form=form)
@@ -97,7 +98,10 @@ def new_performance():
 @login_required
 @role_required(*_MANAGE_ROLES)
 def export_csv():
-    query, _, _ = _filtered_query()
+    # CSV headers and the status values are deliberately NOT translated:
+    # an export is data interchange, and a header that changed with the
+    # exporter's interface language would break downstream consumers.
+    query, _metric, _department_id = _filtered_query()
     rows = [
         [
             e.staff.name if e.staff else "",
@@ -123,5 +127,5 @@ def delete_performance(perf_id):
     log_action("delete", "performance", rec.id, rec.metric_name)
     db.session.delete(rec)
     db.session.commit()
-    flash("تم حذف المؤشر", "success")
+    flash(_("تم حذف المؤشر"), "success")
     return redirect(url_for("performance.list_performance"))

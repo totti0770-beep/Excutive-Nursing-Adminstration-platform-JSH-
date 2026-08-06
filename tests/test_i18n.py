@@ -165,14 +165,135 @@ def test_unknown_accept_language_falls_back_to_arabic(client):
     assert 'dir="rtl"' in html
 
 
-# --- coverage of the translated shell ------------------------------------
+# --- coverage of every translated page ------------------------------------
 
 
-@pytest.mark.parametrize("path", ["/", "/me", "/news/", "/account/password"])
-def test_authenticated_pages_render_in_both_locales(client, path):
+ALL_PAGES = [
+    "/",
+    "/me",
+    "/account/password",
+    "/staff/",
+    "/staff/new",
+    "/departments/",
+    "/departments/new",
+    "/recognition/",
+    "/recognition/new",
+    "/performance/",
+    "/performance/new",
+    "/news/",
+    "/news/new",
+    "/users/",
+    "/users/new",
+    "/audit/",
+]
+
+
+@pytest.mark.parametrize("path", ALL_PAGES)
+def test_pages_render_in_both_locales(client, path):
     client.post("/login", data={"email": ADMIN_EMAIL, "password": PASSWORD})
     for locale, direction in (("ar", "rtl"), ("en", "ltr")):
         client.post(f"/lang/{locale}", data={"next": path})
         resp = client.get(path)
         assert resp.status_code == 200, f"{path} failed in {locale}"
         assert f'dir="{direction}"' in _html(resp)
+
+
+def test_english_pages_are_actually_translated(client):
+    """Guards against a page rendering English chrome around Arabic content."""
+    client.post("/login", data={"email": ADMIN_EMAIL, "password": PASSWORD})
+    client.post("/lang/en", data={"next": "/staff/"})
+    for path, expected in (
+        ("/staff/", "Nursing staff database"),
+        ("/departments/", "Nursing administration departments"),
+        ("/users/", "User accounts"),
+        ("/audit/", "Audit trail"),
+        ("/performance/", "Performance metrics"),
+        ("/recognition/", "Recognition & awards"),
+    ):
+        assert expected in _html(client.get(path)), f"{path} not translated"
+
+
+# --- stored vocabularies must not follow the interface language ------------
+#
+# Award types and metric names are written to the database verbatim. If the
+# English UI submitted the translated label, rows would fragment by the
+# author's language and the filters would stop matching across languages.
+
+
+def test_award_created_in_english_stores_the_canonical_arabic_value(app, client):
+    client.post("/login", data={"email": ADMIN_EMAIL, "password": PASSWORD})
+    client.post("/lang/en", data={"next": "/recognition/"})
+
+    # The English form must still offer the canonical value as the option value.
+    form_html = _html(client.get("/recognition/new"))
+    assert 'value="ممرض/ممرضة الشهر"' in form_html
+    assert "Nurse of the Month" in form_html  # ...displayed in English
+
+    with app.app_context():
+        from app.models import Staff
+
+        staff_id = Staff.query.order_by(Staff.name).first().id
+
+    client.post(
+        "/recognition/new",
+        data={
+            "staff_id": staff_id,
+            "award_type": "ممرض/ممرضة الشهر",
+            "granted_by": "admin",
+        },
+    )
+
+    with app.app_context():
+        from app.models import Recognition
+
+        stored = [r.award_type for r in Recognition.query.all()]
+        assert "Nurse of the Month" not in stored
+        assert "ممرض/ممرضة الشهر" in stored
+
+    # ...and the filter still matches it while the UI is in English.
+    filtered = _html(client.get("/recognition/?award_type=ممرض/ممرضة الشهر"))
+    assert "Nurse of the Month" in filtered
+
+
+def test_metric_recorded_in_english_stores_the_canonical_arabic_value(app, client):
+    client.post("/login", data={"email": ADMIN_EMAIL, "password": PASSWORD})
+    client.post("/lang/en", data={"next": "/performance/"})
+
+    with app.app_context():
+        from app.models import Staff
+
+        staff_id = Staff.query.order_by(Staff.name).first().id
+
+    client.post(
+        "/performance/new",
+        data={"staff_id": staff_id, "metric_name": "جودة الرعاية", "value": "88"},
+    )
+
+    with app.app_context():
+        from app.models import Performance
+
+        stored = [p.metric_name for p in Performance.query.all()]
+        assert "Quality of care" not in stored
+        assert "جودة الرعاية" in stored
+
+
+def test_role_is_stored_as_its_key_not_its_label(app, client):
+    """Role labels are localised; the stored role value must not be."""
+    client.post("/login", data={"email": ADMIN_EMAIL, "password": PASSWORD})
+    client.post("/lang/en", data={"next": "/users/"})
+    client.post(
+        "/users/new",
+        data={
+            "email": "newperson@jazanhospital.com",
+            "password": "StrongPass123",
+            "role": "nursing_director",
+            "staff_id": 0,
+            "is_active": "y",
+        },
+    )
+    with app.app_context():
+        from app.models import User
+
+        created = User.query.filter_by(email="newperson@jazanhospital.com").first()
+        assert created is not None
+        assert created.role == "nursing_director"

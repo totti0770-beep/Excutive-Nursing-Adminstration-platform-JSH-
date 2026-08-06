@@ -9,6 +9,7 @@ from functools import wraps
 from urllib.parse import urlparse
 
 from flask import abort
+from flask_babel import lazy_gettext as _l
 from flask_login import current_user
 
 
@@ -34,18 +35,20 @@ class Roles:
 
     ALL = (SYSTEM_ADMIN, NURSING_DIRECTOR, DEPARTMENT_HEAD, STAFF_NURSE)
 
-    # Arabic display labels for UI dropdowns and tables.
-    LABELS_AR = {
-        SYSTEM_ADMIN: "مدير النظام",
-        NURSING_DIRECTOR: "مدير التمريض",
-        DEPARTMENT_HEAD: "رئيس قسم",
-        STAFF_NURSE: "ممرض/ممرضة",
+    # Display labels for dropdowns and tables. Only the label is localised —
+    # the key above is what is stored on the record, so it never varies with
+    # the interface language.
+    LABELS = {
+        SYSTEM_ADMIN: _l("مدير النظام"),
+        NURSING_DIRECTOR: _l("مدير التمريض"),
+        DEPARTMENT_HEAD: _l("رئيس قسم"),
+        STAFF_NURSE: _l("ممرض/ممرضة"),
     }
 
     @classmethod
     def label(cls, role):
-        """Arabic label for a role value (falls back to the raw value)."""
-        return cls.LABELS_AR.get(role, role or "—")
+        """Localised label for a role value (falls back to the raw value)."""
+        return cls.LABELS.get(role, role or "—")
 
 
 def role_required(*roles):

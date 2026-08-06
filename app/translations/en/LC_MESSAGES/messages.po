@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nursing Executive Administration System 1.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-08-06 17:36+0000\n"
+"POT-Creation-Date: 2026-08-06 19:13+0000\n"
 "PO-Revision-Date: 2026-08-06 17:24+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -53,23 +53,39 @@ msgstr "Server error"
 
 #: app/errors.py:13
 msgid "حدث خطأ غير متوقع. تم تسجيل المشكلة وسنعمل على معالجتها."
-msgstr ""
-"An unexpected error occurred. The problem has been logged and will be "
-"addressed."
+msgstr "An unexpected error occurred. The problem has been logged and will be addressed."
 
-#: app/blueprints/auth/forms.py:11
+#: app/security.py:42
+msgid "مدير النظام"
+msgstr "System Administrator"
+
+#: app/security.py:43
+msgid "مدير التمريض"
+msgstr "Nursing Director"
+
+#: app/security.py:44
+msgid "رئيس قسم"
+msgstr "Department Head"
+
+#: app/security.py:45
+msgid "ممرض/ممرضة"
+msgstr "Nurse"
+
+#: app/blueprints/auth/forms.py:11 app/blueprints/staff/forms.py:32
+#: app/blueprints/users/forms.py:13 app/templates/users/list.html:42
 msgid "البريد الإلكتروني"
 msgstr "Email address"
 
-#: app/blueprints/auth/forms.py:13
+#: app/blueprints/auth/forms.py:13 app/blueprints/users/forms.py:15
 msgid "الرجاء إدخال البريد الإلكتروني"
 msgstr "Please enter your email address"
 
-#: app/blueprints/auth/forms.py:14
+#: app/blueprints/auth/forms.py:14 app/blueprints/staff/forms.py:35
+#: app/blueprints/users/forms.py:16
 msgid "بريد إلكتروني غير صالح"
 msgstr "Invalid email address"
 
-#: app/blueprints/auth/forms.py:18
+#: app/blueprints/auth/forms.py:18 app/blueprints/users/forms.py:29
 msgid "كلمة المرور"
 msgstr "Password"
 
@@ -133,11 +149,54 @@ msgstr "Current password is incorrect"
 msgid "تم تغيير كلمة المرور بنجاح"
 msgstr "Password changed successfully"
 
+#: app/blueprints/departments/forms.py:11
+msgid "اسم القسم"
+msgstr "Department name"
+
+#: app/blueprints/departments/forms.py:12
+msgid "الرجاء إدخال اسم القسم"
+msgstr "Please enter the department name"
+
+#: app/blueprints/departments/forms.py:14 app/templates/departments/detail.html:19
+#: app/templates/departments/list.html:35
+msgid "الموقع"
+msgstr "Location"
+
+#: app/blueprints/departments/forms.py:15 app/templates/departments/detail.html:20
+#: app/templates/departments/list.html:36
+msgid "رئيس القسم"
+msgstr "Department head"
+
+#: app/blueprints/departments/routes.py:66 app/blueprints/departments/routes.py:94
+msgid "اسم القسم مستخدم بالفعل"
+msgstr "That department name is already in use"
+
+#: app/blueprints/departments/routes.py:77
+msgid "تمت إضافة القسم بنجاح"
+msgstr "Department added successfully"
+
+#: app/blueprints/departments/routes.py:101
+msgid "تم تحديث بيانات القسم"
+msgstr "Department details updated"
+
+#: app/blueprints/departments/routes.py:115
+#, python-format
+msgid "لا يمكن حذف قسم يحتوي على موظفين (%(count)d). الرجاء نقل الموظفين إلى قسم آخر أولاً."
+msgstr ""
+"This department cannot be deleted while it has staff (%(count)d). Please move the "
+"staff to another department first."
+
+#: app/blueprints/departments/routes.py:125
+msgid "تم حذف القسم"
+msgstr "Department deleted"
+
 #: app/blueprints/main/routes.py:93
 msgid "إجمالي طاقم التمريض"
 msgstr "Total nursing staff"
 
-#: app/blueprints/main/routes.py:100 app/templates/partials/sidebar.html:43
+#: app/blueprints/main/routes.py:100 app/templates/departments/detail.html:3
+#: app/templates/departments/list.html:3 app/templates/departments/list.html:4
+#: app/templates/partials/sidebar.html:43
 msgid "الأقسام"
 msgstr "Departments"
 
@@ -149,8 +208,327 @@ msgstr "Awards granted"
 msgid "متوسط الأداء"
 msgstr "Average performance"
 
-#: app/templates/auth/change_password.html:3
-#: app/templates/auth/change_password.html:4
+#: app/blueprints/news/__init__.py:11
+msgid "أخبار"
+msgstr "News"
+
+#: app/blueprints/news/__init__.py:12
+msgid "إعلان"
+msgstr "Announcement"
+
+#: app/blueprints/news/__init__.py:13
+msgid "فعالية"
+msgstr "Event"
+
+#: app/blueprints/news/forms.py:13
+msgid "العنوان"
+msgstr "Title"
+
+#: app/blueprints/news/forms.py:14
+msgid "الرجاء إدخال العنوان"
+msgstr "Please enter a title"
+
+#: app/blueprints/news/forms.py:17
+msgid "التصنيف"
+msgstr "Category"
+
+#: app/blueprints/news/forms.py:19
+msgid "الرجاء اختيار التصنيف"
+msgstr "Please choose a category"
+
+#: app/blueprints/news/forms.py:22
+msgid "المحتوى"
+msgstr "Content"
+
+#: app/blueprints/news/forms.py:23
+msgid "الرجاء إدخال المحتوى"
+msgstr "Please enter the content"
+
+#: app/blueprints/news/forms.py:25
+msgid "منشور"
+msgstr "Published"
+
+#: app/blueprints/news/forms.py:26 app/templates/news/detail.html:18
+#: app/templates/news/list.html:44
+msgid "مثبّت"
+msgstr "Pinned"
+
+#: app/blueprints/news/routes.py:82
+msgid "تم نشر المنشور بنجاح"
+msgstr "Post published successfully"
+
+#: app/blueprints/news/routes.py:101
+msgid "تم تحديث المنشور"
+msgstr "Post updated"
+
+#: app/blueprints/news/routes.py:114
+msgid "تم حذف المنشور"
+msgstr "Post deleted"
+
+#: app/blueprints/performance/__init__.py:13
+msgid "رضا المرضى"
+msgstr "Patient satisfaction"
+
+#: app/blueprints/performance/__init__.py:14
+msgid "الالتزام بالمناوبات"
+msgstr "Shift adherence"
+
+#: app/blueprints/performance/__init__.py:15
+msgid "جودة الرعاية"
+msgstr "Quality of care"
+
+#: app/blueprints/performance/__init__.py:16
+msgid "الالتزام بمعايير السلامة"
+msgstr "Safety standards compliance"
+
+#: app/blueprints/performance/__init__.py:17
+msgid "التطوير المهني"
+msgstr "Professional development"
+
+#: app/blueprints/performance/forms.py:14 app/blueprints/recognition/forms.py:14
+#: app/templates/performance/list.html:50
+msgid "الموظف"
+msgstr "Staff member"
+
+#: app/blueprints/performance/forms.py:16 app/blueprints/recognition/forms.py:16
+msgid "الرجاء اختيار الموظف"
+msgstr "Please choose a staff member"
+
+#: app/blueprints/performance/forms.py:19 app/templates/performance/list.html:52
+msgid "المؤشر"
+msgstr "Metric"
+
+#: app/blueprints/performance/forms.py:23
+msgid "الرجاء اختيار المؤشر"
+msgstr "Please choose a metric"
+
+#: app/blueprints/performance/forms.py:26
+msgid "القيمة (%)"
+msgstr "Value (%)"
+
+#: app/blueprints/performance/forms.py:28
+msgid "الرجاء إدخال القيمة"
+msgstr "Please enter a value"
+
+#: app/blueprints/performance/forms.py:29
+msgid "القيمة يجب أن تكون بين 0 و 100"
+msgstr "Value must be between 0 and 100"
+
+#: app/blueprints/performance/forms.py:32 app/blueprints/recognition/forms.py:26
+#: app/templates/performance/list.html:54
+msgid "التاريخ"
+msgstr "Date"
+
+#: app/blueprints/performance/routes.py:77 app/blueprints/recognition/routes.py:107
+msgid "لا يوجد موظفون. الرجاء إضافة موظف أولاً."
+msgstr "There are no staff yet. Please add a staff member first."
+
+#: app/blueprints/performance/routes.py:91
+msgid "تم تسجيل المؤشر بنجاح"
+msgstr "Metric recorded successfully"
+
+#: app/blueprints/performance/routes.py:130
+msgid "تم حذف المؤشر"
+msgstr "Metric deleted"
+
+#: app/blueprints/recognition/__init__.py:15
+msgid "جائزة فلورنس نايتنجيل"
+msgstr "Florence Nightingale Award"
+
+#: app/blueprints/recognition/__init__.py:16
+msgid "ممرض/ممرضة الشهر"
+msgstr "Nurse of the Month"
+
+#: app/blueprints/recognition/__init__.py:17
+msgid "شكر وتقدير"
+msgstr "Thanks and Appreciation"
+
+#: app/blueprints/recognition/__init__.py:18
+msgid "التميز في خدمة المرضى"
+msgstr "Excellence in Patient Care"
+
+#: app/blueprints/recognition/__init__.py:19
+msgid "روح الفريق"
+msgstr "Team Spirit"
+
+#: app/blueprints/recognition/forms.py:19
+msgid "نوع التكريم"
+msgstr "Award type"
+
+#: app/blueprints/recognition/forms.py:23
+msgid "الرجاء اختيار نوع التكريم"
+msgstr "Please choose an award type"
+
+#: app/blueprints/recognition/forms.py:25 app/templates/recognition/list.html:61
+msgid "مُنح بواسطة"
+msgstr "Granted by"
+
+#: app/blueprints/recognition/forms.py:27
+msgid "سبب التكريم"
+msgstr "Reason for the award"
+
+#: app/blueprints/recognition/routes.py:128
+msgid "تم منح التكريم بنجاح"
+msgstr "Award granted successfully"
+
+#: app/blueprints/recognition/routes.py:142
+msgid "تم حذف التكريم"
+msgstr "Award deleted"
+
+#: app/blueprints/staff/forms.py:13 app/templates/departments/detail.html:45
+#: app/templates/main/my_home.html:26 app/templates/staff/list.html:62
+msgid "الاسم"
+msgstr "Name"
+
+#: app/blueprints/staff/forms.py:14
+msgid "الرجاء إدخال الاسم"
+msgstr "Please enter the name"
+
+#: app/blueprints/staff/forms.py:17 app/templates/departments/detail.html:46
+#: app/templates/main/my_home.html:27 app/templates/staff/list.html:63
+msgid "الرقم الوظيفي"
+msgstr "Employee ID"
+
+#: app/blueprints/staff/forms.py:18
+msgid "الرجاء إدخال الرقم الوظيفي"
+msgstr "Please enter the employee ID"
+
+#: app/blueprints/staff/forms.py:21 app/blueprints/users/forms.py:21
+#: app/templates/departments/detail.html:47 app/templates/staff/list.html:64
+#: app/templates/users/list.html:43
+msgid "الدور"
+msgstr "Role"
+
+#: app/blueprints/staff/forms.py:23 app/blueprints/users/forms.py:23
+msgid "الرجاء اختيار الدور"
+msgstr "Please choose a role"
+
+#: app/blueprints/staff/forms.py:27 app/templates/departments/list.html:34
+#: app/templates/main/my_home.html:28 app/templates/performance/list.html:51
+#: app/templates/staff/list.html:65
+msgid "القسم"
+msgstr "Department"
+
+#: app/blueprints/staff/forms.py:29
+msgid "الرجاء اختيار القسم"
+msgstr "Please choose a department"
+
+#: app/blueprints/staff/forms.py:39
+msgid "الهاتف"
+msgstr "Phone"
+
+#: app/blueprints/staff/forms.py:40
+msgid "تاريخ التعيين"
+msgstr "Hire date"
+
+#: app/blueprints/staff/forms.py:41 app/blueprints/users/forms.py:30
+#: app/templates/departments/detail.html:59 app/templates/main/my_home.html:30
+#: app/templates/staff/list.html:49 app/templates/staff/list.html:79
+#: app/templates/users/list.html:59
+msgid "نشط"
+msgstr "Active"
+
+#: app/blueprints/staff/routes.py:119 app/blueprints/staff/routes.py:147
+msgid "الرقم الوظيفي مستخدم بالفعل"
+msgstr "That employee ID is already in use"
+
+#: app/blueprints/staff/routes.py:127
+msgid "تمت إضافة الموظف بنجاح"
+msgstr "Staff member added successfully"
+
+#: app/blueprints/staff/routes.py:152
+msgid "تم تحديث بيانات الموظف"
+msgstr "Staff details updated"
+
+#: app/blueprints/staff/routes.py:166
+msgid "تم حذف الموظف"
+msgstr "Staff member deleted"
+
+#: app/blueprints/users/forms.py:26
+msgid "ملف الموظف المرتبط"
+msgstr "Linked staff profile"
+
+#: app/blueprints/users/routes.py:20
+msgid "— غير مرتبط —"
+msgstr "— Not linked —"
+
+#: app/blueprints/users/routes.py:79 app/blueprints/users/routes.py:123
+msgid "البريد الإلكتروني مستخدم بالفعل"
+msgstr "That email address is already in use"
+
+#: app/blueprints/users/routes.py:83 app/blueprints/users/routes.py:127
+#, python-format
+msgid "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل"
+msgstr "Password must be at least %(n)d characters"
+
+#: app/blueprints/users/routes.py:88 app/blueprints/users/routes.py:132
+msgid "هذا الموظف مرتبط بحساب آخر بالفعل"
+msgstr "This staff member is already linked to another account"
+
+#: app/blueprints/users/routes.py:101
+msgid "تمت إضافة المستخدم بنجاح"
+msgstr "User added successfully"
+
+#: app/blueprints/users/routes.py:142
+msgid "تم تحديث بيانات المستخدم"
+msgstr "User details updated"
+
+#: app/blueprints/users/routes.py:154
+msgid "لا يمكنك حذف حسابك الحالي"
+msgstr "You cannot delete your own account"
+
+#: app/blueprints/users/routes.py:159
+msgid "تم حذف المستخدم"
+msgstr "User deleted"
+
+#: app/templates/audit/list.html:3 app/templates/audit/list.html:4
+#: app/templates/audit/list.html:19 app/templates/partials/sidebar.html:56
+msgid "سجل التدقيق"
+msgstr "Audit trail"
+
+#: app/templates/audit/list.html:20 app/templates/performance/list.html:10
+msgid "إجمالي السجلات:"
+msgstr "Total records:"
+
+#: app/templates/audit/list.html:27
+msgid "كل الإجراءات"
+msgstr "All actions"
+
+#: app/templates/audit/list.html:33
+msgid "كل الأنواع"
+msgstr "All types"
+
+#: app/templates/audit/list.html:38 app/templates/performance/list.html:42
+#: app/templates/recognition/list.html:44 app/templates/staff/list.html:52
+#: app/templates/users/list.html:32
+msgid "تصفية"
+msgstr "Filter"
+
+#: app/templates/audit/list.html:46
+msgid "الوقت"
+msgstr "Time"
+
+#: app/templates/audit/list.html:47
+msgid "المستخدم"
+msgstr "User"
+
+#: app/templates/audit/list.html:48
+msgid "الإجراء"
+msgstr "Action"
+
+#: app/templates/audit/list.html:49
+msgid "النوع"
+msgstr "Type"
+
+#: app/templates/audit/list.html:50
+msgid "التفاصيل"
+msgstr "Details"
+
+#: app/templates/audit/list.html:65 app/templates/performance/list.html:74
+msgid "لا توجد سجلات"
+msgstr "No records"
+
+#: app/templates/auth/change_password.html:3 app/templates/auth/change_password.html:4
 #: app/templates/partials/header.html:36
 msgid "تغيير كلمة المرور"
 msgstr "Change password"
@@ -159,7 +537,10 @@ msgstr "Change password"
 msgid "حفظ"
 msgstr "Save"
 
-#: app/templates/auth/change_password.html:18
+#: app/templates/auth/change_password.html:18 app/templates/departments/form.html:21
+#: app/templates/news/form.html:27 app/templates/performance/form.html:19
+#: app/templates/recognition/form.html:23 app/templates/staff/form.html:29
+#: app/templates/users/form.html:34
 msgid "إلغاء"
 msgstr "Cancel"
 
@@ -175,6 +556,101 @@ msgstr "N"
 #: app/templates/auth/login.html:53
 msgid "دخول"
 msgstr "Sign in"
+
+#: app/templates/departments/detail.html:6
+msgid "العودة إلى الأقسام"
+msgstr "Back to departments"
+
+#: app/templates/departments/detail.html:21 app/templates/departments/list.html:37
+msgid "عدد الموظفين"
+msgstr "Staff count"
+
+#: app/templates/departments/detail.html:24 app/templates/departments/list.html:56
+#: app/templates/news/detail.html:31 app/templates/news/list.html:57
+#: app/templates/staff/list.html:87 app/templates/users/list.html:66
+msgid "تعديل"
+msgstr "Edit"
+
+#: app/templates/departments/detail.html:25
+msgid "عرض في قاعدة بيانات الطاقم"
+msgstr "View in the staff database"
+
+#: app/templates/departments/detail.html:27
+#, python-format
+msgid "تأكيد حذف قسم %(name)s؟"
+msgstr "Delete the %(name)s department?"
+
+#: app/templates/departments/detail.html:29 app/templates/news/detail.html:34
+#: app/templates/performance/list.html:69 app/templates/recognition/list.html:68
+#: app/templates/staff/list.html:91 app/templates/users/list.html:71
+msgid "حذف"
+msgstr "Delete"
+
+#: app/templates/departments/detail.html:39
+msgid "طاقم القسم"
+msgstr "Department staff"
+
+#: app/templates/departments/detail.html:48 app/templates/main/my_home.html:29
+#: app/templates/staff/list.html:66 app/templates/users/list.html:45
+msgid "الحالة"
+msgstr "Status"
+
+#: app/templates/departments/detail.html:61 app/templates/main/my_home.html:31
+#: app/templates/staff/list.html:50 app/templates/staff/list.html:81
+msgid "غير نشط"
+msgstr "Inactive"
+
+#: app/templates/departments/detail.html:66
+msgid "لا يوجد موظفون في هذا القسم"
+msgstr "No staff in this department"
+
+#: app/templates/departments/form.html:2 app/templates/departments/form.html:3
+msgid "تعديل قسم"
+msgstr "Edit department"
+
+#: app/templates/departments/form.html:2 app/templates/departments/form.html:3
+#: app/templates/departments/list.html:16
+msgid "إضافة قسم"
+msgstr "Add department"
+
+#: app/templates/departments/form.html:19 app/templates/news/form.html:26
+#: app/templates/staff/form.html:27 app/templates/users/form.html:32
+msgid "حفظ التغييرات"
+msgstr "Save changes"
+
+#: app/templates/departments/form.html:19 app/templates/staff/form.html:27
+#: app/templates/users/form.html:32
+msgid "إضافة"
+msgstr "Add"
+
+#: app/templates/departments/list.html:9
+msgid "أقسام إدارة التمريض"
+msgstr "Nursing administration departments"
+
+#: app/templates/departments/list.html:10
+msgid "إجمالي الأقسام:"
+msgstr "Total departments:"
+
+#: app/templates/departments/list.html:23
+msgid "بحث باسم القسم"
+msgstr "Search by department name"
+
+#: app/templates/departments/list.html:25
+msgid "بحث"
+msgstr "Search"
+
+#: app/templates/departments/list.html:38 app/templates/performance/list.html:55
+#: app/templates/staff/list.html:67 app/templates/users/list.html:46
+msgid "إجراءات"
+msgstr "Actions"
+
+#: app/templates/departments/list.html:55
+msgid "عرض"
+msgstr "View"
+
+#: app/templates/departments/list.html:61
+msgid "لا توجد أقسام مطابقة"
+msgstr "No matching departments"
 
 #: app/templates/errors/error.html:17
 msgid "العودة إلى الصفحة الرئيسية"
@@ -199,17 +675,112 @@ msgstr "Available modules"
 
 #: app/templates/main/dashboard.html:51
 msgid ""
-"تسجيل الدخول الآمن، قاعدة بيانات الطاقم، إدارة الأقسام، التكريم والتقدير،"
-" الأداء، ومركز الإشعارات والأخبار — جميعها متاحة من القائمة الجانبية. "
-"الوحدات القادمة: التقارير والإعدادات."
+"تسجيل الدخول الآمن، قاعدة بيانات الطاقم، إدارة الأقسام، التكريم والتقدير، الأداء، "
+"ومركز الإشعارات والأخبار — جميعها متاحة من القائمة الجانبية. الوحدات القادمة: "
+"التقارير والإعدادات."
 msgstr ""
-"Secure sign-in, the staff database, department management, recognition "
-"and awards, performance, and the notifications and news centre are all "
-"available from the sidebar. Coming next: reports and settings."
+"Secure sign-in, the staff database, department management, recognition and awards, "
+"performance, and the notifications and news centre are all available from the "
+"sidebar. Coming next: reports and settings."
 
+#: app/templates/main/my_home.html:2 app/templates/main/my_home.html:3
+#: app/templates/partials/sidebar.html:62
+msgid "الرئيسية"
+msgstr "Home"
+
+#: app/templates/main/my_home.html:14
+#, python-format
+msgid "مرحباً، %(name)s"
+msgstr "Welcome, %(name)s"
+
+#: app/templates/main/my_home.html:14
+msgid "مرحباً"
+msgstr "Welcome"
+
+#: app/templates/main/my_home.html:23
+msgid "ملفي الشخصي"
+msgstr "My profile"
+
+#: app/templates/main/my_home.html:35
+msgid "لم يتم ربط حسابك بملف موظف بعد. الرجاء التواصل مع إدارة النظام."
+msgstr ""
+"Your account is not linked to a staff profile yet. Please contact the system "
+"administrator."
+
+#: app/templates/main/my_home.html:43
+msgid "تكريماتي"
+msgstr "My awards"
+
+#: app/templates/main/my_home.html:60 app/templates/recognition/list.html:72
+msgid "لا توجد تكريمات بعد"
+msgstr "No awards yet"
+
+#: app/templates/main/my_home.html:66
+msgid "آخر الأخبار"
+msgstr "Latest news"
+
+#: app/templates/main/my_home.html:67
+msgid "عرض الكل"
+msgstr "View all"
+
+#: app/templates/main/my_home.html:80
+msgid "لا توجد أخبار حالياً"
+msgstr "No news at the moment"
+
+#: app/templates/news/detail.html:3 app/templates/news/list.html:3
+#: app/templates/news/list.html:4 app/templates/news/list.html:15
 #: app/templates/partials/header.html:20 app/templates/partials/sidebar.html:68
 msgid "الإشعارات والأخبار"
 msgstr "Notifications & news"
+
+#: app/templates/news/detail.html:13
+msgid "العودة إلى الأخبار"
+msgstr "Back to news"
+
+#: app/templates/news/detail.html:19 app/templates/news/list.html:45
+msgid "مسودة"
+msgstr "Draft"
+
+#: app/templates/news/detail.html:32
+msgid "تأكيد حذف المنشور؟"
+msgstr "Delete this post?"
+
+#: app/templates/news/form.html:2 app/templates/news/form.html:3
+msgid "تعديل منشور"
+msgstr "Edit post"
+
+#: app/templates/news/form.html:2 app/templates/news/form.html:3
+#: app/templates/news/list.html:22
+msgid "منشور جديد"
+msgstr "New post"
+
+#: app/templates/news/form.html:26
+msgid "نشر"
+msgstr "Publish"
+
+#: app/templates/news/list.html:16
+msgid "إجمالي المنشورات:"
+msgstr "Total posts:"
+
+#: app/templates/news/list.html:30 app/templates/staff/list.html:48
+msgid "الكل"
+msgstr "All"
+
+#: app/templates/news/list.html:55
+msgid "قراءة المزيد"
+msgstr "Read more"
+
+#: app/templates/news/list.html:62
+msgid "لا توجد منشورات"
+msgstr "No posts"
+
+#: app/templates/partials/_macros.html:18
+msgid "السابق"
+msgstr "Previous"
+
+#: app/templates/partials/_macros.html:30
+msgid "التالي"
+msgstr "Next"
 
 #: app/templates/partials/header.html:51
 msgid "خروج"
@@ -219,27 +790,22 @@ msgstr "Sign out"
 msgid "تغيير اللغة"
 msgstr "Change language"
 
-#: app/templates/partials/sidebar.html:39
+#: app/templates/partials/sidebar.html:39 app/templates/staff/list.html:3
+#: app/templates/staff/list.html:4
 msgid "قاعدة بيانات الطاقم"
 msgstr "Staff database"
 
-#: app/templates/partials/sidebar.html:47
+#: app/templates/partials/sidebar.html:47 app/templates/recognition/list.html:3
+#: app/templates/recognition/list.html:4 app/templates/recognition/list.html:9
 msgid "التكريم والتقدير"
 msgstr "Recognition & awards"
 
-#: app/templates/partials/sidebar.html:52
+#: app/templates/partials/sidebar.html:52 app/templates/users/list.html:3
+#: app/templates/users/list.html:4
 msgid "إدارة المستخدمين"
 msgstr "User management"
 
-#: app/templates/partials/sidebar.html:56
-msgid "سجل التدقيق"
-msgstr "Audit trail"
-
-#: app/templates/partials/sidebar.html:62
-msgid "الرئيسية"
-msgstr "Home"
-
-#: app/templates/partials/sidebar.html:74
+#: app/templates/partials/sidebar.html:74 app/templates/performance/list.html:3
 msgid "الأداء"
 msgstr "Performance"
 
@@ -254,4 +820,163 @@ msgstr "Settings"
 #: app/templates/partials/sidebar.html:80
 msgid "قريباً"
 msgstr "Coming soon"
+
+#: app/templates/performance/form.html:3 app/templates/performance/list.html:20
+msgid "تسجيل مؤشر"
+msgstr "Record metric"
+
+#: app/templates/performance/form.html:4
+msgid "تسجيل مؤشر أداء"
+msgstr "Record a performance metric"
+
+#: app/templates/performance/form.html:18
+msgid "تسجيل"
+msgstr "Record"
+
+#: app/templates/performance/list.html:4 app/templates/performance/list.html:9
+msgid "مؤشرات الأداء"
+msgstr "Performance metrics"
+
+#: app/templates/performance/list.html:15 app/templates/recognition/list.html:15
+#: app/templates/staff/list.html:15
+msgid "تصدير"
+msgstr "Export"
+
+#: app/templates/performance/list.html:31
+msgid "كل المؤشرات"
+msgstr "All metrics"
+
+#: app/templates/performance/list.html:37 app/templates/recognition/list.html:39
+#: app/templates/staff/list.html:33
+msgid "كل الأقسام"
+msgstr "All departments"
+
+#: app/templates/performance/list.html:53
+msgid "القيمة"
+msgstr "Value"
+
+#: app/templates/performance/list.html:67
+msgid "تأكيد حذف المؤشر؟"
+msgstr "Delete this metric?"
+
+#: app/templates/performance/list.html:87
+msgid "متوسط المؤشرات"
+msgstr "Metric averages"
+
+#: app/templates/performance/list.html:103 app/templates/recognition/list.html:96
+msgid "لا توجد بيانات"
+msgstr "No data"
+
+#: app/templates/recognition/form.html:2 app/templates/recognition/form.html:3
+#: app/templates/recognition/list.html:21
+msgid "منح تكريم"
+msgstr "Grant award"
+
+#: app/templates/recognition/form.html:22
+msgid "منح التكريم"
+msgstr "Grant the award"
+
+#: app/templates/recognition/list.html:10
+msgid "إجمالي التكريمات:"
+msgstr "Total awards:"
+
+#: app/templates/recognition/list.html:33
+msgid "كل أنواع التكريم"
+msgstr "All award types"
+
+#: app/templates/recognition/list.html:66
+msgid "تأكيد حذف التكريم؟"
+msgstr "Delete this award?"
+
+#: app/templates/recognition/list.html:82
+msgid "الأكثر تكريماً"
+msgstr "Most recognised"
+
+#: app/templates/staff/form.html:3 app/templates/staff/form.html:4
+msgid "تعديل موظف"
+msgstr "Edit staff member"
+
+#: app/templates/staff/form.html:3 app/templates/staff/form.html:4
+#: app/templates/staff/list.html:21
+msgid "إضافة موظف"
+msgstr "Add staff member"
+
+#: app/templates/staff/list.html:9
+msgid "قاعدة بيانات الطاقم التمريضي"
+msgstr "Nursing staff database"
+
+#: app/templates/staff/list.html:10
+msgid "إجمالي النتائج:"
+msgstr "Total results:"
+
+#: app/templates/staff/list.html:29
+msgid "بحث بالاسم أو الرقم الوظيفي"
+msgstr "Search by name or employee ID"
+
+#: app/templates/staff/list.html:40 app/templates/users/list.html:27
+msgid "كل الأدوار"
+msgstr "All roles"
+
+#: app/templates/staff/list.html:89
+#, python-format
+msgid "تأكيد حذف %(name)s؟"
+msgstr "Delete %(name)s?"
+
+#: app/templates/staff/list.html:97
+msgid "لا توجد نتائج مطابقة"
+msgstr "No matching results"
+
+#: app/templates/users/form.html:2 app/templates/users/form.html:3
+msgid "تعديل مستخدم"
+msgstr "Edit user"
+
+#: app/templates/users/form.html:2 app/templates/users/form.html:3
+#: app/templates/users/list.html:16
+msgid "إضافة مستخدم"
+msgstr "Add user"
+
+#: app/templates/users/form.html:21
+msgid "اتركها فارغة للإبقاء على كلمة المرور الحالية."
+msgstr "Leave blank to keep the current password."
+
+#: app/templates/users/form.html:21
+msgid "٨ أحرف على الأقل."
+msgstr "At least 8 characters."
+
+#: app/templates/users/list.html:9
+msgid "حسابات المستخدمين"
+msgstr "User accounts"
+
+#: app/templates/users/list.html:10
+msgid "إجمالي المستخدمين:"
+msgstr "Total users:"
+
+#: app/templates/users/list.html:23
+msgid "بحث بالبريد الإلكتروني"
+msgstr "Search by email address"
+
+#: app/templates/users/list.html:44
+msgid "الموظف المرتبط"
+msgstr "Linked staff"
+
+#: app/templates/users/list.html:55
+msgid "غير مرتبط"
+msgstr "Not linked"
+
+#: app/templates/users/list.html:61
+msgid "معطّل"
+msgstr "Disabled"
+
+#: app/templates/users/list.html:69
+#, python-format
+msgid "تأكيد حذف المستخدم %(email)s؟"
+msgstr "Delete the user %(email)s?"
+
+#: app/templates/users/list.html:74
+msgid "حسابك"
+msgstr "Your account"
+
+#: app/templates/users/list.html:80
+msgid "لا يوجد مستخدمون مطابقون"
+msgstr "No matching users"
 

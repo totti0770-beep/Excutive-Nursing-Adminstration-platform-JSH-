@@ -12,9 +12,10 @@
 
 ## 1. Current State (الوضع الحالي)
 
-The system is a working **Flask + SQLAlchemy** application with a server-rendered RTL Arabic
-interface. It is feature-complete for the modules listed below, is covered by an automated
-test suite enforced in CI, and is packaged for deployment.
+The system is a working **Flask + SQLAlchemy** application with a server-rendered bilingual
+interface — Arabic (RTL, the default) and English (LTR). It is feature-complete for the
+modules listed below, is covered by an automated test suite enforced in CI, and is packaged
+for deployment.
 
 ### 1.1 Delivered and working (end-to-end, tested)
 | Module | Capability |
@@ -28,16 +29,19 @@ test suite enforced in CI, and is packaged for deployment.
 | News & Notifications | Feed for all roles, category filter, pinned-first, notification bell; authoring restricted |
 | User Management | Account CRUD, role assignment, staff linking (one login per profile), no self-delete |
 | Audit Trail | Append-only log of all mutations + auth events, with an admin-only viewer |
+| Bilingual interface | Arabic (RTL, default) and English (LTR) across every screen; per-user language preference; layout mirrors via CSS logical properties |
 
 ### 1.2 Non-functional posture
 - **Security:** server-enforced RBAC, app-wide CSRF, login rate limiting, immediate
   deactivation, strict CSP + security headers, 8-hour idle session timeout, no credentials
   in source. Detail and **known gaps** in `24_Security_Architecture.md`.
-- **Quality:** 67 automated tests at ~85% coverage; CI gates on lint, coverage floor, and
-  migration drift.
-- **Deployment:** gunicorn + Docker + Procfile, `/healthz`, structured logging, branded RTL
-  error pages, documented PostgreSQL path.
+- **Quality:** 102 automated tests at ~88% coverage; CI gates on lint, coverage floor,
+  translation-catalog completeness, and migration drift.
+- **Deployment:** gunicorn + Docker + Procfile, `/healthz`, structured logging, branded
+  direction-aware error pages, documented PostgreSQL path.
 - **Intranet-safe:** Tailwind and the Tajawal font are self-hosted; no runtime CDN.
+- **Bilingual:** Arabic (default) and English; stored values never vary with the interface
+  language (see `21_Database_Design.md` §7).
 
 ## 2. Not Yet Built (غير منجز)
 
@@ -45,7 +49,6 @@ Stated plainly so nothing here is mistaken for delivered scope:
 
 | Gap | Note |
 |---|---|
-| **English (LTR) interface** | The brief asked for Arabic RTL **and** English LTR. Only Arabic ships; no i18n layer (e.g. Flask-Babel) yet. |
 | **MFA** | Brief asked for "MFA-ready"; no second factor implemented. |
 | **AD / SSO integration** | Accounts are local only. |
 | **Document/policy library with file upload** | No file storage; the prototype's "upload" never stored files either. |
@@ -77,9 +80,10 @@ Stated plainly so nothing here is mistaken for delivered scope:
    via `flask create-admin`.
 2. **Run UAT** with nursing supervisors and a sample of staff nurses.
 3. **Commission the security review** against the known-gaps list before handling real data.
-4. **Decide on English/LTR i18n** — it is stated scope and is the largest functional gap.
-5. **Close the MFA and account-lockout gaps** if the security review requires them for
+4. **Close the MFA and account-lockout gaps** if the security review requires them for
    production sign-off.
+5. **Run the accessibility audit** — the largest remaining quality gap now that the
+   bilingual interface has shipped.
 
 ## 5. Historical: findings that triggered the rebuild (للتوثيق)
 

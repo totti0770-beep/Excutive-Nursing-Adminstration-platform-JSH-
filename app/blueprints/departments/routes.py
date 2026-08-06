@@ -1,6 +1,7 @@
 """Departments routes: list (with staff counts), detail, and CRUD."""
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from flask_login import login_required
 from sqlalchemy import func
 
@@ -62,7 +63,7 @@ def new_department():
     if form.validate_on_submit():
         name = form.name.data.strip()
         if Department.query.filter_by(name=name).first():
-            form.name.errors.append("اسم القسم مستخدم بالفعل")
+            form.name.errors.append(_("اسم القسم مستخدم بالفعل"))
         else:
             dept = Department(
                 name=name,
@@ -73,7 +74,7 @@ def new_department():
             db.session.flush()
             log_action("create", "department", dept.id, dept.name)
             db.session.commit()
-            flash("تمت إضافة القسم بنجاح", "success")
+            flash(_("تمت إضافة القسم بنجاح"), "success")
             return redirect(url_for("departments.list_departments"))
     return render_template("departments/form.html", form=form, mode="new")
 
@@ -90,14 +91,14 @@ def edit_department(dept_id):
             Department.name == name, Department.id != dept.id
         ).first()
         if clash:
-            form.name.errors.append("اسم القسم مستخدم بالفعل")
+            form.name.errors.append(_("اسم القسم مستخدم بالفعل"))
         else:
             dept.name = name
             dept.location = (form.location.data or "").strip() or None
             dept.head_name = (form.head_name.data or "").strip() or None
             log_action("update", "department", dept.id, dept.name)
             db.session.commit()
-            flash("تم تحديث بيانات القسم", "success")
+            flash(_("تم تحديث بيانات القسم"), "success")
             return redirect(url_for("departments.detail", dept_id=dept.id))
     return render_template("departments/form.html", form=form, mode="edit", dept=dept)
 
@@ -110,13 +111,16 @@ def delete_department(dept_id):
     staff_count = Staff.query.filter_by(department_id=dept.id).count()
     if staff_count:
         flash(
-            f"لا يمكن حذف قسم يحتوي على موظفين ({staff_count}). "
-            "الرجاء نقل الموظفين إلى قسم آخر أولاً.",
+            _(
+                "لا يمكن حذف قسم يحتوي على موظفين (%(count)d). "
+                "الرجاء نقل الموظفين إلى قسم آخر أولاً.",
+                count=staff_count,
+            ),
             "error",
         )
         return redirect(url_for("departments.detail", dept_id=dept.id))
     log_action("delete", "department", dept.id, dept.name)
     db.session.delete(dept)
     db.session.commit()
-    flash("تم حذف القسم", "success")
+    flash(_("تم حذف القسم"), "success")
     return redirect(url_for("departments.list_departments"))

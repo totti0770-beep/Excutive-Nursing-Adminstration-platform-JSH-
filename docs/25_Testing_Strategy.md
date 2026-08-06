@@ -15,7 +15,7 @@
 
 | Layer | Status | Detail |
 |---|---|---|
-| Automated functional/integration tests | **Implemented** | 67 pytest tests, ~85% statement coverage of `app/` |
+| Automated functional/integration tests | **Implemented** | 102 pytest tests, ~88% statement coverage of `app/` |
 | Lint & format gate | **Implemented** | `ruff check` + `ruff format --check` |
 | Migration-drift gate | **Implemented** | `flask db upgrade && flask db check` |
 | Continuous integration | **Implemented** | GitHub Actions on every push and pull request |
@@ -46,6 +46,7 @@ No test touches development data.
 | `test_rbac_landing.py` | Nurse redirected to `/me`, linked profile/awards, manager dashboards, unlinked graceful state |
 | `test_security.py` | Audit rows on login/failed login/create/delete, audit viewer access, **immediate deactivation**, password change, security headers, login rate limit (429) |
 | `test_deploy.py` | `/healthz`, branded 403/404 pages |
+| `test_i18n.py` | Locale resolution and precedence, language switching, direction (`dir`) per locale, open-redirect safety on the switch, per-account persistence, every page rendering in both locales, and **stored values staying canonical when records are created in English** |
 
 **Testing bias:** tests assert **server-enforced authorisation**, not UI state — for each
 management module a `staff_nurse` must receive 403. This is deliberate, given the prototype's
@@ -58,6 +59,9 @@ original failure mode was UI-only role checks.
 1. `ruff check` and `ruff format --check` (lint, imports, formatting)
 2. `pytest --cov=app --cov-fail-under=80` — the coverage floor
 3. `flask db upgrade && flask db check` — a model change without a matching migration fails CI
+4. `make i18n-check` — fails if a translatable string is missing from the catalogs, or if
+   any entry is untranslated or still marked `fuzzy` (pybabel's fuzzy matching produces
+   confidently wrong guesses, so they are treated as failures rather than defaults)
 
 ## 4. Planned: Remaining Test Phases (المراحل المتبقية)
 
@@ -81,7 +85,7 @@ original failure mode was UI-only role checks.
 
 ### 4.4 Accessibility
 - **Scope:** keyboard navigation, focus order, colour contrast, and screen-reader labelling
-  of the RTL Arabic interface. Not yet audited.
+  of the interface in **both** directions (Arabic RTL and English LTR). Not yet audited.
 
 ## 5. Test Environment (بيئة الاختبار)
 

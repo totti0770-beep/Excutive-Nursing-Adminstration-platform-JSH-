@@ -26,7 +26,7 @@ server, which is the central reason this architecture was chosen over the origin
 
 | Tier | Implementation |
 |---|---|
-| Presentation | Jinja2 templates (`app/templates/`), Tailwind CSS, RTL Arabic |
+| Presentation | Jinja2 templates (`app/templates/`), Tailwind CSS, bilingual RTL/LTR |
 | Application | Flask blueprints — one per functional module (`app/blueprints/`) |
 | Data | SQLAlchemy ORM models (`app/models/`) over a relational database |
 
@@ -43,6 +43,7 @@ builds a fully isolated app against an in-memory database.
 - **Auth:** Flask-Login (server-side sessions); passwords hashed with Werkzeug (**scrypt**)
 - **Forms/CSRF:** Flask-WTF (WTForms) with app-wide `CSRFProtect`
 - **Security:** Flask-Talisman (security headers/CSP), Flask-Limiter (rate limiting)
+- **Localisation:** Flask-Babel — Arabic (RTL, default) and English (LTR)
 - **Config:** environment variables via python-dotenv; no secrets in source
 
 ### 3.2 Presentation
@@ -50,6 +51,10 @@ builds a fully isolated app against an in-memory database.
 - **CSS:** Tailwind CSS, **compiled at build time** and committed
   (`app/static/css/tailwind.css`) — no runtime CDN
 - **Fonts:** Tajawal, **self-hosted** from `app/static/fonts/`
+- **Direction:** the layout mirrors automatically. Templates use CSS *logical* properties
+  (`ps-`/`pe-`, `ms-`/`me-`, `start-`/`end-`, `text-start`) rather than physical ones, and
+  `base.html` sets `lang`/`dir` from the active locale — so there is no per-page or
+  per-direction branching.
 - **JS:** a single progressive-enhancement file (`app/static/js/app.js`). No inline
   JavaScript or inline styles anywhere, which is what makes the strict CSP viable.
 
@@ -91,7 +96,8 @@ Cross-cutting modules: `app/security.py` (roles + `role_required`), `app/audit.p
 3. Route decorators enforce access: `@login_required`, then `@role_required(...)`.
 4. The view queries via SQLAlchemy, applies business rules, and — for state changes —
    writes an `AuditLog` row in the same transaction.
-5. Jinja2 renders RTL HTML; Talisman attaches security headers to the response.
+5. Jinja2 renders HTML in the active locale and direction; Talisman attaches security
+   headers to the response.
 
 ## 6. Why this replaced the original BaaS design (مبرر التغيير)
 
