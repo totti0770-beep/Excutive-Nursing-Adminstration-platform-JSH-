@@ -15,7 +15,7 @@
 
 | Layer | Status | Detail |
 |---|---|---|
-| Automated functional/integration tests | **Implemented** | 102 pytest tests, ~88% statement coverage of `app/` |
+| Automated functional/integration tests | **Implemented** | 114 pytest tests, ~88% statement coverage of `app/` |
 | Lint & format gate | **Implemented** | `ruff check` + `ruff format --check` |
 | Migration-drift gate | **Implemented** | `flask db upgrade && flask db check` |
 | Continuous integration | **Implemented** | GitHub Actions on every push and pull request |

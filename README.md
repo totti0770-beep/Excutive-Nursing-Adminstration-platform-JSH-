@@ -192,8 +192,20 @@ Every push and pull request runs the same gates via GitHub Actions
   browsable by a System Admin at `/audit` (for CBAHI/JCI-style accountability).
 - **Account control:** deactivating a user takes effect on their next request
   (enforced in the Flask-Login `user_loader`), not just at next login.
-- **Rate limiting:** `/login` is throttled via Flask-Limiter to blunt
-  brute-force attempts.
+- **Brute-force protection, two layers:** `/login` is throttled per IP via
+  Flask-Limiter, *and* an account locks for `LOGIN_LOCKOUT_MINUTES` (default 15)
+  after `LOGIN_MAX_FAILED_ATTEMPTS` (default 10) consecutive failures — the per-IP
+  limit alone does not stop an attacker spread across many addresses. Locks expire
+  on their own; `POST /users/<id>/unlock` (System Admin) is an escape hatch. A
+  locked account returns the *same* message as a wrong password, so lockout cannot
+  be used to enumerate valid addresses.
+  In a multi-worker deployment set `RATELIMIT_STORAGE_URI` to a shared backend
+  (e.g. `redis://…`) — the default store is per process, so the limit would
+  otherwise be multiplied by the worker count.
+- **Password policy:** one implementation in `app/security.py`, shared by the
+  change-password form, admin user management, and `flask create-admin` — minimum
+  8 characters, at least three of {lowercase, uppercase, digit, symbol}, and it may
+  not contain the account's email local-part.
 - **Security headers:** Flask-Talisman sets a strict `Content-Security-Policy`
   (`default-src 'self'` — the app ships no inline JS/CSS), `X-Frame-Options`,
   `X-Content-Type-Options`, and HSTS (over HTTPS). Set `FORCE_HTTPS=1` in

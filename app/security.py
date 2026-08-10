@@ -5,6 +5,7 @@ enforces, against the authenticated Flask-Login user, that the current user
 holds one of the permitted roles.
 """
 
+import re
 from functools import wraps
 from urllib.parse import urlparse
 
@@ -23,6 +24,57 @@ def is_safe_redirect_target(target):
         return False
     parsed = urlparse(target)
     return not parsed.netloc and not parsed.scheme and target.startswith("/")
+
+
+#: Shortest password accepted anywhere in the system.
+MIN_PASSWORD_LEN = 8
+
+
+def validate_password_strength(password, email=None):
+    """Return a list of reasons the password is unacceptable (empty == fine).
+
+    Single source of truth for the policy, so the rule cannot drift between the
+    self-service change form, admin user management, and the create-admin CLI.
+    Returns messages rather than raising, because every caller surfaces them as
+    WTForms field errors or CLI output.
+
+    Deliberately *not* implemented: rotation and reuse history, which would need
+    a password-history table. `24_Security_Architecture.md` says so explicitly
+    rather than implying the policy is stronger than it is.
+    """
+    errors = []
+    password = password or ""
+
+    if len(password) < MIN_PASSWORD_LEN:
+        errors.append(
+            _l("كلمة المرور يجب أن تكون %(n)d أحرف على الأقل", n=MIN_PASSWORD_LEN)
+        )
+
+    classes = sum(
+        bool(pattern.search(password))
+        for pattern in (
+            re.compile(r"[a-z]"),
+            re.compile(r"[A-Z]"),
+            re.compile(r"[0-9]"),
+            re.compile(r"[^A-Za-z0-9]"),
+        )
+    )
+    if classes < 3:
+        errors.append(
+            _l(
+                "كلمة المرور يجب أن تجمع ثلاثة على الأقل من: أحرف صغيرة، "
+                "أحرف كبيرة، أرقام، رموز."
+            )
+        )
+
+    # A password built from the address it protects is guessable from the
+    # username alone, which is public inside the hospital.
+    if email:
+        local_part = email.split("@")[0].strip().lower()
+        if len(local_part) >= 3 and local_part in password.lower():
+            errors.append(_l("كلمة المرور يجب ألا تحتوي على البريد الإلكتروني."))
+
+    return errors
 
 
 class Roles:

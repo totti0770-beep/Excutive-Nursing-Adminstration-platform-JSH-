@@ -35,6 +35,18 @@ class BaseConfig:
     ORG_NAME = _l("مستشفى جازان التخصصي")
     APP_NAME = _l("نظام إدارة التمريض التنفيذي")
 
+    # Brute-force protection. Per-account lockout complements the per-IP rate
+    # limit on POST /login. The window expires on its own, so a locked-out
+    # colleague never depends on an administrator being available.
+    LOGIN_MAX_FAILED_ATTEMPTS = int(os.environ.get("LOGIN_MAX_FAILED_ATTEMPTS", 10))
+    LOGIN_LOCKOUT_MINUTES = int(os.environ.get("LOGIN_LOCKOUT_MINUTES", 15))
+
+    # Rate-limit storage. The default in-process store is per worker, so a
+    # multi-worker deployment must point this at a shared backend (e.g.
+    # redis://host:6379) or the limit is effectively multiplied by the worker
+    # count and resets on every deploy.
+    RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
+
     # Localisation. Arabic is the primary language and the source language of
     # the message ids, so a missing translation falls back to correct Arabic.
     LANGUAGES = ["ar", "en"]

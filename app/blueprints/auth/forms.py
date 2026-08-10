@@ -32,8 +32,10 @@ class PasswordChangeForm(FlaskForm):
     new_password = PasswordField(
         _l("كلمة المرور الجديدة"),
         validators=[
+            # Strength is checked in the route via
+            # app.security.validate_password_strength, which also knows the
+            # user's email — keeping the policy in exactly one place.
             DataRequired(message=_l("الرجاء إدخال كلمة المرور الجديدة")),
-            Length(min=8, message=_l("كلمة المرور يجب أن تكون 8 أحرف على الأقل")),
         ],
     )
     confirm = PasswordField(

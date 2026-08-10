@@ -27,13 +27,31 @@ brute-forcing, and unattributed administrative changes. Controls below map to th
   logged, or recoverable. Verified by test: the stored hash never equals the password.
 - **No hardcoded credentials.** The first administrator is created out-of-band via
   `flask create-admin`, which reads the password from an option, environment variable, or
-  interactive prompt, enforces a minimum length, and rejects unusable email domains.
+  interactive prompt, applies the password policy below, and rejects unusable email domains.
+- **Password policy** (`app/security.py::validate_password_strength`) — a single
+  implementation shared by the self-service change form, admin user management, and the
+  CLI, so the rule cannot drift between them: minimum 8 characters, at least three of
+  {lowercase, uppercase, digit, symbol}, and must not contain the account's email
+  local-part. *Not* implemented: rotation and reuse history (see §9).
 - **Self-service password change** (`/account/password`) requires the current password and
-  a confirmed new password of at least 8 characters.
-- **Brute-force resistance:** `POST /login` is rate-limited to **10 requests per minute per
-  IP** (Flask-Limiter); exceeding it returns **429**.
-- **User enumeration:** a wrong password and an unknown email return the *same* generic
-  Arabic error.
+  a confirmed new password meeting that policy.
+- **Brute-force resistance, two independent layers:**
+  - *Per IP* — `POST /login` is rate-limited to **10 requests per minute** (Flask-Limiter);
+    exceeding it returns **429**. Storage is configurable via `RATELIMIT_STORAGE_URI`; a
+    multi-worker deployment must point it at a shared backend (e.g. Redis) or the limit is
+    per worker.
+  - *Per account* — after `LOGIN_MAX_FAILED_ATTEMPTS` (default 10) consecutive failures the
+    account is locked for `LOGIN_LOCKOUT_MINUTES` (default 15). This is what stops an
+    attacker distributed across many IPs from getting unlimited attempts on one account.
+    A successful sign-in resets the counter.
+- **Lockout trade-off, stated rather than hidden:** per-account lockout is itself a
+  denial-of-service vector — anyone who knows a colleague's address can lock them out by
+  guessing. It is mitigated by a modest threshold, a short window, and **automatic expiry**,
+  so no one waits on an administrator. `POST /users/<id>/unlock` (System Admin) exists as an
+  escape hatch, not the normal path, and is audited.
+- **User enumeration:** a wrong password, an unknown email, **and a locked account** all
+  return the *same* generic Arabic error. Saying "this account is locked" would confirm the
+  address exists, which is precisely what the generic message prevents.
 
 ## 3. Authorisation (الصلاحيات)
 
@@ -113,10 +131,12 @@ Stated explicitly so they are not mistaken for implemented controls:
 
 1. **MFA is not implemented** (the brief called for "MFA-ready"; the schema and auth flow
    can accommodate it, but no second factor exists today).
-2. **No account lockout** after N failed attempts — only IP rate limiting.
-3. **Rate-limit storage is in-memory** — a multi-worker deployment needs a shared backend
-   (e.g. Redis) for the limit to be global.
-4. **No AD/SSO integration** — accounts are local.
-5. **Password policy is length-only** (≥ 8); no complexity, rotation, or history rules.
-6. **Backup/disaster recovery is a platform responsibility** and is not yet documented as a
+2. **No AD/SSO integration** — accounts are local.
+3. **No password rotation or reuse history.** Complexity is enforced (§2), but expiry and
+   "cannot reuse your last N passwords" would need a password-history table and are not
+   built.
+4. **Rate-limit storage defaults to in-process.** The URI is now configurable, but a
+   multi-worker production deployment must actually set `RATELIMIT_STORAGE_URI` to a shared
+   backend — the default does not become global on its own.
+5. **Backup/disaster recovery is a platform responsibility** and is not yet documented as a
    tested runbook.

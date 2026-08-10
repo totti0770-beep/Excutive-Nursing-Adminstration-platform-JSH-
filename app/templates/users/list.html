@@ -60,10 +60,19 @@
             {% else %}
               <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{{ _('معطّل') }}</span>
             {% endif %}
+            {% if u.is_locked %}
+              <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded ms-1">{{ _('مقفل مؤقتاً') }}</span>
+            {% endif %}
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center gap-2">
               <a href="{{ url_for('users.edit_user', user_id=u.id) }}" class="text-xs text-sky-600 hover:underline">{{ _('تعديل') }}</a>
+              {% if u.is_locked %}
+              <form method="POST" action="{{ url_for('users.unlock_user', user_id=u.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="text-xs text-amber-700 hover:underline">{{ _('إلغاء القفل') }}</button>
+              </form>
+              {% endif %}
               {% if u.id != current_user.id %}
               <form method="POST" action="{{ url_for('users.delete_user', user_id=u.id) }}"
                     data-confirm="{{ _('تأكيد حذف المستخدم %(email)s؟', email=u.email) }}">

@@ -32,10 +32,11 @@ for deployment.
 | Bilingual interface | Arabic (RTL, default) and English (LTR) across every screen; per-user language preference; layout mirrors via CSS logical properties |
 
 ### 1.2 Non-functional posture
-- **Security:** server-enforced RBAC, app-wide CSRF, login rate limiting, immediate
-  deactivation, strict CSP + security headers, 8-hour idle session timeout, no credentials
-  in source. Detail and **known gaps** in `24_Security_Architecture.md`.
-- **Quality:** 102 automated tests at ~88% coverage; CI gates on lint, coverage floor,
+- **Security:** server-enforced RBAC, app-wide CSRF, per-IP login rate limiting **and
+  per-account lockout**, a shared password-strength policy, immediate deactivation, strict
+  CSP + security headers, 8-hour idle session timeout, no credentials in source. Detail and
+  **known gaps** in `24_Security_Architecture.md`.
+- **Quality:** 114 automated tests at ~88% coverage; CI gates on lint, coverage floor,
   translation-catalog completeness, and migration drift.
 - **Deployment:** gunicorn + Docker + Procfile, `/healthz`, structured logging, branded
   direction-aware error pages, documented PostgreSQL path.
@@ -66,7 +67,9 @@ Stated plainly so nothing here is mistaken for delivered scope:
    two overlapping series (numbered `01–30` and `PHASE_*` bundles); 16 are superseded.
    Those now carry a banner, but consolidating them would reduce maintenance.
    See `docs/README.md`.
-2. **Rate-limit storage is in-memory** — not shared across workers/instances.
+2. **Rate-limit storage defaults to in-process.** The backend is now configurable via
+   `RATELIMIT_STORAGE_URI`, but a multi-worker deployment must actually set it to a shared
+   store (e.g. Redis) — the default does not become global by itself.
 3. **Sessions are server-side and local** — horizontal scaling needs sticky sessions or a
    shared store.
 4. **No JSON API** — future HR/HIS integration needs a separate token-authenticated surface,
@@ -80,8 +83,8 @@ Stated plainly so nothing here is mistaken for delivered scope:
    via `flask create-admin`.
 2. **Run UAT** with nursing supervisors and a sample of staff nurses.
 3. **Commission the security review** against the known-gaps list before handling real data.
-4. **Close the MFA and account-lockout gaps** if the security review requires them for
-   production sign-off.
+4. **Close the MFA gap** if the security review requires a second factor for production
+   sign-off (account lockout and the password policy are now in place).
 5. **Run the accessibility audit** — the largest remaining quality gap now that the
    bilingual interface has shipped.
 

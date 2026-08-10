@@ -47,9 +47,9 @@ authenticated but wrong role → **403** (branded RTL page).
 | Method | Path | Access | Purpose |
 |---|---|---|---|
 | GET | `/healthz` | Public | Liveness/readiness probe; pings the DB, returns `{"status":"ok"}` |
-| GET, POST | `/login` | Public | Login form. **POST rate-limited to 10/min per IP** |
+| GET, POST | `/login` | Public | Login form. **POST rate-limited to 10/min per IP**, and the account locks after 10 consecutive failures. A wrong password, an unknown email, and a locked account are indistinguishable |
 | POST | `/logout` | Any | Ends the session |
-| GET, POST | `/account/password` | Any | Self-service password change (verifies current password, min 8 chars) |
+| GET, POST | `/account/password` | Any | Self-service password change (verifies the current password; the new one must meet the policy in `24_Security_Architecture.md` §2) |
 | POST | `/lang/<locale>` | Public | Switch interface language (`ar` / `en`); unknown locale → 404. **POST, not GET**, because it writes the choice to the signed-in user's profile — so CSRF applies and the language cannot be flipped by a link, image, or prefetch. Returns to the originating page via the same open-redirect guard as post-login `next`. Open to anonymous visitors so the login page can be switched. |
 
 ### 3.2 Landing
@@ -108,8 +108,9 @@ the other modules (no `department_head`).*
 | Method | Path | Access | Purpose |
 |---|---|---|---|
 | GET | `/users/` | **Admin** | Login accounts; `q` (email), `role`, `page` |
-| GET, POST | `/users/new` | **Admin** | Create account (unique email, min 8-char password, optional staff link) |
+| GET, POST | `/users/new` | **Admin** | Create account (unique email, password policy enforced, optional staff link) |
 | GET, POST | `/users/<id>/edit` | **Admin** | Update role/link/active; blank password keeps the current one |
+| POST | `/users/<id>/unlock` | **Admin** | Release a brute-force lockout early. Locks also expire on their own, so this is an escape hatch rather than the normal path |
 | POST | `/users/<id>/delete` | **Admin** | Delete — **cannot delete your own account** |
 | GET | `/audit/` | **Admin** | Read-only audit trail; `action`, `entity_type`, `page` |
 
@@ -124,5 +125,6 @@ the other modules (no `department_head`).*
 - **Uniqueness conflicts** (duplicate `employee_id`, department name, user email) are
   reported as field errors, not exceptions.
 - **Errors:** 403 / 404 / 500 render branded RTL pages; 500 rolls back the session.
-- **Audit:** every create / update / delete, plus login, logout, failed login, password
-  change, and CSV export, writes an `AuditLog` row in the same transaction.
+- **Audit:** every create / update / delete, plus login, logout, failed login, denied login,
+  locked login, account unlock, password change, and CSV export, writes an `AuditLog` row in
+  the same transaction.

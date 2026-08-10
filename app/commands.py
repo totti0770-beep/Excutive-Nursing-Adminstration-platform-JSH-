@@ -7,7 +7,7 @@ import click
 
 from app.extensions import db
 from app.models import User
-from app.security import Roles
+from app.security import Roles, validate_password_strength
 
 
 def register_commands(app):
@@ -45,8 +45,13 @@ def register_commands(app):
             confirm = getpass.getpass("Confirm password: ")
             if password != confirm:
                 raise click.ClickException("Passwords do not match.")
-        if len(password) < 8:
-            raise click.ClickException("Password must be at least 8 characters.")
+        # Same policy as the web forms — the first admin must not be the one
+        # account that bypasses it.
+        problems = validate_password_strength(password, email)
+        if problems:
+            raise click.ClickException(
+                "Weak password:\n  - " + "\n  - ".join(str(p) for p in problems)
+            )
 
         user = User.query.filter_by(email=email).first()
         if user is None:

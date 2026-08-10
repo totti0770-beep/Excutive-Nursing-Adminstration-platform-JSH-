@@ -18,6 +18,9 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address, storage_uri="memory://")
+# Storage is not set here: Flask-Limiter reads RATELIMIT_STORAGE_URI from app
+# config at init_app time, so production can point at a shared backend without
+# a code change (the in-process default is per worker).
+limiter = Limiter(key_func=get_remote_address)
 talisman = Talisman()
 babel = Babel()

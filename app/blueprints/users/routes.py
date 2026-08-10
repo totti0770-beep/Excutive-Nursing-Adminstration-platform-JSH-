@@ -9,10 +9,9 @@ from app.blueprints.users import users_bp
 from app.blueprints.users.forms import UserForm
 from app.extensions import db
 from app.models import Staff, User
-from app.security import Roles, role_required
+from app.security import Roles, role_required, validate_password_strength
 
 PER_PAGE = 10
-MIN_PASSWORD_LEN = 8
 
 
 def _staff_choices():
@@ -77,13 +76,8 @@ def new_user():
 
         if User.query.filter_by(email=email).first():
             form.email.errors.append(_("البريد الإلكتروني مستخدم بالفعل"))
-        elif len(password) < MIN_PASSWORD_LEN:
-            form.password.errors.append(
-                _(
-                    "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل",
-                    n=MIN_PASSWORD_LEN,
-                )
-            )
+        elif validate_password_strength(password, email):
+            form.password.errors.extend(validate_password_strength(password, email))
         elif _staff_link_conflict(staff_id):
             form.staff_id.errors.append(_("هذا الموظف مرتبط بحساب آخر بالفعل"))
         else:
@@ -121,13 +115,10 @@ def edit_user(user_id):
         clash = User.query.filter(User.email == email, User.id != user.id).first()
         if clash:
             form.email.errors.append(_("البريد الإلكتروني مستخدم بالفعل"))
-        elif password and len(password) < MIN_PASSWORD_LEN:
-            form.password.errors.append(
-                _(
-                    "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل",
-                    n=MIN_PASSWORD_LEN,
-                )
-            )
+        # A blank password on edit means "keep the current one", so only
+        # validate when the admin actually supplied a new value.
+        elif password and validate_password_strength(password, email):
+            form.password.errors.extend(validate_password_strength(password, email))
         elif _staff_link_conflict(staff_id, exclude_user_id=user.id):
             form.staff_id.errors.append(_("هذا الموظف مرتبط بحساب آخر بالفعل"))
         else:
@@ -143,6 +134,23 @@ def edit_user(user_id):
             return redirect(url_for("users.list_users"))
 
     return render_template("users/form.html", form=form, mode="edit", user=user)
+
+
+@users_bp.route("/<int:user_id>/unlock", methods=["POST"])
+@login_required
+@role_required(Roles.SYSTEM_ADMIN)
+def unlock_user(user_id):
+    """Release a brute-force lockout early.
+
+    An escape hatch, not the normal path: locks expire on their own after
+    LOGIN_LOCKOUT_MINUTES, so nobody is stranded waiting for an administrator.
+    """
+    user = db.get_or_404(User, user_id)
+    user.clear_lockout()
+    log_action("account_unlocked", "user", user.id, user.email)
+    db.session.commit()
+    flash(_("تم إلغاء قفل الحساب"), "success")
+    return redirect(url_for("users.list_users"))
 
 
 @users_bp.route("/<int:user_id>/delete", methods=["POST"])

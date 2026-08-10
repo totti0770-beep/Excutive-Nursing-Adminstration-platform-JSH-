@@ -72,6 +72,8 @@ diverge, the code wins and this document must be regenerated.
 | `is_active` | Boolean | NOT NULL, default `true` |
 | `created_at` | DateTime | NOT NULL |
 | `locale` | String(5) | nullable — preferred interface language (`ar` / `en`); NULL means "not chosen yet", so `Accept-Language` decides |
+| `failed_login_count` | Integer | NOT NULL, default `0` (`server_default`) — consecutive failed sign-ins; reset on success |
+| `locked_until` | DateTime | nullable — brute-force lockout expiry; NULL or past means not locked |
 | `staff_id` | Integer | **FK → `staff.id`** `ON DELETE SET NULL`, nullable, indexed |
 
 *A login is optionally linked to one staff profile. The application enforces **at most one
@@ -97,7 +99,7 @@ profile page).*
 | `timestamp` | DateTime | NOT NULL, indexed |
 | `user_id` | Integer | nullable, indexed — actor |
 | `user_email` | String(255) | nullable — **denormalised** so the log survives user deletion |
-| `action` | String(40) | NOT NULL, indexed — `login`, `logout`, `login_failed`, `login_denied`, `create`, `update`, `delete`, `export`, `password_change` |
+| `action` | String(40) | NOT NULL, indexed — `login`, `logout`, `login_failed`, `login_denied`, `login_locked`, `account_unlocked`, `create`, `update`, `delete`, `export`, `password_change` |
 | `entity_type` | String(40) | nullable, indexed — `staff`, `department`, `recognition`, `performance`, `announcement`, `user`, `auth` |
 | `entity_id` | Integer | nullable |
 | `detail` | String(500) | nullable — truncated at 500 chars by `log_action` |
@@ -141,7 +143,7 @@ that no model change is missing a migration — this runs in CI on every push.
 
 Applied migrations, in order: foundation schema → users table → staff profile fields →
 recognition `note` → announcements table → department `head_name` → audit logs table →
-user `locale` preference.
+user `locale` preference → user lockout fields.
 
 ## 7. Localised values vs. stored values (القيم المخزّنة مقابل المعروضة)
 

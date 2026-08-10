@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nursing Executive Administration System 1.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-08-06 19:13+0000\n"
+"POT-Creation-Date: 2026-08-10 17:29+0000\n"
 "PO-Revision-Date: 2026-08-06 17:24+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -55,23 +55,36 @@ msgstr "Server error"
 msgid "حدث خطأ غير متوقع. تم تسجيل المشكلة وسنعمل على معالجتها."
 msgstr "An unexpected error occurred. The problem has been logged and will be addressed."
 
-#: app/security.py:42
+#: app/security.py:50
+#, python-format
+msgid "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل"
+msgstr "Password must be at least %(n)d characters"
+
+#: app/security.py:65
+msgid "كلمة المرور يجب أن تجمع ثلاثة على الأقل من: أحرف صغيرة، أحرف كبيرة، أرقام، رموز."
+msgstr "Password must combine at least three of: lowercase, uppercase, digits, symbols."
+
+#: app/security.py:75
+msgid "كلمة المرور يجب ألا تحتوي على البريد الإلكتروني."
+msgstr "Password must not contain your email address."
+
+#: app/security.py:94
 msgid "مدير النظام"
 msgstr "System Administrator"
 
-#: app/security.py:43
+#: app/security.py:95
 msgid "مدير التمريض"
 msgstr "Nursing Director"
 
-#: app/security.py:44
+#: app/security.py:96
 msgid "رئيس قسم"
 msgstr "Department Head"
 
-#: app/security.py:45
+#: app/security.py:97
 msgid "ممرض/ممرضة"
 msgstr "Nurse"
 
-#: app/blueprints/auth/forms.py:11 app/blueprints/staff/forms.py:32
+#: app/blueprints/auth/forms.py:11 app/blueprints/staff/forms.py:35
 #: app/blueprints/users/forms.py:13 app/templates/users/list.html:42
 msgid "البريد الإلكتروني"
 msgstr "Email address"
@@ -80,12 +93,12 @@ msgstr "Email address"
 msgid "الرجاء إدخال البريد الإلكتروني"
 msgstr "Please enter your email address"
 
-#: app/blueprints/auth/forms.py:14 app/blueprints/staff/forms.py:35
+#: app/blueprints/auth/forms.py:14 app/blueprints/staff/forms.py:38
 #: app/blueprints/users/forms.py:16
 msgid "بريد إلكتروني غير صالح"
 msgstr "Invalid email address"
 
-#: app/blueprints/auth/forms.py:18 app/blueprints/users/forms.py:29
+#: app/blueprints/auth/forms.py:18 app/blueprints/users/forms.py:31
 msgid "كلمة المرور"
 msgstr "Password"
 
@@ -109,43 +122,39 @@ msgstr "Please enter your current password"
 msgid "كلمة المرور الجديدة"
 msgstr "New password"
 
-#: app/blueprints/auth/forms.py:35
+#: app/blueprints/auth/forms.py:38
 msgid "الرجاء إدخال كلمة المرور الجديدة"
 msgstr "Please enter a new password"
 
-#: app/blueprints/auth/forms.py:36
-msgid "كلمة المرور يجب أن تكون 8 أحرف على الأقل"
-msgstr "Password must be at least 8 characters"
-
-#: app/blueprints/auth/forms.py:40
+#: app/blueprints/auth/forms.py:42
 msgid "تأكيد كلمة المرور"
 msgstr "Confirm password"
 
-#: app/blueprints/auth/forms.py:42
+#: app/blueprints/auth/forms.py:44
 msgid "الرجاء تأكيد كلمة المرور"
 msgstr "Please confirm your password"
 
-#: app/blueprints/auth/forms.py:43
+#: app/blueprints/auth/forms.py:45
 msgid "كلمتا المرور غير متطابقتين"
 msgstr "Passwords do not match"
 
-#: app/blueprints/auth/routes.py:29
+#: app/blueprints/auth/routes.py:34 app/blueprints/auth/routes.py:44
 msgid "بيانات الدخول غير صحيحة"
 msgstr "Incorrect sign-in details"
 
-#: app/blueprints/auth/routes.py:35
+#: app/blueprints/auth/routes.py:50
 msgid "هذا الحساب غير مُفعّل"
 msgstr "This account is not active"
 
-#: app/blueprints/auth/routes.py:54
+#: app/blueprints/auth/routes.py:72
 msgid "تم تسجيل الخروج بنجاح"
 msgstr "Signed out successfully"
 
-#: app/blueprints/auth/routes.py:64
+#: app/blueprints/auth/routes.py:85
 msgid "كلمة المرور الحالية غير صحيحة"
 msgstr "Current password is incorrect"
 
-#: app/blueprints/auth/routes.py:69
+#: app/blueprints/auth/routes.py:92
 msgid "تم تغيير كلمة المرور بنجاح"
 msgstr "Password changed successfully"
 
@@ -153,16 +162,16 @@ msgstr "Password changed successfully"
 msgid "اسم القسم"
 msgstr "Department name"
 
-#: app/blueprints/departments/forms.py:12
+#: app/blueprints/departments/forms.py:13
 msgid "الرجاء إدخال اسم القسم"
 msgstr "Please enter the department name"
 
-#: app/blueprints/departments/forms.py:14 app/templates/departments/detail.html:19
+#: app/blueprints/departments/forms.py:17 app/templates/departments/detail.html:19
 #: app/templates/departments/list.html:35
 msgid "الموقع"
 msgstr "Location"
 
-#: app/blueprints/departments/forms.py:15 app/templates/departments/detail.html:20
+#: app/blueprints/departments/forms.py:18 app/templates/departments/detail.html:20
 #: app/templates/departments/list.html:36
 msgid "رئيس القسم"
 msgstr "Department head"
@@ -389,39 +398,39 @@ msgstr "Please enter the name"
 msgid "الرقم الوظيفي"
 msgstr "Employee ID"
 
-#: app/blueprints/staff/forms.py:18
+#: app/blueprints/staff/forms.py:19
 msgid "الرجاء إدخال الرقم الوظيفي"
 msgstr "Please enter the employee ID"
 
-#: app/blueprints/staff/forms.py:21 app/blueprints/users/forms.py:21
+#: app/blueprints/staff/forms.py:24 app/blueprints/users/forms.py:21
 #: app/templates/departments/detail.html:47 app/templates/staff/list.html:64
 #: app/templates/users/list.html:43
 msgid "الدور"
 msgstr "Role"
 
-#: app/blueprints/staff/forms.py:23 app/blueprints/users/forms.py:23
+#: app/blueprints/staff/forms.py:26 app/blueprints/users/forms.py:23
 msgid "الرجاء اختيار الدور"
 msgstr "Please choose a role"
 
-#: app/blueprints/staff/forms.py:27 app/templates/departments/list.html:34
+#: app/blueprints/staff/forms.py:30 app/templates/departments/list.html:34
 #: app/templates/main/my_home.html:28 app/templates/performance/list.html:51
 #: app/templates/staff/list.html:65
 msgid "القسم"
 msgstr "Department"
 
-#: app/blueprints/staff/forms.py:29
+#: app/blueprints/staff/forms.py:32
 msgid "الرجاء اختيار القسم"
 msgstr "Please choose a department"
 
-#: app/blueprints/staff/forms.py:39
+#: app/blueprints/staff/forms.py:42
 msgid "الهاتف"
 msgstr "Phone"
 
-#: app/blueprints/staff/forms.py:40
+#: app/blueprints/staff/forms.py:43
 msgid "تاريخ التعيين"
 msgstr "Hire date"
 
-#: app/blueprints/staff/forms.py:41 app/blueprints/users/forms.py:30
+#: app/blueprints/staff/forms.py:44 app/blueprints/users/forms.py:32
 #: app/templates/departments/detail.html:59 app/templates/main/my_home.html:30
 #: app/templates/staff/list.html:49 app/templates/staff/list.html:79
 #: app/templates/users/list.html:59
@@ -444,42 +453,47 @@ msgstr "Staff details updated"
 msgid "تم حذف الموظف"
 msgstr "Staff member deleted"
 
-#: app/blueprints/users/forms.py:26
+#: app/blueprints/users/forms.py:27
 msgid "ملف الموظف المرتبط"
 msgstr "Linked staff profile"
 
-#: app/blueprints/users/routes.py:20
+#: app/blueprints/users/routes.py:19
 msgid "— غير مرتبط —"
 msgstr "— Not linked —"
 
-#: app/blueprints/users/routes.py:79 app/blueprints/users/routes.py:123
+#: app/blueprints/users/routes.py:78 app/blueprints/users/routes.py:117
 msgid "البريد الإلكتروني مستخدم بالفعل"
 msgstr "That email address is already in use"
 
-#: app/blueprints/users/routes.py:83 app/blueprints/users/routes.py:127
-#, python-format
-msgid "كلمة المرور يجب أن تكون %(n)d أحرف على الأقل"
-msgstr "Password must be at least %(n)d characters"
-
-#: app/blueprints/users/routes.py:88 app/blueprints/users/routes.py:132
+#: app/blueprints/users/routes.py:82 app/blueprints/users/routes.py:123
 msgid "هذا الموظف مرتبط بحساب آخر بالفعل"
 msgstr "This staff member is already linked to another account"
 
-#: app/blueprints/users/routes.py:101
+#: app/blueprints/users/routes.py:95
 msgid "تمت إضافة المستخدم بنجاح"
 msgstr "User added successfully"
 
-#: app/blueprints/users/routes.py:142
+#: app/blueprints/users/routes.py:133
 msgid "تم تحديث بيانات المستخدم"
 msgstr "User details updated"
 
-#: app/blueprints/users/routes.py:154
+#: app/blueprints/users/routes.py:152
+msgid "تم إلغاء قفل الحساب"
+msgstr "Account unlocked"
+
+#: app/blueprints/users/routes.py:162
 msgid "لا يمكنك حذف حسابك الحالي"
 msgstr "You cannot delete your own account"
 
-#: app/blueprints/users/routes.py:159
+#: app/blueprints/users/routes.py:167
 msgid "تم حذف المستخدم"
 msgstr "User deleted"
+
+#: app/templates/base.html:20 app/templates/main/dashboard.html:2
+#: app/templates/main/dashboard.html:3 app/templates/partials/header.html:14
+#: app/templates/partials/sidebar.html:35
+msgid "لوحة التحكم"
+msgstr "Dashboard"
 
 #: app/templates/audit/list.html:3 app/templates/audit/list.html:4
 #: app/templates/audit/list.html:19 app/templates/partials/sidebar.html:56
@@ -567,7 +581,7 @@ msgstr "Staff count"
 
 #: app/templates/departments/detail.html:24 app/templates/departments/list.html:56
 #: app/templates/news/detail.html:31 app/templates/news/list.html:57
-#: app/templates/staff/list.html:87 app/templates/users/list.html:66
+#: app/templates/staff/list.html:87 app/templates/users/list.html:69
 msgid "تعديل"
 msgstr "Edit"
 
@@ -582,7 +596,7 @@ msgstr "Delete the %(name)s department?"
 
 #: app/templates/departments/detail.html:29 app/templates/news/detail.html:34
 #: app/templates/performance/list.html:69 app/templates/recognition/list.html:68
-#: app/templates/staff/list.html:91 app/templates/users/list.html:71
+#: app/templates/staff/list.html:91 app/templates/users/list.html:80
 msgid "حذف"
 msgstr "Delete"
 
@@ -655,11 +669,6 @@ msgstr "No matching departments"
 #: app/templates/errors/error.html:17
 msgid "العودة إلى الصفحة الرئيسية"
 msgstr "Back to home"
-
-#: app/templates/main/dashboard.html:2 app/templates/main/dashboard.html:3
-#: app/templates/partials/header.html:14 app/templates/partials/sidebar.html:35
-msgid "لوحة التحكم"
-msgstr "Dashboard"
 
 #: app/templates/main/dashboard.html:14
 msgid "نظرة عامة تنفيذية"
@@ -967,16 +976,27 @@ msgstr "Not linked"
 msgid "معطّل"
 msgstr "Disabled"
 
-#: app/templates/users/list.html:69
+#: app/templates/users/list.html:64
+msgid "مقفل مؤقتاً"
+msgstr "Temporarily locked"
+
+#: app/templates/users/list.html:73
+msgid "إلغاء القفل"
+msgstr "Unlock"
+
+#: app/templates/users/list.html:78
 #, python-format
 msgid "تأكيد حذف المستخدم %(email)s؟"
 msgstr "Delete the user %(email)s?"
 
-#: app/templates/users/list.html:74
+#: app/templates/users/list.html:83
 msgid "حسابك"
 msgstr "Your account"
 
-#: app/templates/users/list.html:80
+#: app/templates/users/list.html:89
 msgid "لا يوجد مستخدمون مطابقون"
 msgstr "No matching users"
+
+#~ msgid "كلمة المرور يجب أن تكون 8 أحرف على الأقل"
+#~ msgstr "Password must be at least 8 characters"
 
