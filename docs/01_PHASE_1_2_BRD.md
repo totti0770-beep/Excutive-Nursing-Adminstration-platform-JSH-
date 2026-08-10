@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered documents and predates the Flask rebuild.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `04_Business_Requirements_Document.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 1 & 2: Business Analysis & Business Requirements Document (BRD)
 
 ## Project: Nursing Administration Portal

@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document describes Firestore Security Rules and Firebase hosting; security is now enforced server-side.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `24_Security_Architecture.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 23 & 24: Security & Deployment Architecture
 
 ## Project: Nursing Administration Portal

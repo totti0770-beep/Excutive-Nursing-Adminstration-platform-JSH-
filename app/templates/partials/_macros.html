@@ -15,7 +15,7 @@
 <div class="flex items-center justify-center gap-1 mt-5">
   {% if pg.has_prev %}
     <a href="{{ url_for(endpoint, page=pg.prev_num, **filters) }}"
-       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">السابق</a>
+       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">{{ _('السابق') }}</a>
   {% endif %}
   {% for p in pg.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
     {% if p %}
@@ -27,7 +27,7 @@
   {% endfor %}
   {% if pg.has_next %}
     <a href="{{ url_for(endpoint, page=pg.next_num, **filters) }}"
-       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">التالي</a>
+       class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">{{ _('التالي') }}</a>
   {% endif %}
 </div>
 {% endif %}

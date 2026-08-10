@@ -2,13 +2,8 @@
 # Nursing Executive Administration System — Jazan Specialty Hospital
 
 An internal administrative & governance web portal for the Nursing Administration,
-built as a modular Flask application with a right-to-left (RTL) Arabic UI.
-
-> **Status:** Foundation + Authentication complete. Project structure,
-> configuration, database models, the RTL dashboard shell, and secure login
-> (Flask-Login, hashed passwords, CSRF, enforced RBAC) are in place. Remaining
-> feature modules (staff database, recognition, notifications) are built
-> incrementally in subsequent increments.
+built as a modular Flask application. The interface is **bilingual**: Arabic
+right-to-left (the default) and English left-to-right.
 
 ## Tech stack
 
@@ -16,7 +11,9 @@ built as a modular Flask application with a right-to-left (RTL) Arabic UI.
 - **ORM / DB:** SQLAlchemy via Flask-SQLAlchemy; migrations via Flask-Migrate (Alembic)
   - Dev: SQLite (zero setup) · Prod: PostgreSQL (models are Postgres-compatible)
 - **UI:** Server-rendered Jinja2 templates + Tailwind CSS (locally built, no CDN),
-  RTL Arabic with a **self-hosted Tajawal font** — fully self-contained for intranet use
+  with a **self-hosted Tajawal font** — fully self-contained for intranet use
+- **Localisation:** Flask-Babel — Arabic (RTL, default) and English (LTR); the layout
+  mirrors automatically via CSS logical properties
 - **Config:** environment variables via `.env` (python-dotenv); no secrets in code
 
 ## Data model
@@ -89,6 +86,38 @@ npm run build:css      # regenerate app/static/css/tailwind.css
 
 The Tajawal font is self-hosted from `app/static/fonts/` (no Google Fonts / external CDN),
 so the UI renders fully styled on an isolated hospital intranet.
+
+### Translations (i18n)
+
+The interface ships in **Arabic (default, RTL)** and **English (LTR)**. Arabic is the source
+language: the message ids in the code *are* the Arabic strings, so a missing translation
+falls back to correct Arabic and the Arabic UI cannot regress. Only English needs a catalog
+(`app/translations/en/`).
+
+The compiled catalog (`messages.mo`) is committed alongside the built CSS, so the app runs
+without a translation toolchain. Use the Makefile targets when you change a string:
+
+```bash
+make i18n-update     # re-extract from source and merge into the catalogs
+#                      then fill in the new msgstr entries in
+#                      app/translations/en/LC_MESSAGES/messages.po
+make i18n-compile    # rebuild the .mo files the app reads
+make i18n-check      # CI gate: fails if a catalog is out of date
+make i18n-add LANG=fr   # start a new language
+```
+
+> Always go through the Makefile. The code aliases `lazy_gettext` to `_l`, which is **not**
+> a default pybabel keyword — a bare `pybabel extract` silently drops every form label,
+> validation message, and error-page string.
+
+**How the language is chosen**, first match wins: an explicit choice (the header switcher,
+stored in the session) → the signed-in user's saved preference (`users.locale`) → the
+browser's `Accept-Language` → Arabic. Switching is a CSRF-protected `POST /lang/<locale>`,
+not a link, because it writes to the user's profile.
+
+When adding UI, use logical CSS properties (`ps-`/`pe-`, `ms-`/`me-`, `start-`/`end-`,
+`text-start`/`text-end`) rather than physical ones (`pl-`, `mr-`, `left-`, `text-right`)
+so the layout mirrors correctly in both directions.
 
 ## Production deployment
 
@@ -163,8 +192,20 @@ Every push and pull request runs the same gates via GitHub Actions
   browsable by a System Admin at `/audit` (for CBAHI/JCI-style accountability).
 - **Account control:** deactivating a user takes effect on their next request
   (enforced in the Flask-Login `user_loader`), not just at next login.
-- **Rate limiting:** `/login` is throttled via Flask-Limiter to blunt
-  brute-force attempts.
+- **Brute-force protection, two layers:** `/login` is throttled per IP via
+  Flask-Limiter, *and* an account locks for `LOGIN_LOCKOUT_MINUTES` (default 15)
+  after `LOGIN_MAX_FAILED_ATTEMPTS` (default 10) consecutive failures — the per-IP
+  limit alone does not stop an attacker spread across many addresses. Locks expire
+  on their own; `POST /users/<id>/unlock` (System Admin) is an escape hatch. A
+  locked account returns the *same* message as a wrong password, so lockout cannot
+  be used to enumerate valid addresses.
+  In a multi-worker deployment set `RATELIMIT_STORAGE_URI` to a shared backend
+  (e.g. `redis://…`) — the default store is per process, so the limit would
+  otherwise be multiplied by the worker count.
+- **Password policy:** one implementation in `app/security.py`, shared by the
+  change-password form, admin user management, and `flask create-admin` — minimum
+  8 characters, at least three of {lowercase, uppercase, digit, symbol}, and it may
+  not contain the account's email local-part.
 - **Security headers:** Flask-Talisman sets a strict `Content-Security-Policy`
   (`default-src 'self'` — the app ships no inline JS/CSS), `X-Frame-Options`,
   `X-Content-Type-Options`, and HSTS (over HTTPS). Set `FORCE_HTTPS=1` in

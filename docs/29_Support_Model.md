@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document assumes Firebase operational tooling.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `20_Solution_Architecture.md` §3.4 and the repository `README.md`. See `docs/README.md` for the index.
+
+---
+
 # Document 29: Support Model
 ## Project: Nursing Administration Portal
 **Client:** Jazan Specialty Hospital (JSH)

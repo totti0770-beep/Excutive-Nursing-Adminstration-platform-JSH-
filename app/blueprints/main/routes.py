@@ -1,14 +1,19 @@
 """Main blueprint routes."""
 
-from flask import jsonify, redirect, render_template, url_for
+from urllib.parse import urlparse
+
+from flask import abort, jsonify, redirect, render_template, request, session, url_for
+from flask_babel import gettext as _
 from flask_login import current_user, login_required
 from sqlalchemy import func, text
 
 from app.blueprints.main import main_bp
 from app.blueprints.news import CATEGORIES as NEWS_CATEGORIES
 from app.extensions import db
+from app.i18n import SESSION_KEY as LOCALE_SESSION_KEY
+from app.i18n import is_supported
 from app.models import Announcement, Department, Performance, Recognition, Staff
-from app.security import Roles
+from app.security import Roles, is_safe_redirect_target
 
 
 @main_bp.route("/healthz")
@@ -19,6 +24,49 @@ def healthz():
         return jsonify(status="ok"), 200
     except Exception:  # pragma: no cover - only on a real DB outage
         return jsonify(status="error"), 503
+
+
+@main_bp.route("/lang/<locale>", methods=["POST"])
+def set_language(locale):
+    """Switch interface language and return to the originating page.
+
+    POST (not GET) because this changes stored state: it writes the choice to
+    the signed-in user's profile. That keeps it consistent with every other
+    mutation in the app and means CSRF protection applies, so the language
+    cannot be flipped by a third-party link, image, or prefetch.
+
+    Available to anonymous visitors too, so the language can be switched on
+    the login page before signing in.
+    """
+    if not is_supported(locale):
+        abort(404)
+
+    session[LOCALE_SESSION_KEY] = locale
+    if current_user.is_authenticated:
+        # Persist so the preference follows the account to a new session.
+        current_user.locale = locale
+        db.session.commit()
+
+    target = request.form.get("next") or _referrer_path()
+    if is_safe_redirect_target(target):
+        return redirect(target)
+    return redirect(url_for("main.dashboard"))
+
+
+def _referrer_path():
+    """The Referer header reduced to a same-host relative path, else None.
+
+    The header is an absolute URL, so it can never satisfy the relative-path
+    check directly; this strips it down only when the host matches ours.
+    """
+    referrer = request.referrer
+    if not referrer:
+        return None
+    parsed = urlparse(referrer)
+    if parsed.netloc and parsed.netloc != request.host:
+        return None
+    path = parsed.path or "/"
+    return f"{path}?{parsed.query}" if parsed.query else path
 
 
 _DASHBOARD_ROLES = (Roles.SYSTEM_ADMIN, Roles.NURSING_DIRECTOR, Roles.DEPARTMENT_HEAD)
@@ -42,28 +90,28 @@ def dashboard():
 
     kpis = [
         {
-            "label": "إجمالي طاقم التمريض",
+            "label": _("إجمالي طاقم التمريض"),
             "value": total_staff,
             "icon": "users",
             "accent": "amber",
             "href": url_for("staff.list_staff"),
         },
         {
-            "label": "الأقسام",
+            "label": _("الأقسام"),
             "value": total_departments,
             "icon": "building",
             "accent": "emerald",
             "href": url_for("departments.list_departments"),
         },
         {
-            "label": "التكريمات الممنوحة",
+            "label": _("التكريمات الممنوحة"),
             "value": total_recognitions,
             "icon": "award",
             "accent": "violet",
             "href": url_for("recognition.list_recognition"),
         },
         {
-            "label": "متوسط الأداء",
+            "label": _("متوسط الأداء"),
             "icon": "activity",
             "accent": "sky",
             "value": f"{avg_performance:.1f}" if avg_performance is not None else "—",

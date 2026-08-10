@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document describes Firestore collections; the delivered database is relational.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `21_Database_Design.md` and `22_ER_Diagram.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 18 & 19: Database Design & ER Diagram
 
 ## Project: Nursing Administration Portal

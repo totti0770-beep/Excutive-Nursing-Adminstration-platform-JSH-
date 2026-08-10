@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% from 'partials/_macros.html' import pagination as pager %}
-{% block title %}سجل التدقيق{% endblock %}
-{% block page_title %}سجل التدقيق{% endblock %}
+{% block title %}{{ _('سجل التدقيق') }}{% endblock %}
+{% block page_title %}{{ _('سجل التدقيق') }}{% endblock %}
 
 {% set action_styles = {
   'login': 'bg-emerald-50 text-emerald-700',
@@ -16,38 +16,38 @@
 
 {% block content %}
 <div class="mb-6">
-  <h2 class="text-xl font-bold text-slate-800">سجل التدقيق</h2>
-  <p class="text-sm text-slate-500 mt-1">إجمالي السجلات: {{ pagination.total }}</p>
+  <h2 class="text-xl font-bold text-slate-800">{{ _('سجل التدقيق') }}</h2>
+  <p class="text-sm text-slate-500 mt-1">{{ _('إجمالي السجلات:') }} {{ pagination.total }}</p>
 </div>
 
 <!-- Filters -->
 <form method="GET" action="{{ url_for('audit.list_audit') }}"
       class="bg-white rounded-2xl border border-slate-200 p-4 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
   <select name="action" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-    <option value="">كل الإجراءات</option>
+    <option value="">{{ _('كل الإجراءات') }}</option>
     {% for a in actions %}
       <option value="{{ a }}" {% if filters.action == a %}selected{% endif %}>{{ a }}</option>
     {% endfor %}
   </select>
   <select name="entity_type" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-    <option value="">كل الأنواع</option>
+    <option value="">{{ _('كل الأنواع') }}</option>
     {% for e in entity_types %}
       <option value="{{ e }}" {% if filters.entity_type == e %}selected{% endif %}>{{ e }}</option>
     {% endfor %}
   </select>
-  <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">تصفية</button>
+  <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">{{ _('تصفية') }}</button>
 </form>
 
 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
   <div class="overflow-x-auto">
-    <table class="w-full text-sm text-right">
+    <table class="w-full text-sm text-start">
       <thead class="bg-slate-50 text-slate-500">
         <tr>
-          <th class="px-4 py-3 font-medium">الوقت</th>
-          <th class="px-4 py-3 font-medium">المستخدم</th>
-          <th class="px-4 py-3 font-medium">الإجراء</th>
-          <th class="px-4 py-3 font-medium">النوع</th>
-          <th class="px-4 py-3 font-medium">التفاصيل</th>
+          <th class="px-4 py-3 font-medium">{{ _('الوقت') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('المستخدم') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('الإجراء') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('النوع') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('التفاصيل') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -62,7 +62,7 @@
           <td class="px-4 py-3 text-slate-600">{{ e.detail or '' }}</td>
         </tr>
         {% else %}
-        <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">لا توجد سجلات</td></tr>
+        <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">{{ _('لا توجد سجلات') }}</td></tr>
         {% endfor %}
       </tbody>
     </table>

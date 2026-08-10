@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered design documents.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `18_Design_System.md`, `19_Screen_Specification.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 16 & 17: UI Design System & UX Guidelines
 
 ## Project: Nursing Administration Portal

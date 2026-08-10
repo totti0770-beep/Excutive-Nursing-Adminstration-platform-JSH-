@@ -9,9 +9,10 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import Flask, session
+from flask_babel import lazy_gettext as _l
 
 from app.config import get_config
-from app.extensions import csrf, db, limiter, login_manager, migrate, talisman
+from app.extensions import babel, csrf, db, limiter, login_manager, migrate, talisman
 
 
 def create_app(config_object=None):
@@ -34,8 +35,26 @@ def create_app(config_object=None):
     csrf.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
-    login_manager.login_message = "الرجاء تسجيل الدخول للوصول إلى هذه الصفحة."
+    login_manager.login_message = _l("الرجاء تسجيل الدخول للوصول إلى هذه الصفحة.")
     limiter.init_app(app)
+    # Localisation: Arabic (RTL) by default, English (LTR) available.
+    from app.i18n import select_locale, supported_locales, text_direction
+
+    babel.init_app(app, locale_selector=select_locale)
+
+    # Expose the active locale and its direction to every template so the
+    # layout can mirror itself without any per-page conditionals.
+    @app.context_processor
+    def inject_locale():
+        from flask_babel import get_locale
+
+        active = str(get_locale() or app.config["BABEL_DEFAULT_LOCALE"])
+        return {
+            "current_locale": active,
+            "text_direction": text_direction(active),
+            "available_locales": supported_locales(),
+        }
+
     # Security headers. HTTPS redirect only in production; a strict CSP is
     # possible because there is no inline JS/CSS (see static/js/app.js).
     talisman.init_app(

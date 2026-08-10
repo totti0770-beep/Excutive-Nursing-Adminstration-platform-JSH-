@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}{{ dept.name }}{% endblock %}
-{% block page_title %}الأقسام{% endblock %}
+{% block page_title %}{{ _('الأقسام') }}{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('departments.list_departments') }}" class="text-sm text-slate-500 hover:underline">&#8594; العودة إلى الأقسام</a>
+<a href="{{ url_for('departments.list_departments') }}" class="text-sm text-slate-500 hover:underline">&#8594; {{ _('العودة إلى الأقسام') }}</a>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-3">
   <!-- Department info -->
@@ -16,17 +16,17 @@
         <h2 class="text-lg font-bold text-slate-800">{{ dept.name }}</h2>
       </div>
       <dl class="space-y-2 text-sm">
-        <div class="flex justify-between"><dt class="text-slate-500">الموقع</dt><dd class="text-slate-700">{{ dept.location or '—' }}</dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">رئيس القسم</dt><dd class="text-slate-700">{{ dept.head_name or '—' }}</dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">عدد الموظفين</dt><dd class="text-slate-700 ltr-nums">{{ roster|length }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('الموقع') }}</dt><dd class="text-slate-700">{{ dept.location or '—' }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('رئيس القسم') }}</dt><dd class="text-slate-700">{{ dept.head_name or '—' }}</dd></div>
+        <div class="flex justify-between"><dt class="text-slate-500">{{ _('عدد الموظفين') }}</dt><dd class="text-slate-700 ltr-nums">{{ roster|length }}</dd></div>
       </dl>
       <div class="flex items-center gap-3 mt-5 pt-4 border-t border-slate-100">
-        <a href="{{ url_for('departments.edit_department', dept_id=dept.id) }}" class="text-sm text-sky-600 hover:underline">تعديل</a>
-        <a href="{{ url_for('staff.list_staff', department_id=dept.id) }}" class="text-sm text-slate-500 hover:underline">عرض في قاعدة بيانات الطاقم</a>
+        <a href="{{ url_for('departments.edit_department', dept_id=dept.id) }}" class="text-sm text-sky-600 hover:underline">{{ _('تعديل') }}</a>
+        <a href="{{ url_for('staff.list_staff', department_id=dept.id) }}" class="text-sm text-slate-500 hover:underline">{{ _('عرض في قاعدة بيانات الطاقم') }}</a>
         <form method="POST" action="{{ url_for('departments.delete_department', dept_id=dept.id) }}"
-              data-confirm="تأكيد حذف قسم {{ dept.name }}؟">
+              data-confirm="{{ _('تأكيد حذف قسم %(name)s؟', name=dept.name) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <button type="submit" class="text-sm text-red-600 hover:underline">حذف</button>
+          <button type="submit" class="text-sm text-red-600 hover:underline">{{ _('حذف') }}</button>
         </form>
       </div>
     </div>
@@ -36,16 +36,16 @@
   <div class="lg:col-span-2">
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-100">
-        <h3 class="font-bold text-slate-800">طاقم القسم</h3>
+        <h3 class="font-bold text-slate-800">{{ _('طاقم القسم') }}</h3>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm text-right">
+        <table class="w-full text-sm text-start">
           <thead class="bg-slate-50 text-slate-500">
             <tr>
-              <th class="px-4 py-3 font-medium">الاسم</th>
-              <th class="px-4 py-3 font-medium">الرقم الوظيفي</th>
-              <th class="px-4 py-3 font-medium">الدور</th>
-              <th class="px-4 py-3 font-medium">الحالة</th>
+              <th class="px-4 py-3 font-medium">{{ _('الاسم') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('الرقم الوظيفي') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('الدور') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('الحالة') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -56,14 +56,14 @@
               <td class="px-4 py-3 text-slate-600">{{ role_label(m.role) }}</td>
               <td class="px-4 py-3">
                 {% if m.is_active %}
-                  <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">نشط</span>
+                  <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">{{ _('نشط') }}</span>
                 {% else %}
-                  <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">غير نشط</span>
+                  <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{{ _('غير نشط') }}</span>
                 {% endif %}
               </td>
             </tr>
             {% else %}
-            <tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">لا يوجد موظفون في هذا القسم</td></tr>
+            <tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">{{ _('لا يوجد موظفون في هذا القسم') }}</td></tr>
             {% endfor %}
           </tbody>
         </table>

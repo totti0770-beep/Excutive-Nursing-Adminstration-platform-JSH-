@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 {% from 'partials/_macros.html' import pagination as pager %}
-{% block title %}الأداء{% endblock %}
-{% block page_title %}مؤشرات الأداء{% endblock %}
+{% block title %}{{ _('الأداء') }}{% endblock %}
+{% block page_title %}{{ _('مؤشرات الأداء') }}{% endblock %}
 
 {% block content %}
 <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
   <div>
-    <h2 class="text-xl font-bold text-slate-800">مؤشرات الأداء</h2>
-    <p class="text-sm text-slate-500 mt-1">إجمالي السجلات: {{ pagination.total }}</p>
+    <h2 class="text-xl font-bold text-slate-800">{{ _('مؤشرات الأداء') }}</h2>
+    <p class="text-sm text-slate-500 mt-1">{{ _('إجمالي السجلات:') }} {{ pagination.total }}</p>
   </div>
   <div class="flex items-center gap-2">
     <a href="{{ url_for('performance.export_csv', **filters) }}"
        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition">
-      تصدير CSV
+      {{ _('تصدير') }} CSV
     </a>
     <a href="{{ url_for('performance.new_performance') }}"
        class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      تسجيل مؤشر
+      {{ _('تسجيل مؤشر') }}
     </a>
   </div>
 </div>
@@ -28,31 +28,31 @@
     <form method="GET" action="{{ url_for('performance.list_performance') }}"
           class="bg-white rounded-2xl border border-slate-200 p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
       <select name="metric" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-        <option value="">كل المؤشرات</option>
+        <option value="">{{ _('كل المؤشرات') }}</option>
         {% for m in metrics %}
-          <option value="{{ m }}" {% if filters.metric == m %}selected{% endif %}>{{ m }}</option>
+          <option value="{{ m }}" {% if filters.metric == m %}selected{% endif %}>{{ _(m) }}</option>
         {% endfor %}
       </select>
       <select name="department_id" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-        <option value="">كل الأقسام</option>
+        <option value="">{{ _('كل الأقسام') }}</option>
         {% for d in departments %}
           <option value="{{ d.id }}" {% if filters.department_id == d.id %}selected{% endif %}>{{ d.name }}</option>
         {% endfor %}
       </select>
-      <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">تصفية</button>
+      <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">{{ _('تصفية') }}</button>
     </form>
 
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full text-sm text-right">
+        <table class="w-full text-sm text-start">
           <thead class="bg-slate-50 text-slate-500">
             <tr>
-              <th class="px-4 py-3 font-medium">الموظف</th>
-              <th class="px-4 py-3 font-medium">القسم</th>
-              <th class="px-4 py-3 font-medium">المؤشر</th>
-              <th class="px-4 py-3 font-medium">القيمة</th>
-              <th class="px-4 py-3 font-medium">التاريخ</th>
-              <th class="px-4 py-3 font-medium">إجراءات</th>
+              <th class="px-4 py-3 font-medium">{{ _('الموظف') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('القسم') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('المؤشر') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('القيمة') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('التاريخ') }}</th>
+              <th class="px-4 py-3 font-medium">{{ _('إجراءات') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -60,18 +60,18 @@
             <tr class="hover:bg-slate-50">
               <td class="px-4 py-3 font-medium text-slate-800">{{ e.staff.name if e.staff else '—' }}</td>
               <td class="px-4 py-3 text-slate-600">{{ e.staff.department.name if e.staff and e.staff.department else '—' }}</td>
-              <td class="px-4 py-3 text-slate-600">{{ e.metric_name }}</td>
+              <td class="px-4 py-3 text-slate-600">{{ _(e.metric_name) }}</td>
               <td class="px-4 py-3"><span class="text-xs bg-sky-50 text-sky-700 px-2 py-1 rounded ltr-nums">{{ '%.1f' | format(e.value) }}</span></td>
               <td class="px-4 py-3 text-slate-500 ltr-nums">{{ e.date.strftime('%Y-%m-%d') }}</td>
               <td class="px-4 py-3">
-                <form method="POST" action="{{ url_for('performance.delete_performance', perf_id=e.id) }}" data-confirm="تأكيد حذف المؤشر؟">
+                <form method="POST" action="{{ url_for('performance.delete_performance', perf_id=e.id) }}" data-confirm="{{ _('تأكيد حذف المؤشر؟') }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
+                  <button type="submit" class="text-xs text-red-600 hover:underline">{{ _('حذف') }}</button>
                 </form>
               </td>
             </tr>
             {% else %}
-            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">لا توجد سجلات</td></tr>
+            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">{{ _('لا توجد سجلات') }}</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -84,13 +84,13 @@
   <!-- Averages summary -->
   <div>
     <div class="bg-white rounded-2xl border border-slate-200 p-5">
-      <h3 class="font-bold text-slate-800 mb-3">متوسط المؤشرات</h3>
+      <h3 class="font-bold text-slate-800 mb-3">{{ _('متوسط المؤشرات') }}</h3>
       {% if averages %}
       <ul class="space-y-3">
         {% for name, avg in averages %}
         <li>
           <div class="flex items-center justify-between text-sm mb-1">
-            <span class="text-slate-700">{{ name }}</span>
+            <span class="text-slate-700">{{ _(name) }}</span>
             <span class="text-slate-500 ltr-nums">{{ '%.1f' | format(avg) }}%</span>
           </div>
           <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
@@ -100,7 +100,7 @@
         {% endfor %}
       </ul>
       {% else %}
-      <p class="text-sm text-slate-400">لا توجد بيانات</p>
+      <p class="text-sm text-slate-400">{{ _('لا توجد بيانات') }}</p>
       {% endif %}
     </div>
   </div>

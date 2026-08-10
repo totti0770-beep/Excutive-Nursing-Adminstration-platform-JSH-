@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ current_locale }}" dir="{{ text_direction }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>تسجيل الدخول — {{ config.APP_NAME_AR }}</title>
+  <title>{{ _('تسجيل الدخول') }} — {{ config.APP_NAME }}</title>
 
   <!-- Self-contained, locally built Tailwind + self-hosted Tajawal font (no external CDN) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}" />
 </head>
 <body class="min-h-screen bg-slate-100 font-sans antialiased flex items-center justify-center p-4">
   <div class="w-full max-w-md">
+    <div class="flex justify-center mb-4">{% include 'partials/language_switch.html' %}</div>
     <div class="text-center mb-6">
-      <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gold text-brand-dark text-2xl font-extrabold">ت</span>
-      <h1 class="mt-3 text-xl font-bold text-slate-800">{{ config.APP_NAME_AR }}</h1>
-      <p class="text-sm text-slate-500">{{ config.ORG_NAME_AR }}</p>
+      <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gold text-brand-dark text-2xl font-extrabold">{{ _('ت') }}</span>
+      <h1 class="mt-3 text-xl font-bold text-slate-800">{{ config.APP_NAME }}</h1>
+      <p class="text-sm text-slate-500">{{ config.ORG_NAME }}</p>
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-      <h2 class="text-lg font-bold text-slate-800 mb-4">تسجيل الدخول</h2>
+      <h2 class="text-lg font-bold text-slate-800 mb-4">{{ _('تسجيل الدخول') }}</h2>
 
       {% include 'partials/flashes.html' %}
 
@@ -49,13 +50,13 @@
 
         <button type="submit"
                 class="w-full rounded-lg bg-brand-dark text-white font-medium py-2.5 text-sm hover:bg-slate-800 transition">
-          دخول
+          {{ _('دخول') }}
         </button>
       </form>
     </div>
 
     <p class="text-center text-xs text-slate-400 mt-6">
-      {{ config.ORG_NAME_AR }}
+      {{ config.ORG_NAME }}
     </p>
   </div>
 </body>

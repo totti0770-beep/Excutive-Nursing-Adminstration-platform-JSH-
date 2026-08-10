@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered SRS and specifies the abandoned Firebase stack.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `20_Solution_Architecture.md` and `23_API_Design.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 3: Software Requirements Specification (SRS)
 
 ## Project: Nursing Administration Portal

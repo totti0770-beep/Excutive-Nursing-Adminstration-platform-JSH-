@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{ ann.title }}{% endblock %}
-{% block page_title %}الإشعارات والأخبار{% endblock %}
+{% block page_title %}{{ _('الإشعارات والأخبار') }}{% endblock %}
 
 {% set cat_styles = {
   'news': 'bg-sky-50 text-sky-700',
@@ -10,13 +10,13 @@
 
 {% block content %}
 <div class="max-w-3xl">
-  <a href="{{ url_for('news.feed') }}" class="text-sm text-slate-500 hover:underline">&#8594; العودة إلى الأخبار</a>
+  <a href="{{ url_for('news.feed') }}" class="text-sm text-slate-500 hover:underline">&#8594; {{ _('العودة إلى الأخبار') }}</a>
 
   <article class="bg-white rounded-2xl border border-slate-200 p-6 mt-3">
     <div class="flex items-center gap-2 mb-3 flex-wrap">
       <span class="text-xs px-2 py-0.5 rounded {{ cat_styles.get(ann.category, 'bg-slate-100 text-slate-600') }}">{{ categories.get(ann.category, ann.category) }}</span>
-      {% if ann.pinned %}<span class="text-xs px-2 py-0.5 rounded bg-brand-gold/15 text-brand-gold">مثبّت</span>{% endif %}
-      {% if not ann.is_published %}<span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-500">مسودة</span>{% endif %}
+      {% if ann.pinned %}<span class="text-xs px-2 py-0.5 rounded bg-brand-gold/15 text-brand-gold">{{ _('مثبّت') }}</span>{% endif %}
+      {% if not ann.is_published %}<span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-500">{{ _('مسودة') }}</span>{% endif %}
     </div>
 
     <h1 class="text-2xl font-bold text-slate-800">{{ ann.title }}</h1>
@@ -28,10 +28,10 @@
 
     {% if can_manage %}
     <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-100">
-      <a href="{{ url_for('news.edit_announcement', ann_id=ann.id) }}" class="text-sm text-sky-600 hover:underline">تعديل</a>
-      <form method="POST" action="{{ url_for('news.delete_announcement', ann_id=ann.id) }}" data-confirm="تأكيد حذف المنشور؟">
+      <a href="{{ url_for('news.edit_announcement', ann_id=ann.id) }}" class="text-sm text-sky-600 hover:underline">{{ _('تعديل') }}</a>
+      <form method="POST" action="{{ url_for('news.delete_announcement', ann_id=ann.id) }}" data-confirm="{{ _('تأكيد حذف المنشور؟') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <button type="submit" class="text-sm text-red-600 hover:underline">حذف</button>
+        <button type="submit" class="text-sm text-red-600 hover:underline">{{ _('حذف') }}</button>
       </form>
     </div>
     {% endif %}

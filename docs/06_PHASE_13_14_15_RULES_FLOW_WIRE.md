@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered business-rules/workflow/wireframe documents.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `08_Business_Rules.md`, `17_Wireframes.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 13, 14, & 15: Business Rules, Workflow Design, & Wireframe Specs
 
 ## Project: Nursing Administration Portal

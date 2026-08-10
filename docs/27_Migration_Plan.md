@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document plans a migration into Firestore; the delivered system uses a relational database with Alembic migrations.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `21_Database_Design.md` §6. See `docs/README.md` for the index.
+
+---
+
 # Document 27: Migration Plan
 ## Project: Nursing Administration Portal
 **Client:** Jazan Specialty Hospital (JSH)

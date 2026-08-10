@@ -1,49 +1,49 @@
 {% extends 'base.html' %}
 {% from 'partials/_macros.html' import pagination as pager %}
-{% block title %}إدارة المستخدمين{% endblock %}
-{% block page_title %}إدارة المستخدمين{% endblock %}
+{% block title %}{{ _('إدارة المستخدمين') }}{% endblock %}
+{% block page_title %}{{ _('إدارة المستخدمين') }}{% endblock %}
 
 {% block content %}
 <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
   <div>
-    <h2 class="text-xl font-bold text-slate-800">حسابات المستخدمين</h2>
-    <p class="text-sm text-slate-500 mt-1">إجمالي المستخدمين: {{ pagination.total }}</p>
+    <h2 class="text-xl font-bold text-slate-800">{{ _('حسابات المستخدمين') }}</h2>
+    <p class="text-sm text-slate-500 mt-1">{{ _('إجمالي المستخدمين:') }} {{ pagination.total }}</p>
   </div>
   <a href="{{ url_for('users.new_user') }}"
      class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
          stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    إضافة مستخدم
+    {{ _('إضافة مستخدم') }}
   </a>
 </div>
 
 <!-- Filters -->
 <form method="GET" action="{{ url_for('users.list_users') }}"
       class="bg-white rounded-2xl border border-slate-200 p-4 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-  <input type="text" name="q" value="{{ filters.q }}" placeholder="بحث بالبريد الإلكتروني"
+  <input type="text" name="q" value="{{ filters.q }}" placeholder="{{ _('بحث بالبريد الإلكتروني') }}"
          class="sm:col-span-2 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none" />
   <div class="flex gap-2">
     <select name="role" class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-      <option value="">كل الأدوار</option>
+      <option value="">{{ _('كل الأدوار') }}</option>
       {% for r in roles %}
         <option value="{{ r }}" {% if filters.role == r %}selected{% endif %}>{{ role_label(r) }}</option>
       {% endfor %}
     </select>
-    <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">تصفية</button>
+    <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">{{ _('تصفية') }}</button>
   </div>
 </form>
 
 <!-- Users table -->
 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
   <div class="overflow-x-auto">
-    <table class="w-full text-sm text-right">
+    <table class="w-full text-sm text-start">
       <thead class="bg-slate-50 text-slate-500">
         <tr>
-          <th class="px-4 py-3 font-medium">البريد الإلكتروني</th>
-          <th class="px-4 py-3 font-medium">الدور</th>
-          <th class="px-4 py-3 font-medium">الموظف المرتبط</th>
-          <th class="px-4 py-3 font-medium">الحالة</th>
-          <th class="px-4 py-3 font-medium">إجراءات</th>
+          <th class="px-4 py-3 font-medium">{{ _('البريد الإلكتروني') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('الدور') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('الموظف المرتبط') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('الحالة') }}</th>
+          <th class="px-4 py-3 font-medium">{{ _('إجراءات') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -52,32 +52,41 @@
           <td class="px-4 py-3 font-medium text-slate-800 ltr-nums">{{ u.email }}</td>
           <td class="px-4 py-3 text-slate-600">{{ role_label(u.role) }}</td>
           <td class="px-4 py-3 text-slate-600">
-            {% if u.staff %}{{ u.staff.name }}{% else %}<span class="text-slate-400">غير مرتبط</span>{% endif %}
+            {% if u.staff %}{{ u.staff.name }}{% else %}<span class="text-slate-400">{{ _('غير مرتبط') }}</span>{% endif %}
           </td>
           <td class="px-4 py-3">
             {% if u.is_active %}
-              <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">نشط</span>
+              <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">{{ _('نشط') }}</span>
             {% else %}
-              <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">معطّل</span>
+              <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{{ _('معطّل') }}</span>
+            {% endif %}
+            {% if u.is_locked %}
+              <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded ms-1">{{ _('مقفل مؤقتاً') }}</span>
             {% endif %}
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center gap-2">
-              <a href="{{ url_for('users.edit_user', user_id=u.id) }}" class="text-xs text-sky-600 hover:underline">تعديل</a>
+              <a href="{{ url_for('users.edit_user', user_id=u.id) }}" class="text-xs text-sky-600 hover:underline">{{ _('تعديل') }}</a>
+              {% if u.is_locked %}
+              <form method="POST" action="{{ url_for('users.unlock_user', user_id=u.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="text-xs text-amber-700 hover:underline">{{ _('إلغاء القفل') }}</button>
+              </form>
+              {% endif %}
               {% if u.id != current_user.id %}
               <form method="POST" action="{{ url_for('users.delete_user', user_id=u.id) }}"
-                    data-confirm="تأكيد حذف المستخدم {{ u.email }}؟">
+                    data-confirm="{{ _('تأكيد حذف المستخدم %(email)s؟', email=u.email) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
+                <button type="submit" class="text-xs text-red-600 hover:underline">{{ _('حذف') }}</button>
               </form>
               {% else %}
-              <span class="text-xs text-slate-300">حسابك</span>
+              <span class="text-xs text-slate-300">{{ _('حسابك') }}</span>
               {% endif %}
             </div>
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">لا يوجد مستخدمون مطابقون</td></tr>
+        <tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">{{ _('لا يوجد مستخدمون مطابقون') }}</td></tr>
         {% endfor %}
       </tbody>
     </table>

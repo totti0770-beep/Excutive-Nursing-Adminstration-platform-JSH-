@@ -1,6 +1,7 @@
 """Staff (Nursing Staff Database) routes: list, search, filter, and CRUD."""
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_babel import gettext as _
 from flask_login import login_required
 from sqlalchemy import or_
 
@@ -73,7 +74,10 @@ def list_staff():
 @login_required
 @role_required(*_MANAGE_ROLES)
 def export_csv():
-    query, _ = _filtered_query()
+    # CSV headers and the status values are deliberately NOT translated:
+    # an export is data interchange, and a header that changed with the
+    # exporter's interface language would break downstream consumers.
+    query, _filters = _filtered_query()
     rows = [
         [
             s.name,
@@ -112,7 +116,7 @@ def new_staff():
     if form.validate_on_submit():
         emp_id = form.employee_id.data.strip()
         if Staff.query.filter_by(employee_id=emp_id).first():
-            form.employee_id.errors.append("الرقم الوظيفي مستخدم بالفعل")
+            form.employee_id.errors.append(_("الرقم الوظيفي مستخدم بالفعل"))
         else:
             member = Staff()
             _apply(form, member)
@@ -120,7 +124,7 @@ def new_staff():
             db.session.flush()
             log_action("create", "staff", member.id, member.name)
             db.session.commit()
-            flash("تمت إضافة الموظف بنجاح", "success")
+            flash(_("تمت إضافة الموظف بنجاح"), "success")
             return redirect(url_for("staff.list_staff"))
 
     return render_template("staff/form.html", form=form, mode="new")
@@ -140,12 +144,12 @@ def edit_staff(staff_id):
             Staff.employee_id == emp_id, Staff.id != member.id
         ).first()
         if clash:
-            form.employee_id.errors.append("الرقم الوظيفي مستخدم بالفعل")
+            form.employee_id.errors.append(_("الرقم الوظيفي مستخدم بالفعل"))
         else:
             _apply(form, member)
             log_action("update", "staff", member.id, member.name)
             db.session.commit()
-            flash("تم تحديث بيانات الموظف", "success")
+            flash(_("تم تحديث بيانات الموظف"), "success")
             return redirect(url_for("staff.list_staff"))
 
     return render_template("staff/form.html", form=form, mode="edit", member=member)
@@ -159,7 +163,7 @@ def delete_staff(staff_id):
     log_action("delete", "staff", member.id, member.name)
     db.session.delete(member)
     db.session.commit()
-    flash("تم حذف الموظف", "success")
+    flash(_("تم حذف الموظف"), "success")
     return redirect(url_for("staff.list_staff"))
 
 

@@ -5,6 +5,7 @@ imports: models and blueprints import ``db`` from here, and the app factory
 initialises these against the application in one place.
 """
 
+from flask_babel import Babel
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
@@ -17,5 +18,9 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address, storage_uri="memory://")
+# Storage is not set here: Flask-Limiter reads RATELIMIT_STORAGE_URI from app
+# config at init_app time, so production can point at a shared backend without
+# a code change (the in-process default is per worker).
+limiter = Limiter(key_func=get_remote_address)
 talisman = Talisman()
+babel = Babel()

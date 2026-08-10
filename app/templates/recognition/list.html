@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 {% from 'partials/_macros.html' import pagination as pager %}
-{% block title %}التكريم والتقدير{% endblock %}
-{% block page_title %}التكريم والتقدير{% endblock %}
+{% block title %}{{ _('التكريم والتقدير') }}{% endblock %}
+{% block page_title %}{{ _('التكريم والتقدير') }}{% endblock %}
 
 {% block content %}
 <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
   <div>
-    <h2 class="text-xl font-bold text-slate-800">التكريم والتقدير</h2>
-    <p class="text-sm text-slate-500 mt-1">إجمالي التكريمات: {{ pagination.total }}</p>
+    <h2 class="text-xl font-bold text-slate-800">{{ _('التكريم والتقدير') }}</h2>
+    <p class="text-sm text-slate-500 mt-1">{{ _('إجمالي التكريمات:') }} {{ pagination.total }}</p>
   </div>
   <div class="flex items-center gap-2">
     <a href="{{ url_for('recognition.export_csv', **filters) }}"
        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50 transition">
-      تصدير CSV
+      {{ _('تصدير') }} CSV
     </a>
     <a href="{{ url_for('recognition.new_recognition') }}"
        class="inline-flex items-center gap-2 rounded-lg bg-brand-dark text-white text-sm font-medium px-4 py-2 hover:bg-slate-800 transition">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-      منح تكريم
+      {{ _('منح تكريم') }}
     </a>
   </div>
 </div>
@@ -30,18 +30,18 @@
     <form method="GET" action="{{ url_for('recognition.list_recognition') }}"
           class="bg-white rounded-2xl border border-slate-200 p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
       <select name="award_type" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-        <option value="">كل أنواع التكريم</option>
+        <option value="">{{ _('كل أنواع التكريم') }}</option>
         {% for a in award_types %}
-          <option value="{{ a }}" {% if filters.award_type == a %}selected{% endif %}>{{ a }}</option>
+          <option value="{{ a }}" {% if filters.award_type == a %}selected{% endif %}>{{ _(a) }}</option>
         {% endfor %}
       </select>
       <select name="department_id" class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white">
-        <option value="">كل الأقسام</option>
+        <option value="">{{ _('كل الأقسام') }}</option>
         {% for d in departments %}
           <option value="{{ d.id }}" {% if filters.department_id == d.id %}selected{% endif %}>{{ d.name }}</option>
         {% endfor %}
       </select>
-      <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">تصفية</button>
+      <button type="submit" class="rounded-lg bg-brand-gold text-brand-dark text-sm font-bold px-4 hover:brightness-95 transition">{{ _('تصفية') }}</button>
     </form>
 
     <div class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100">
@@ -55,21 +55,21 @@
             <p class="font-medium text-slate-800">{{ r.staff.name if r.staff else '—' }}
               <span class="text-xs text-slate-400">— {{ r.staff.department.name if r.staff and r.staff.department else '' }}</span>
             </p>
-            <p class="text-sm text-violet-700">{{ r.award_type }}</p>
+            <p class="text-sm text-violet-700">{{ _(r.award_type) }}</p>
             {% if r.note %}<p class="text-sm text-slate-500 mt-1">{{ r.note }}</p>{% endif %}
             <p class="text-[11px] text-slate-400 mt-1">
-              {{ r.timestamp.strftime('%Y-%m-%d') }}{% if r.granted_by %} · مُنح بواسطة {{ r.granted_by }}{% endif %}
+              {{ r.timestamp.strftime('%Y-%m-%d') }}{% if r.granted_by %} · {{ _('مُنح بواسطة') }} {{ r.granted_by }}{% endif %}
             </p>
           </div>
         </div>
         <form method="POST" action="{{ url_for('recognition.delete_recognition', rec_id=r.id) }}"
-              data-confirm="تأكيد حذف التكريم؟">
+              data-confirm="{{ _('تأكيد حذف التكريم؟') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <button type="submit" class="text-xs text-red-600 hover:underline">حذف</button>
+          <button type="submit" class="text-xs text-red-600 hover:underline">{{ _('حذف') }}</button>
         </form>
       </div>
       {% else %}
-      <div class="p-10 text-center text-slate-400">لا توجد تكريمات بعد</div>
+      <div class="p-10 text-center text-slate-400">{{ _('لا توجد تكريمات بعد') }}</div>
       {% endfor %}
     </div>
 
@@ -79,7 +79,7 @@
   <!-- Top recipients -->
   <div>
     <div class="bg-white rounded-2xl border border-slate-200 p-5">
-      <h3 class="font-bold text-slate-800 mb-3">الأكثر تكريماً</h3>
+      <h3 class="font-bold text-slate-800 mb-3">{{ _('الأكثر تكريماً') }}</h3>
       {% if top_recipients %}
       <ol class="space-y-2">
         {% for name, cnt in top_recipients %}
@@ -93,7 +93,7 @@
         {% endfor %}
       </ol>
       {% else %}
-      <p class="text-sm text-slate-400">لا توجد بيانات</p>
+      <p class="text-sm text-slate-400">{{ _('لا توجد بيانات') }}</p>
       {% endif %}
     </div>
   </div>

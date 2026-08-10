@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> Its technical sections specify the abandoned Firebase/React stack (the functional requirements remain useful).
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `20_Solution_Architecture.md`, `21_Database_Design.md`, `23_API_Design.md`. See `docs/README.md` for the index.
+
+---
+
 # Document 05: Software Requirements Specification (SRS)
 ## Project: Nursing Administration Portal
 **Client:** Jazan Specialty Hospital (JSH)

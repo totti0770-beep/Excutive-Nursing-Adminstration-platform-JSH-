@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — historical reference only.**
+> This document duplicates the numbered personas/journey/use-case documents.
+> It is kept for traceability and **must not be used as a build specification**.
+> Current documentation: `15_User_Personas.md`, `16_User_Journey.md`, `09_Use_Cases.md`. See `docs/README.md` for the index.
+
+---
+
 # Phase 7, 8, & 9: User Personas, Journey Maps, & Use Cases
 
 ## Project: Nursing Administration Portal
